@@ -12,7 +12,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: shop-blue-green
-  namespace: openshift-gitops
+  namespace: %USER%-gitops-argocd
 spec:
   destination:
     name: ''
@@ -317,7 +317,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: shop-canary
-  namespace: openshift-gitops
+  namespace: %USER%-gitops-argocd
 spec:
   destination:
     name: ''
