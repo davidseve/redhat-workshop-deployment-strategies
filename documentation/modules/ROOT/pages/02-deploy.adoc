@@ -1,5 +1,7 @@
 = Deploy Shop Application
 include::_attributes.adoc[]
+{user}
+%USER%
 
 ### Deploy Shop Application
 
