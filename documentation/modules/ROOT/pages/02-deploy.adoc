@@ -14,7 +14,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: shop-blue-green
-  namespace: {user}-gitops-argocd
+  namespace: %USER%-gitops-argocd
 spec:
   destination:
     name: ''
@@ -51,7 +51,7 @@ We have deployed the `shop` with ArgoCD. We can test that it is up and running.
  
 We have to get the Online route
 ```
-curl "$(oc get routes products-umbrella-online -n {user}-blue-green --template='https://{{.spec.host}}')/products"
+curl "$(oc get routes products-umbrella-online -n %USER%-blue-green --template='https://{{.spec.host}}')/products"
 ```
 And the Offline route
 ```
