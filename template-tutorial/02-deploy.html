@@ -146,11 +146,11 @@
 kind: Application
 metadata:
   name: shop-blue-green
-  namespace: %USER%-gitops-argocd
+  namespace: {user}-gitops-argocd
 spec:
   destination:
     name: ''
-    namespace: %USER%-blue-green
+    namespace: {user}-blue-green
     server: 'https://kubernetes.default.svc'
   source:
     path: helm/quarkus-helm-umbrella/chart
@@ -159,7 +159,7 @@ spec:
     helm:
       parameters:
       - name: "global.namespace"
-        value: %USER%-blue-green
+        value: {user}-blue-green
       valueFiles:
         - values/vaues-blue-green.yaml
   project: default
@@ -194,7 +194,7 @@ spec:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">curl "$(oc get routes products-umbrella-online -n %USER%-blue-green --template='https://{{.spec.host}}')/products"</code></pre>
+<pre class="highlightjs highlight"><code class="language-none hljs">curl "$(oc get routes products-umbrella-online -n {user}-blue-green --template='https://{{.spec.host}}')/products"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -202,7 +202,7 @@ spec:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">curl "$(oc get routes products-umbrella-offline -n %USER%-blue-green --template='https://{{.spec.host}}')/products"</code></pre>
+<pre class="highlightjs highlight"><code class="language-none hljs">curl "$(oc get routes products-umbrella-offline -n {user}-blue-green --template='https://{{.spec.host}}')/products"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -278,7 +278,7 @@ Because right now we have both routers against the same rollout revision we will
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">kubectl argo rollouts get rollout products --watch -n %USER%-blue-green</code></pre>
+<pre class="highlightjs highlight"><code class="language-none hljs">kubectl argo rollouts get rollout products --watch -n {user}-blue-green</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -425,7 +425,7 @@ If this dependency is for example a production DB we will create the things that
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">kubectl argo rollouts promote products -n %USER%-blue-green</code></pre>
+<pre class="highlightjs highlight"><code class="language-none hljs">kubectl argo rollouts promote products -n {user}-blue-green</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -520,7 +520,7 @@ git push</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">kubectl argo rollouts promote products -n %USER%-blue-green</code></pre>
+<pre class="highlightjs highlight"><code class="language-none hljs">kubectl argo rollouts promote products -n {user}-blue-green</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -568,11 +568,11 @@ git push</code></pre>
 kind: Application
 metadata:
   name: shop-canary
-  namespace: %USER%-gitops-argocd
+  namespace: {user}-gitops-argocd
 spec:
   destination:
     name: ''
-    namespace: %USER%-canary
+    namespace: {user}-canary
     server: 'https://kubernetes.default.svc'
   source:
     path: helm/quarkus-helm-umbrella/chart
@@ -581,7 +581,7 @@ spec:
     helm:
       parameters:
       - name: "global.namespace"
-        value: %USER%-canary
+        value: {user}-canary
       valueFiles:
         - values/values-canary.yaml
   project: default
@@ -613,7 +613,7 @@ spec:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">curl "$(oc get routes products-umbrella-online -n %USER%-canary --template='https://{{.spec.host}}')/products"</code></pre>
+<pre class="highlightjs highlight"><code class="language-none hljs">curl "$(oc get routes products-umbrella-online -n {user}-canary --template='https://{{.spec.host}}')/products"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -671,7 +671,7 @@ We can see that the current version is <code>v1.0.1</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">kubectl argo rollouts get rollout products --watch -n %USER%-canary</code></pre>
+<pre class="highlightjs highlight"><code class="language-none hljs">kubectl argo rollouts get rollout products --watch -n {user}-canary</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -778,7 +778,7 @@ git push</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">kubectl argo rollouts get rollout products --watch -n %USER%-canary</code></pre>
+<pre class="highlightjs highlight"><code class="language-none hljs">kubectl argo rollouts get rollout products --watch -n {user}-canary</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -847,7 +847,7 @@ This is our current status:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">kubectl argo rollouts get rollout products --watch -n %USER%-canary</code></pre>
+<pre class="highlightjs highlight"><code class="language-none hljs">kubectl argo rollouts get rollout products --watch -n {user}-canary</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -876,7 +876,7 @@ This is our current status:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">kubectl argo rollouts get rollout products --watch -n %USER%-canary</code></pre>
+<pre class="highlightjs highlight"><code class="language-none hljs">kubectl argo rollouts get rollout products --watch -n {user}-canary</code></pre>
 </div>
 </div>
 <div class="listingblock">
