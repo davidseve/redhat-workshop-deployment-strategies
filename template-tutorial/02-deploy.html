@@ -154,7 +154,7 @@
 kind: Application
 metadata:
   name: shop-blue-green
-  namespace: {user}-gitops-argocd
+  namespace: %USER%-gitops-argocd
 spec:
   destination:
     name: ''
@@ -202,7 +202,7 @@ spec:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">curl "$(oc get routes products-umbrella-online -n {user}-blue-green --template='https://{{.spec.host}}')/products"</code></pre>
+<pre class="highlightjs highlight"><code class="language-none hljs">curl "$(oc get routes products-umbrella-online -n %USER%-blue-green --template='https://{{.spec.host}}')/products"</code></pre>
 </div>
 </div>
 <div class="paragraph">
