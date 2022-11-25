@@ -12,11 +12,11 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: shop-blue-green
-  namespace: %USER%-gitops-argocd
+  namespace: {user}-gitops-argocd
 spec:
   destination:
     name: ''
-    namespace: %USER%-blue-green
+    namespace: {user}-blue-green
     server: 'https://kubernetes.default.svc'
   source:
     path: helm/quarkus-helm-umbrella/chart
@@ -25,7 +25,7 @@ spec:
     helm:
       parameters:
       - name: "global.namespace"
-        value: %USER%-blue-green
+        value: {user}-blue-green
       valueFiles:
         - values/vaues-blue-green.yaml
   project: default
@@ -49,11 +49,11 @@ We have deployed the `shop` with ArgoCD. We can test that it is up and running.
  
 We have to get the Online route
 ```
-curl "$(oc get routes products-umbrella-online -n %USER%-blue-green --template='https://{{.spec.host}}')/products"
+curl "$(oc get routes products-umbrella-online -n {user}-blue-green --template='https://{{.spec.host}}')/products"
 ```
 And the Offline route
 ```
-curl "$(oc get routes products-umbrella-offline -n %USER%-blue-green --template='https://{{.spec.host}}')/products"
+curl "$(oc get routes products-umbrella-offline -n {user}-blue-green --template='https://{{.spec.host}}')/products"
 ```
 Notice that in each microservice response we have added metadata information to see better the `version` of each application. This will help us to see the changes while we do the Blue/Green deployment.
 Because right now we have both routers against the same rollout revision we will have the same response with version `v1.0.1`:
@@ -99,7 +99,7 @@ We can also see the rollout`s status[^note].
     Argo Rollouts offers a Kubectl plugin to enrich the experience with Rollouts https://argoproj.github.io/argo-rollouts/installation/#kubectl-plugin-installation 
 
 ```
-kubectl argo rollouts get rollout products --watch -n %USER%-blue-green
+kubectl argo rollouts get rollout products --watch -n {user}-blue-green
 ```
 
 ```
@@ -209,7 +209,7 @@ We are going to open the new version to final users.
 
 Execute this command to promote products:
 ```
-kubectl argo rollouts promote products -n %USER%-blue-green
+kubectl argo rollouts promote products -n {user}-blue-green
 ```
 
 First **Argo Rollouts** will just change the service to use the new release (ReplicaSet). We `minimize downtime` because it just changes the service label. 
@@ -282,7 +282,7 @@ git push
 
 Execute this command to promote products to version `v1.0.1`:
 ```
-kubectl argo rollouts promote products -n %USER%-blue-green
+kubectl argo rollouts promote products -n {user}-blue-green
 ```
 The rollback is done!
 ![Shop Step Rollback](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-rollback.png)
@@ -319,11 +319,11 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: shop-canary
-  namespace: %USER%-gitops-argocd
+  namespace: {user}-gitops-argocd
 spec:
   destination:
     name: ''
-    namespace: %USER%-canary
+    namespace: {user}-canary
     server: 'https://kubernetes.default.svc'
   source:
     path: helm/quarkus-helm-umbrella/chart
@@ -332,7 +332,7 @@ spec:
     helm:
       parameters:
       - name: "global.namespace"
-        value: %USER%-canary
+        value: {user}-canary
       valueFiles:
         - values/values-canary.yaml
   project: default
@@ -357,7 +357,7 @@ We have deployed the `shop` with ArgoCD. We can test that it is up and running.
  
 We have to get the Online route
 ```
-curl "$(oc get routes products-umbrella-online -n %USER%-canary --template='https://{{.spec.host}}')/products"
+curl "$(oc get routes products-umbrella-online -n {user}-canary --template='https://{{.spec.host}}')/products"
 ```
 
 Notice that in each microservice response we have added metadata information to see better the `version` of each application. This will help us to see the changes while we do the canary deployment.
@@ -398,7 +398,7 @@ We can also see the rollout`s status[^note].
 
 
 ```
-kubectl argo rollouts get rollout products --watch -n %USER%-canary
+kubectl argo rollouts get rollout products --watch -n {user}-canary
 ```
 
 ```
@@ -470,7 +470,7 @@ This is our current status:
 ![Shop Step 1](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-1.png)
 
 ```
-kubectl argo rollouts get rollout products --watch -n %USER%-canary
+kubectl argo rollouts get rollout products --watch -n {user}-canary
 ```
 ```
 NAME                                  KIND        STATUS     AGE    INFO
@@ -526,7 +526,7 @@ This is our current status:
 ![Shop Step 2](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-2.png)
 
 ```
-kubectl argo rollouts get rollout products --watch -n %USER%-canary
+kubectl argo rollouts get rollout products --watch -n {user}-canary
 ```
 ```
 NAME                                  KIND        STATUS     AGE    INFO
@@ -548,7 +548,7 @@ This is our current status:
 ![Shop Step 1](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-3.png)
 
 ```
-kubectl argo rollouts get rollout products --watch -n %USER%-canary
+kubectl argo rollouts get rollout products --watch -n {user}-canary
 ```
 ```
 NAME                                 KIND        STATUS        AGE    INFO
