@@ -146,20 +146,20 @@
 kind: Application
 metadata:
   name: shop-blue-green
-  namespace: {user}-gitops-argocd
+  namespace: %USER%-gitops-argocd
 spec:
   destination:
     name: ''
-    namespace: {user}-blue-green
+    namespace: %USER%-blue-green
     server: 'https://kubernetes.default.svc'
   source:
     path: helm/quarkus-helm-umbrella/chart
-    repoURL: https://github.com/change_me/shop-application-helm-chart
+    repoURL: <a href="https://github.com/change_me/shop-application-helm-chart" class="bare">https://github.com/change_me/shop-application-helm-chart</a>
     targetRevision: HEAD
     helm:
       parameters:
       - name: "global.namespace"
-        value: {user}-blue-green
+        value: %USER%-blue-green
       valueFiles:
         - values/vaues-blue-green.yaml
   project: default
