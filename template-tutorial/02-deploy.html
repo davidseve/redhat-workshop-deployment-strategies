@@ -132,14 +132,6 @@
   <div class="content">
 <article class="doc">
 <h1 class="page">Deploy Shop Application</h1>
-<div id="preamble">
-<div class="sectionbody">
-<div class="paragraph">
-<p>%USER%
-%USER%</p>
-</div>
-</div>
-</div>
 <div class="sect2">
 <h3 id="_deploy_shop_application"><a class="anchor" href="#_deploy_shop_application"></a>Deploy Shop Application</h3>
 <div class="paragraph">
@@ -154,7 +146,7 @@
 kind: Application
 metadata:
   name: shop-blue-green
-  namespace: %USER%-gitops-argocd
+  namespace: {user}-gitops-argocd
 spec:
   destination:
     name: ''
@@ -180,9 +172,9 @@ spec:
 <div class="paragraph">
 <p>TODO is it right?</p>
 </div>
-<div class="listingblock">
+<div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc apply -f blue-green-argo-rollouts/application-shop-blue-green-rollouts.yaml</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc apply -f blue-green-argo-rollouts/application-shop-blue-green-rollouts.yaml</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -200,17 +192,17 @@ spec:
 <div class="paragraph">
 <p>We have to get the Online route</p>
 </div>
-<div class="listingblock">
+<div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">curl "$(oc get routes products-umbrella-online -n %USER%-blue-green --template='https://{{.spec.host}}')/products"</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">curl "$(oc get routes products-umbrella-online -n %USER%-blue-green --template='https://{{.spec.host}}')/products"</code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p>And the Offline route</p>
 </div>
-<div class="listingblock">
+<div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">curl "$(oc get routes products-umbrella-offline -n {user}-blue-green --template='https://{{.spec.host}}')/products"</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">curl "$(oc get routes products-umbrella-offline -n %USER%-blue-green --template='https://{{.spec.host}}')/products"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -284,14 +276,14 @@ Because right now we have both routers against the same rollout revision we will
 <p>[^note]:
     Argo Rollouts offers a Kubectl plugin to enrich the experience with Rollouts <a href="https://argoproj.github.io/argo-rollouts/installation/#kubectl-plugin-installation" class="bare">https://argoproj.github.io/argo-rollouts/installation/#kubectl-plugin-installation</a></p>
 </div>
-<div class="listingblock">
+<div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">kubectl argo rollouts get rollout products --watch -n {user}-blue-green</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout products --watch -n %USER%-blue-green</code></pre>
 </div>
 </div>
-<div class="listingblock">
+<div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">NAME                                  KIND        STATUS     AGE INFO
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">NAME                                  KIND        STATUS     AGE INFO
 ⟳ products                            Rollout     ✔ Healthy  12m
 └──# revision:1
    └──⧉ products-67fc9fb79b           ReplicaSet  ✔ Healthy  12m  stable,active
@@ -353,9 +345,9 @@ We will deploy a new version v1.1.1. To do it, we have to edit the file `helm/qu
 <div class="paragraph">
 <p>And push the changes</p>
 </div>
-<div class="listingblock">
+<div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">git add .
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">git add .
 git commit -m "Change products version to v1.1.1"
 git push</code></pre>
 </div>
@@ -376,9 +368,9 @@ git push</code></pre>
 <div class="paragraph">
 <p><strong>Argo Rollouts</strong> will automatically deploy the new products version and execute the <code>prePromotionAnalysis</code>.</p>
 </div>
-<div class="listingblock">
+<div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">NAME                                  KIND         STATUS        AGE  INFO
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">NAME                                  KIND         STATUS        AGE  INFO
 ⟳ products                            Rollout      ॥ Paused      27m
 ├──# revision:2
 │  ├──⧉ products-9dc6f576f            ReplicaSet   ✔ Healthy     36s  preview
@@ -431,17 +423,17 @@ If this dependency is for example a production DB we will create the things that
 <div class="paragraph">
 <p>Execute this command to promote products:</p>
 </div>
-<div class="listingblock">
+<div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">kubectl argo rollouts promote products -n {user}-blue-green</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts promote products -n %USER%-blue-green</code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p>First <strong>Argo Rollouts</strong> will just change the service to use the new release (ReplicaSet). We <code>minimize downtime</code> because it just changes the service label.</p>
 </div>
-<div class="listingblock">
+<div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">NAME                                  KIND         STATUS        AGE  INFO
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">NAME                                  KIND         STATUS        AGE  INFO
 ⟳ products                            Rollout      ✔ Healthy     88m
 ├──# revision:2
 │  ├──⧉ products-9dc6f576f            ReplicaSet   ✔ Healthy     62m  stable,active
@@ -461,9 +453,9 @@ If this dependency is for example a production DB we will create the things that
 <div class="paragraph">
 <p>And after <code>scaleDownDelaySeconds</code> <strong>Argo Rollouts</strong> will scale down the first replicaSet (v1.0.1).</p>
 </div>
-<div class="listingblock">
+<div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs"> NAME                                 KIND         STATUS        AGE  INFO
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input"> NAME                                 KIND         STATUS        AGE  INFO
 ⟳ products                           Rollout      ✔ Healthy     89m
 ├──# revision:2
 │  ├──⧉ products-9dc6f576f           ReplicaSet   ✔ Healthy     62m  stable,active
@@ -511,9 +503,9 @@ In our case the commit that we have done not only changes the ReplicaSet but als
 <div class="paragraph">
 <p>I recommend doing the changes in git. We will revert the last commit</p>
 </div>
-<div class="listingblock">
+<div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">git revert HEAD
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">git revert HEAD --no-edit
 git push</code></pre>
 </div>
 </div>
@@ -526,9 +518,9 @@ git push</code></pre>
 <div class="paragraph">
 <p>Execute this command to promote products to version <code>v1.0.1</code>:</p>
 </div>
-<div class="listingblock">
+<div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">kubectl argo rollouts promote products -n {user}-blue-green</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts promote products -n %USER%-blue-green</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -599,9 +591,9 @@ spec:
       selfHeal: false</code></pre>
 </div>
 </div>
-<div class="listingblock">
+<div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc apply -f canary-argo-rollouts/application-shop-canary-rollouts.yaml</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc apply -f canary-argo-rollouts/application-shop-canary-rollouts.yaml</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -619,9 +611,9 @@ spec:
 <div class="paragraph">
 <p>We have to get the Online route</p>
 </div>
-<div class="listingblock">
+<div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">curl "$(oc get routes products-umbrella-online -n {user}-canary --template='https://{{.spec.host}}')/products"</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">curl "$(oc get routes products-umbrella-online -n %USER%-canary --template='https://{{.spec.host}}')/products"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -677,14 +669,14 @@ We can see that the current version is <code>v1.0.1</code>:</p>
 <div class="paragraph">
 <p>We can also see the rollout`s status[^note].</p>
 </div>
-<div class="listingblock">
+<div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">kubectl argo rollouts get rollout products --watch -n {user}-canary</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout products --watch -n %USER%-canary</code></pre>
 </div>
 </div>
-<div class="listingblock">
+<div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">NAME                                  KIND        STATUS     AGE  INFO
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">NAME                                  KIND        STATUS     AGE  INFO
 ⟳ products                            Rollout     ✔ Healthy  38s
 └──# revision:1
    └──⧉ products-67fc9fb79b           ReplicaSet  ✔ Healthy  38s  stable
@@ -760,9 +752,9 @@ We can see that the current version is <code>v1.0.1</code>:</p>
 <div class="paragraph">
 <p>Push the changes to start the deployment.</p>
 </div>
-<div class="listingblock">
+<div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">git add .
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">git add .
 git commit -m "Change products version to v1.1.1"
 git push</code></pre>
 </div>
@@ -784,14 +776,14 @@ git push</code></pre>
 <p>This is our current status:
 ![Shop Step 1](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-1.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-1.png</a>)</p>
 </div>
-<div class="listingblock">
+<div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">kubectl argo rollouts get rollout products --watch -n {user}-canary</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout products --watch -n %USER%-canary</code></pre>
 </div>
 </div>
-<div class="listingblock">
+<div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">NAME                                  KIND        STATUS     AGE    INFO
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">NAME                                  KIND        STATUS     AGE    INFO
 ⟳ products                            Rollout     ॥ Paused   3m13s
 ├──# revision:2
 │  └──⧉ products-9dc6f576f            ReplicaSet  ✔ Healthy  8s     canary
@@ -853,14 +845,14 @@ git push</code></pre>
 This is our current status:
 ![Shop Step 2](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-2.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-2.png</a>)</p>
 </div>
-<div class="listingblock">
+<div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">kubectl argo rollouts get rollout products --watch -n {user}-canary</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout products --watch -n %USER%-canary</code></pre>
 </div>
 </div>
-<div class="listingblock">
+<div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">NAME                                  KIND        STATUS     AGE    INFO
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">NAME                                  KIND        STATUS     AGE    INFO
 ⟳ products                            Rollout     ॥ Paused   3m47s
 ├──# revision:2
 │  └──⧉ products-9dc6f576f            ReplicaSet  ✔ Healthy  42s    canary
@@ -882,14 +874,14 @@ This is our current status:
 <p>This is our current status:
 ![Shop Step 1](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-3.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-3.png</a>)</p>
 </div>
-<div class="listingblock">
+<div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">kubectl argo rollouts get rollout products --watch -n {user}-canary</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout products --watch -n %USER%-canary</code></pre>
 </div>
 </div>
-<div class="listingblock">
+<div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">NAME                                 KIND        STATUS        AGE    INFO
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">NAME                                 KIND        STATUS        AGE    INFO
 ⟳ products                           Rollout     ✔ Healthy     4m32s
 ├──# revision:2
 │  └──⧉ products-9dc6f576f           ReplicaSet  ✔ Healthy     87s    stable
@@ -934,9 +926,9 @@ In our case the commit that we have done not only changes the ReplicaSet but als
 <div class="paragraph">
 <p>I recommend doing the changes in git. We will revert the last commit</p>
 </div>
-<div class="listingblock">
+<div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">git revert HEAD --no-edit</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">git revert HEAD --no-edit</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -968,11 +960,12 @@ In our case the commit that we have done not only changes the ReplicaSet but als
 </div>
 </div>
 <div class="paragraph">
-<p>Execute those commands to push the changes:</p>
+<p>Execute those commands to push the changes:
+.Offline route in the productive environment</p>
 </div>
-<div class="listingblock">
+<div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">git add .
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">git add .
 git commit -m "delete steps for rollback"
 git push</code></pre>
 </div>
