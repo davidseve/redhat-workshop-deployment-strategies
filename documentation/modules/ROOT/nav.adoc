@@ -1,7 +1,16 @@
-* xref:01-setup.adoc[1. Setup]
-** xref:01-setup.adoc#prerequisite[Prerequisites]
-** xref:01-setup.adoc#minikube[Setup Minikube]
+* xref:01-setup.adoc[1. Environment Setup]
+** xref:01-setup.adoc#01-prerequisites[1.1 Prerequisites]
+** xref:01-setup.adoc#01-laboratory[1.2 Laboratory]
+*** xref:01-setup.adoc#01-parameters[1.2.1 Parameters]
+*** xref:01-setup.adoc#01-accessconsole[1.2.2 Access - OCP Console]
 
-* xref:02-deploy.adoc[2. Deploy Service]
-** xref:02-deploy.adoc#package[Build Service]
-** xref:02-deploy.adoc#deploy[Deploy Dervice]
+* xref:02-cluster-setup.adoc[2. Cluster Setup]
+
+* xref:03-deployment-strategies.adoc[3. Deployment Strategies with Argo CD and Argo Rollouts]
+
+* xref:04-access-the-tools.adoc[4. Access the tools]
+
+* xref:05-blue-green-deployment.adoc[5. Blue/Green deployment strategy]
+
+* xref:06-canary-deployment.adoc[6. Canary deployment strategy]
+

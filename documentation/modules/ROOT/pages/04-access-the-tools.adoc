@@ -1,0 +1,84 @@
+= Access the tools
+
+include::_attributes.adoc[]
+
+This section focuses on getting access to the four tools that we are going to use to control the deployment of the Shop application:
+
+* *OCP Client*: The `oc` command will be used to create Openshift resources as well as to debug the application configuration.
+* *OCP Web console*: The Openshift web console will be used to create Openshift resources as well as to debug the application configuration.
+* *ArgoCD web console*: This web console helps us to visualize the sync status between Git and Openshift.
+* *Clone the GitOps repo*: This repository contains all the deployment configurations of the application and it's the only source of truth of the configuration.
+
+
+== 1. Openshift - OC Client
+
+The OpenShift Container Platform CLI (which needs to be installed first) exposes the commands for managing your applications as well as the lower-level tools to interact with each component of your system. With the `oc` command, you can create applications and manage OpenShift Container Platform projects from a terminal.
+
+Please check that you have followed the pre-requisites with your instructor and connect to the cluster executing the next command from your terminal:
+
+[.lines_space]
+[.console-input]
+[source,bash, subs="+macros,+attributes"]
+----
+oc login -u {user} -p openshift {cluster_api}
+----
+
+If the login is successful, it should show an output similar to the following screenshot:
+
+.OC CLI Login Output
+image::oc_login_output.png["OC CLI Login Output"]
+
+TIP: Please pay special attention to _oc CLI_  because you will need to use this tool several times during this tutorial.
+
+As shown in the output, the user will have access to the following namespaces:
+
+* *{user}-gitops-argocd*: It will contain all the GitOps objects.
+* *{user}-blue-green*: Will contain the application using Blue/Green deployment.
+* *{user}-canary*: Will contain the application using Canary deployment.
+
+Each user will have its own three namespaces.
+
+== 2. Openshift - Web Console
+
+Access the https://console-openshift-console.apps.%CLUSTER%/k8s/cluster/projects[OCP web console^] and login with your assigned username and password:
+
+* Username: {user}.
+* Password: `{user}`.
+
+Once logged in, you will see the same namespaces as using the `oc` command:
+
+.OCP web console projects view
+image::ocp_console_projects.png["OCP web console projects view"]
+
+
+== 3. ArgoCD dashboard
+ 
+The ArgoCD web console will give you access to control how the git repo is synced with Openshift, as well as check the real status of the synchronization. In order to log in to the web console, access the Openshift web console and click on the following icon: You will get the link to the ArgoCD web console:
+
+TODO
+// .Openshift link to the ArgoCD web console
+// image::ocp_console_argocd_link.png["Openshift link to the ArgoCD web console"]
+
+// You will be requested to Log in to ArgoCD. Click on `LOG IN VIA OPENSHIFT` to be prompted for your Openshift credentials.
+
+// .ArgoCD login screen
+// image::argocd_login.png["ArgoCD login screen"]
+
+// If the login is successful, you will see the home screen where your applications will be created.
+
+// .ArgoCD applications
+// image::argocd_applications.png["ArgoCD applications"]
+
+
+== 4. Clone the GitOps repository
+
+Following the GitOps practices, all the deployment configuration is stored in the git repo. We have created an initial repository that you will change to configure your deployment. As part of the demo, you will have to do some changes and commits. Fork the repository and clone it in your local machine, as you don't have write permissions on the initial git repo.
+
+1. Access the https://github.com/rhte2023-argo-rollouts/shop-application-helm-chart[Shop application Helm chart] repository and fork it on your GitHub account. If prompted, choose to fork the `main` branch.
+
+[.console-input]
+[source,input,subs="+macros,+attributes"]
+----
+git clone https://github.com/chamge_me/shop-application-helm-chart
+cd shop-application-helm-chart
+----

@@ -1,0 +1,20 @@
+
+[cols="5*^,5*.",options="header,+attributes"]
+|===
+|**Tool**|**Fedora**|**macOS**|**Windows**|**Official Documentation**
+| oc
+| https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz[Download]
+| https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-mac.tar.gz[Download]
+| https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-windows.zip[Download]
+| https://docs.openshift.com/container-platform/4.6/cli_reference/openshift_cli/getting-started-cli.html[OpenShift CLI - Docs]
+| git
+| https://git-scm.com/download/linux[Download]
+| https://git-scm.com/download/mac[Download]
+| https://git-scm.com/download/win[Download]
+| https://git-scm.com[Git - Docs]
+| Argo Rollouts CLI
+| https://github.com/argoproj/argo-rollouts/releases/download/v1.3.1/kubectl-argo-rollouts-linux-arm64[Download]
+| https://github.com/argoproj/argo-rollouts/releases/download/v1.3.1/kubectl-argo-rollouts-linux-arm64[Download]
+| https://github.com/argoproj/argo-rollouts/releases/download/v1.3.1/kubectl-argo-rollouts-windows-amd64[Download]
+| https://argoproj.github.io/argo-rollouts/installation/#kubectl-plugin-installation[Git - Docs]
+|===

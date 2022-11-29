@@ -1,20 +1,22 @@
-= Welcome to Template Tutorial
+= Welcome to Red Hat Workshop - Deployment Strategies with Argo CD and Argo Rollouts
 :page-layout: home
 :!sectids:
 
 [.text-center.strong]
-== Publish Services to Kubernetes
+== Introduction
 
-A Kubernetes tutorial to show how you can deploy a Java service to a Kubernetes cluster as it was a child game.
+_Red Hat Workshop - Deployment Strategies with Argo CD and Argo Rollouts_ is a repository which includes a tutorial with a set of practices for the purpose of practicing with Kubernetes Native GitOps model, Blue/Green deployment and canary deployment using Argo Rollouts
 
-[.tiles.browse]
-== Browse modules
+The general idea behind this workshop is to get an initial understanding of the following points:
 
-[.tile]
-.xref:01-setup.adoc[Get Started]
-* xref:01-setup.adoc#minikube[Minikube]
+- Deploy microservice-based applications in Kubernetes using ArgoCD and Helm
+- Operate applications in Kubernetes using ArgoCD in a GitOps model
+- Blue/Green deployment for Cloud Native applications
+- Canary deployment for Cloud Native applications
 
-[.tile]
-.xref:02-deploy.adoc[Deploying]
-* xref:02-deploy.adoc#package[Package the Application]
-* xref:02-deploy.adoc#deploy[Deploy the Application]
+[.text-center.strong]
+== Getting Started
+
+First of all, it is required to review your local machine prerequisites and laboratory environment access in order to be able to start working on this tutorial.
+
+Please follow xref:01-setup.adoc[Environment Setup] for more information.

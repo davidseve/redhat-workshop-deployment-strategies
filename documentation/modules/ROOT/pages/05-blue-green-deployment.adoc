@@ -1,0 +1,370 @@
+# Blue/Green deployment strategy
+include::_attributes.adoc[]
+
+
+*Blue-green deployment* is a strategy for updating running computer systems with *minimal downtime*. The operator maintains two environments, dubbed blue and green. One serves production traffic (the version all users use), while the other is updated.
+
+For instance, the old version is the blue environment, while the new version is the green environment. Once all the *production traffic is fully transferred from blue to green*, blue can be kept as-is for a possible rollback or be updated to become the template upon which the next update is made.
+
+* Advantages:
+** Minimize downtime.
+** A quick way to roll back.
+** Smoke testing.
+* Disadvantages:
+** Doubling of total resources.
+** Backward compatibility.
+
+### How-to Blue/Green
+
+In this example, we have two versions up and running in production: online and offline. We also have routers and services for offline and online pointing to the corresponding microservice. As explained above, we can deploy a new version of the microservice in the green service ("offline") and perform *smoke tests* against it to ensure that the new version will perform correctly when real traffic begins to arrive to Green.
+
+
+![Blue/Green](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green.png)
+
+When a new version is ready for real users, we only have to modify the k8s service to point to the new deployment (Green) as in the following image. There is minimal downtime and we can do a rapid rollback just by undoing the changes in the service.
+
+![Blue/Green switch](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green-switch.png)
+
+As with great power comes great responsibility, you have to take the following into account:
+
+* We need to *double the total resources used*: CPU, RAM, Persistent Storage, etc. We will see how to minimize this effect.
+* We have to be *ready for a rapid rollback*. In case of seeing any issue in the monitorization, we should be able to modify the service to point back to the first deployment.
+* We need to keep *backward compatibility*. If not, we would not be able to perform rollbacks.
+
+
+
+## Deploy Shop Application
+
+TODO edit repo
+
+We are going to create the application `shop`, that we will use to test Blue/Green deployment. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just forked. Please edit the file `blue-green-argo-rollouts/application-shop-blue-green-rollouts.yaml` and set your own GitHub repository in the `reportURL`.
+
+[source,yaml,subs="+macros,+attributes"]
+----
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: shop-blue-green
+  namespace: {user}-gitops-argocd
+spec:
+  destination:
+    name: ''
+    namespace: {user}-blue-green
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: helm/quarkus-helm-umbrella/chart
+    repoURL: https://github.com/rhte2023-argo-rollouts/shop-application-helm-chart
+    targetRevision: HEAD
+    helm:
+      parameters:
+      - name: "global.namespace"
+        value: {user}-blue-green
+      valueFiles:
+        - values/blue-green/values.yaml
+        - values/blue-green/values-image-tag.yaml
+  project: default
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+----
+TODO is it right?
+[.console-input]
+[source,input,subs="+macros,+attributes"]
+----
+oc apply -f blue-green-argo-rollouts/application-shop-blue-green-rollouts.yaml
+----
+
+Looking at the Argo CD dashboard, you would notice that we have a new `shop` application.
+
+TODO add image
+
+## Test Shop application
+ 
+We have deployed the `shop` with ArgoCD. We can test that it is up and running.
+ 
+We have to get the Online route
+[.console-input]
+[source,input,subs="+macros,+attributes"]
+----
+curl "$(oc get routes products-umbrella-online -n {user}-blue-green --template='https://{{.spec.host}}')/products"
+----
+And the Offline route
+[.console-input]
+[source,input,subs="+macros,+attributes"]
+----
+curl "$(oc get routes products-umbrella-offline -n {user}-blue-green --template='https://{{.spec.host}}')/products"
+----
+Notice that in each microservice response we have added metadata information to see better the `version` of each application. This will help us to see the changes while we do the Blue/Green deployment.
+Because right now we have both routers against the same rollout revision we will have the same response with version `v1.0.1`:
+
+[source,json]
+----
+{
+   "products":[
+      {
+         ...
+         "name":"TV 4K",
+         "price":"1500€"
+      }
+   ],
+   "metadata":{
+      "version":"v1.0.1", <--
+      "colour":"none",
+      "mode":"online"
+   }
+}
+----
+## Initial status
+
+To achieve Blue/Green deployment with `Cloud Native` applications using **Argo Rollouts**, we have designed this architecture.
+
+This is our current status:
+![Shop initial status](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-0.png)
+
+OpenShift Components - Online
+
+- Routes and Services declared with the suffix -online
+- Routes mapped only to the online services
+- Services mapped to the rollout.
+ 
+OpenShift Components - Offline
+
+- Routes and Services declared with the suffix -offline
+- Routes mapped only to the offline services
+- Services mapped to the rollout
+
+We can also see the rollout`s status[^note].
+
+[^note]:
+    Argo Rollouts offers a Kubectl plugin to enrich the experience with Rollouts https://argoproj.github.io/argo-rollouts/installation/#kubectl-plugin-installation 
+
+[.console-input]
+[source,input,subs="+macros,+attributes"]
+----
+kubectl argo rollouts get rollout products --watch -n {user}-blue-green
+----
+
+[.console-input]
+[source,input,subs="+macros,+attributes"]
+----
+NAME                                  KIND        STATUS     AGE INFO
+⟳ products                            Rollout     ✔ Healthy  12m  
+└──# revision:1                                                   
+   └──⧉ products-67fc9fb79b           ReplicaSet  ✔ Healthy  12m  stable,active
+      ├──□ products-67fc9fb79b-49k25  Pod         ✔ Running  12m  ready:1/1
+      └──□ products-67fc9fb79b-p7jk9  Pod         ✔ Running  12m  ready:1/1
+----
+
+We have defined an active or online service 'products-umbrella-online' and a preview or offline service 'products-umbrella-offline'. Final user will always use 'products-umbrella-online'. We have created an AnalysisTemplate 'products-analysis-template' that just validates the health of the application, for production environments a better analysis should be done. **Argo Rollouts** use this AnalysisTemplate to validate a new version and set whether it is ready to be promoted or not. To learn more, please read [this](https://argoproj.github.io/argo-rollouts/features/bluegreen/).
+
+[source,yaml,subs="+macros,+attributes"]
+----
+  strategy:
+    blueGreen:
+      activeService: products-umbrella-online
+      previewService: products-umbrella-offline      
+      autoPromotionEnabled: false
+      prePromotionAnalysis:
+        templates:
+          - templateName: products-analysis-template
+----
+## Products Blue/Green deployment
+We have split a `Cloud Native` Blue/Green deployment into two steps:
+
+1. Deploy a new version.
+2. Promote a new version
+ 
+
+ 
+We have already deployed the products version v1.0.1, and we are ready to use a new products version v1.1.1 that has a new `description` attribute.
+
+### Step 1 - Deploy a new version
+ 
+ TODO is it the right path?
+
+We will deploy a new version v1.1.1. To do it, we have to edit the file `helm/quarkus-helm-umbrella/chart/values/blue-green/values-image-tag.yaml` under `products` set `tag` value to `v.1.1.1`
+
+[source,yaml,subs="+macros,+attributes"]
+----
+products:
+  quarkus-base:
+    image:
+      tag: v1.1.1
+----
+
+And push the changes
+[.console-input]
+[source,input,subs="+macros,+attributes"]
+----
+git add .
+git commit -m "Change products version to v1.1.1"
+git push
+----
+
+ ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI or configure the Argo CD Git Webhook.[^note2].
+ 
+[^note2]:
+    Here you can see how to configure the Argo CD Git [Webhook]( https://argo-cd.readthedocs.io/en/stable/operator-manual/webhook/)
+    ![Argo CD Git Webhook](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-webhook.png)
+
+
+![Refresh Shop](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-Shop-Refresh.png)
+ 
+**Argo Rollouts** will automatically deploy the new products version and execute the `prePromotionAnalysis`. 
+
+[.console-input]
+[source,input,subs="+macros,+attributes"]
+----
+NAME                                  KIND         STATUS        AGE  INFO
+⟳ products                            Rollout      ॥ Paused      27m  
+├──# revision:2                                                       
+│  ├──⧉ products-9dc6f576f            ReplicaSet   ✔ Healthy     36s  preview
+│  │  ├──□ products-9dc6f576f-6vqp5   Pod          ✔ Running     36s  ready:1/1
+│  │  └──□ products-9dc6f576f-lmgd7   Pod          ✔ Running     36s  ready:1/1
+│  └──α products-9dc6f576f-2-pre      AnalysisRun  ✔ Successful  31s  ✔ 1
+└──# revision:1                                                       
+   └──⧉ products-67fc9fb79b           ReplicaSet   ✔ Healthy     27m  stable,active
+      ├──□ products-67fc9fb79b-49k25  Pod          ✔ Running     27m  ready:1/1
+      └──□ products-67fc9fb79b-p7jk9  Pod          ✔ Running     27m  ready:1/1
+----
+  
+If the `prePromotionAnalysis` goes well, we can see that offline applications have version v1.1.1 and the new attribute description, but the online version has not changed.
+
+This is our current status:
+![Shop Step 1](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-1.png)
+
+ 
+[source,json]
+----
+{
+  "products":[
+     {
+        "discountInfo":{...},
+        "name":"TV 4K",
+        "price":"1500€",
+        "description":"The best TV" <--
+     }
+  ],
+  "metadata":{
+     "version":"v1.1.1", <--
+  }
+}
+----
+Functional testing users can execute `Smoke tests` to validate this new v1.1.1 version.
+
+We have to be careful with those tests in a production environment because the product microservice will call the online dependencies.
+If this dependency is for example a production DB we will create the things that our `Smoke tests` do.
+ 
+### Step 2 - Promote a new version
+ 
+We are going to open the new version to final users.
+
+Execute this command to promote products:
+[.console-input]
+[source,input,subs="+macros,+attributes"]
+----
+kubectl argo rollouts promote products -n {user}-blue-green
+----
+
+First **Argo Rollouts** will just change the service to use the new release (ReplicaSet). We `minimize downtime` because it just changes the service label. 
+
+[.console-input]
+[source,input,subs="+macros,+attributes"]
+----
+NAME                                  KIND         STATUS        AGE  INFO
+⟳ products                            Rollout      ✔ Healthy     88m  
+├──# revision:2                                                       
+│  ├──⧉ products-9dc6f576f            ReplicaSet   ✔ Healthy     62m  stable,active
+│  │  ├──□ products-9dc6f576f-6vqp5   Pod          ✔ Running     62m  ready:1/1
+│  │  └──□ products-9dc6f576f-lmgd7   Pod          ✔ Running     62m  ready:1/1
+│  └──α products-9dc6f576f-2-pre      AnalysisRun  ✔ Successful  62m  ✔ 1
+└──# revision:1                                                       
+   └──⧉ products-67fc9fb79b           ReplicaSet   ✔ Healthy     88m  delay:27s
+      ├──□ products-67fc9fb79b-49k25  Pod          ✔ Running     88m  ready:1/1
+      └──□ products-67fc9fb79b-p7jk9  Pod          ✔ Running     88m  ready:1/1
+----
+This is our current status:
+![Shop Step 2 initial](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-2-initial.png)
+
+And after `scaleDownDelaySeconds` **Argo Rollouts** will scale down the first replicaSet (v1.0.1).
+ 
+[.console-input]
+[source,input,subs="+macros,+attributes"]
+----
+ NAME                                 KIND         STATUS        AGE  INFO
+⟳ products                           Rollout      ✔ Healthy     89m  
+├──# revision:2                                                      
+│  ├──⧉ products-9dc6f576f           ReplicaSet   ✔ Healthy     62m  stable,active
+│  │  ├──□ products-9dc6f576f-6vqp5  Pod          ✔ Running     62m  ready:1/1
+│  │  └──□ products-9dc6f576f-lmgd7  Pod          ✔ Running     62m  ready:1/1
+│  └──α products-9dc6f576f-2-pre     AnalysisRun  ✔ Successful  62m  ✔ 1
+└──# revision:1                                                      
+   └──⧉ products-67fc9fb79b          ReplicaSet   • ScaledDown  89m  
+----
+
+This is our final status:
+![Shop Step 2](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-2.png)
+
+**We have in the online environment the new version v1.1.1!!!**
+[source,json]
+----
+{
+  "products":[
+     {
+        "discountInfo":{...},
+        "name":"TV 4K",
+        "price":"1500€",
+        "description":"The best TV" <--
+     }
+  ],
+  "metadata":{
+     "version":"v1.1.1", <--
+  }
+}
+----
+
+### Rollback
+
+Imagine that something goes wrong, we know that this never happens but just in case. We can do a very `quick rollback` just by undoing the change in the `Products` online service.
+
+**Argo Rollouts** has an [undo](https://argoproj.github.io/argo-rollouts/generated/kubectl-argo-rollouts/kubectl-argo-rollouts_undo/) command to do the rollback. In my opinion, I don't like this procedure because it is not aligned with GitOps. The changes that **Argo Rollouts** do does not come from git, so git is OutOfSync with what we have in Openshift.
+In our case the commit that we have done not only changes the ReplicaSet but also the ConfigMap. The `undo` command only changes the ReplicaSet, so it does not work for us.
+
+I recommend doing the changes in git. We will revert the last commit
+[.console-input]
+[source,input,subs="+macros,+attributes"]
+----
+git revert HEAD --no-edit
+git push
+----
+**ArgoCD** will get the changes and apply them. **Argo Rollouts** will create a new revision with the previous version.
+
+![Shop Step Rollback initial](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-rollback-initial.png)
+
+Execute this command to promote products to version `v1.0.1`:
+[.console-input]
+[source,input,subs="+macros,+attributes"]
+----
+kubectl argo rollouts promote products -n {user}-blue-green
+----
+The rollback is done!
+![Shop Step Rollback](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-rollback.png)
+[source,json]
+----
+{
+   "products":[
+      {
+         ...
+         "name":"TV 4K",
+         "price":"1500€"
+      }
+   ],
+   "metadata":{
+      "version":"v1.0.1", <--
+      "colour":"none",
+      "mode":"online"
+   }
+}
+----
+

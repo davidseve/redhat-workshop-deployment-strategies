@@ -2,3 +2,4 @@
 :source-highlighter: highlightjs
 
 :user: %USER%
+:cluster_api: https://api.%CLUSTER%:6443
