@@ -568,20 +568,20 @@ git push</code></pre>
 kind: Application
 metadata:
   name: shop-canary
-  namespace: {user}-gitops-argocd
+  namespace: %USER%-gitops-argocd
 spec:
   destination:
     name: ''
-    namespace: {user}-canary
+    namespace: %USER%-canary
     server: 'https://kubernetes.default.svc'
   source:
     path: helm/quarkus-helm-umbrella/chart
-    repoURL: https://github.com/change_me/shop-application-helm-chart
+    repoURL: <a href="https://github.com/change_me/shop-application-helm-chart" class="bare">https://github.com/change_me/shop-application-helm-chart</a>
     targetRevision: HEAD
     helm:
       parameters:
       - name: "global.namespace"
-        value: {user}-canary
+        value: %USER%-canary
       valueFiles:
         - values/values-canary.yaml
   project: default
