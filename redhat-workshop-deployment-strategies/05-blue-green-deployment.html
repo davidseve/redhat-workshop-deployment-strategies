@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Blue/Green deployment strategy :: Red Hat Workshop - Deployment Strategies with Argo CD and Argo Rollouts</title>
+    <link rel="canonical" href="https://github.com/davidseve/redhat-workshop-deployment-strategies/redhat-workshop-deployment-strategies/05-blue-green-deployment.html">
+    <link rel="prev" href="04-access-the-tools.html">
+    <link rel="next" href="06-canary-deployment.html">
+    <meta name="generator" content="Antora 3.0.0">
+    <link rel="stylesheet" href="../_/css/site.css">
+<link rel="icon" href="../_/img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://developers.redhat.com" target="_blank"><img
+          src="../_/img/header_logo.png" height="40px" alt="Red Hat Developer Program"></a>
+      <a class="navbar-item" href="https://github.com/davidseve/redhat-workshop-deployment-strategies">Red Hat Workshop - Deployment Strategies with Argo CD and Argo Rollouts</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Books</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">CheatSheets</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">CheatSheet A</a>
+            <a class="navbar-item" href="#">CheatSheet B</a>
+            <a class="navbar-item" href="#">CheatSheet C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Upcoming Events</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Event A</a>
+            <a class="navbar-item" href="#">Event B</a>
+            <a class="navbar-item" href="#">Event C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">More Tutorials</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Tutorial A</a>
+            <a class="navbar-item" href="#">Tutorial B</a>
+            <a class="navbar-item" href="#">Tutorial C</a>
+          </div>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="button is-primary" href="#">Download</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="redhat-workshop-deployment-strategies" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html" class=" query-params-link">Workshop</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="01-setup.html">1. Environment Setup</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="01-setup.html#01-prerequisites">1.1 Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="01-setup.html#01-laboratory">1.2 Laboratory</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="01-setup.html#01-parameters">1.2.1 Parameters</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="01-setup.html#01-accessconsole">1.2.2 Access - OCP Console</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="02-cluster-setup.html">2. Cluster Setup</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="03-deployment-strategies.html">3. Deployment Strategies with Argo CD and Argo Rollouts</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="04-access-the-tools.html">4. Access the tools</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="05-blue-green-deployment.html">5. Blue/Green deployment strategy</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="06-canary-deployment.html">6. Canary deployment strategy</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Workshop</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Workshop</span>
+      <ul class="versions">
+        <li class="version is-current">
+          <a href="index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">Workshop</a></li>
+    <li><a href="05-blue-green-deployment.html">5. Blue/Green deployment strategy</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/davidseve/redhat-workshop-deployment-strategies/edit/master/documentation/modules/ROOT/pages/05-blue-green-deployment.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Blue/Green deployment strategy</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Blue-green deployment</strong> is a strategy for updating running computer systems with <strong>minimal downtime</strong>. The operator maintains two environments, dubbed blue and green. One serves production traffic (the version all users use), while the other is updated.</p>
+</div>
+<div class="paragraph">
+<p>For instance, the old version is the blue environment, while the new version is the green environment. Once all the <strong>production traffic is fully transferred from blue to green</strong>, blue can be kept as-is for a possible rollback or be updated to become the template upon which the next update is made.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Advantages:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Minimize downtime.</p>
+</li>
+<li>
+<p>A quick way to roll back.</p>
+</li>
+<li>
+<p>Smoke testing.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Disadvantages:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Doubling of total resources.</p>
+</li>
+<li>
+<p>Backward compatibility.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_to_bluegreen"><a class="anchor" href="#_how_to_bluegreen"></a>How-to Blue/Green</h3>
+<div class="paragraph">
+<p>In this example, we have two versions up and running in production: online and offline. We also have routers and services for offline and online pointing to the corresponding microservice. As explained above, we can deploy a new version of the microservice in the green service ("offline") and perform <strong>smoke tests</strong> against it to ensure that the new version will perform correctly when real traffic begins to arrive to Green.</p>
+</div>
+<div class="paragraph">
+<p>![Blue/Green](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green.png</a>)</p>
+</div>
+<div class="paragraph">
+<p>When a new version is ready for real users, we only have to modify the k8s service to point to the new deployment (Green) as in the following image. There is minimal downtime and we can do a rapid rollback just by undoing the changes in the service.</p>
+</div>
+<div class="paragraph">
+<p>![Blue/Green switch](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green-switch.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green-switch.png</a>)</p>
+</div>
+<div class="paragraph">
+<p>As with great power comes great responsibility, you have to take the following into account:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>We need to <strong>double the total resources used</strong>: CPU, RAM, Persistent Storage, etc. We will see how to minimize this effect.</p>
+</li>
+<li>
+<p>We have to be <strong>ready for a rapid rollback</strong>. In case of seeing any issue in the monitorization, we should be able to modify the service to point back to the first deployment.</p>
+</li>
+<li>
+<p>We need to keep <strong>backward compatibility</strong>. If not, we would not be able to perform rollbacks.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_deploy_shop_application"><a class="anchor" href="#_deploy_shop_application"></a>Deploy Shop Application</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>TODO edit repo</p>
+</div>
+<div class="paragraph">
+<p>We are going to create the application <code>shop</code>, that we will use to test Blue/Green deployment. Because we will make changes in the application&#8217;s GitHub repository, we have to use the repository that you have just forked. Please edit the file <code>blue-green-argo-rollouts/application-shop-blue-green-rollouts.yaml</code> and set your own GitHub repository in the <code>reportURL</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: shop-blue-green
+  namespace: %USER%-gitops-argocd
+spec:
+  destination:
+    name: ''
+    namespace: %USER%-blue-green
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: helm/quarkus-helm-umbrella/chart
+    repoURL: <a href="https://github.com/rhte2023-argo-rollouts/shop-application-helm-chart" class="bare">https://github.com/rhte2023-argo-rollouts/shop-application-helm-chart</a>
+    targetRevision: HEAD
+    helm:
+      parameters:
+      - name: "global.namespace"
+        value: %USER%-blue-green
+      valueFiles:
+        - values/blue-green/values.yaml
+        - values/blue-green/values-image-tag.yaml
+  project: default
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>TODO is it right?</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc apply -f blue-green-argo-rollouts/application-shop-blue-green-rollouts.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Looking at the Argo CD dashboard, you would notice that we have a new <code>shop</code> application.</p>
+</div>
+<div class="paragraph">
+<p>TODO add image</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_test_shop_application"><a class="anchor" href="#_test_shop_application"></a>Test Shop application</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We have deployed the <code>shop</code> with ArgoCD. We can test that it is up and running.</p>
+</div>
+<div class="paragraph">
+<p>We have to get the Online route</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">curl "$(oc get routes products-umbrella-online -n %USER%-blue-green --template='https://{{.spec.host}}')/products"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And the Offline route</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">curl "$(oc get routes products-umbrella-offline -n %USER%-blue-green --template='https://{{.spec.host}}')/products"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Notice that in each microservice response we have added metadata information to see better the <code>version</code> of each application. This will help us to see the changes while we do the Blue/Green deployment.
+Because right now we have both routers against the same rollout revision we will have the same response with version <code>v1.0.1</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+   "products":[
+      {
+         ...
+         "name":"TV 4K",
+         "price":"1500€"
+      }
+   ],
+   "metadata":{
+      "version":"v1.0.1", &lt;--
+      "colour":"none",
+      "mode":"online"
+   }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_initial_status"><a class="anchor" href="#_initial_status"></a>Initial status</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To achieve Blue/Green deployment with <code>Cloud Native</code> applications using <strong>Argo Rollouts</strong>, we have designed this architecture.</p>
+</div>
+<div class="paragraph">
+<p>This is our current status:
+![Shop initial status](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-0.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-0.png</a>)</p>
+</div>
+<div class="paragraph">
+<p>OpenShift Components - Online</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Routes and Services declared with the suffix -online</p>
+</li>
+<li>
+<p>Routes mapped only to the online services</p>
+</li>
+<li>
+<p>Services mapped to the rollout.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>OpenShift Components - Offline</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Routes and Services declared with the suffix -offline</p>
+</li>
+<li>
+<p>Routes mapped only to the offline services</p>
+</li>
+<li>
+<p>Services mapped to the rollout</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>We can also see the rollout`s status[^note].</p>
+</div>
+<div class="paragraph">
+<p>[^note]:
+    Argo Rollouts offers a Kubectl plugin to enrich the experience with Rollouts <a href="https://argoproj.github.io/argo-rollouts/installation/#kubectl-plugin-installation" class="bare">https://argoproj.github.io/argo-rollouts/installation/#kubectl-plugin-installation</a></p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout products --watch -n %USER%-blue-green</code></pre>
+</div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">NAME                                  KIND        STATUS     AGE INFO
+⟳ products                            Rollout     ✔ Healthy  12m
+└──# revision:1
+   └──⧉ products-67fc9fb79b           ReplicaSet  ✔ Healthy  12m  stable,active
+      ├──□ products-67fc9fb79b-49k25  Pod         ✔ Running  12m  ready:1/1
+      └──□ products-67fc9fb79b-p7jk9  Pod         ✔ Running  12m  ready:1/1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We have defined an active or online service 'products-umbrella-online' and a preview or offline service 'products-umbrella-offline'. Final user will always use 'products-umbrella-online'. We have created an AnalysisTemplate 'products-analysis-template' that just validates the health of the application, for production environments a better analysis should be done. <strong>Argo Rollouts</strong> use this AnalysisTemplate to validate a new version and set whether it is ready to be promoted or not. To learn more, please read [this](<a href="https://argoproj.github.io/argo-rollouts/features/bluegreen/" class="bare">https://argoproj.github.io/argo-rollouts/features/bluegreen/</a>).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">  strategy:
+    blueGreen:
+      activeService: products-umbrella-online
+      previewService: products-umbrella-offline
+      autoPromotionEnabled: false
+      prePromotionAnalysis:
+        templates:
+          - templateName: products-analysis-template</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_products_bluegreen_deployment"><a class="anchor" href="#_products_bluegreen_deployment"></a>Products Blue/Green deployment</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We have split a <code>Cloud Native</code> Blue/Green deployment into two steps:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Deploy a new version.</p>
+</li>
+<li>
+<p>Promote a new version</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>We have already deployed the products version v1.0.1, and we are ready to use a new products version v1.1.1 that has a new <code>description</code> attribute.</p>
+</div>
+<div class="sect2">
+<h3 id="_step_1_deploy_a_new_version"><a class="anchor" href="#_step_1_deploy_a_new_version"></a>Step 1 - Deploy a new version</h3>
+<div class="literalblock">
+<div class="content">
+<pre>TODO is it the right path?</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We will deploy a new version v1.1.1. To do it, we have to edit the file <code>helm/quarkus-helm-umbrella/chart/values/blue-green/values-image-tag.yaml</code> under <code>products</code> set <code>tag</code> value to <code>v.1.1.1</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">products:
+  quarkus-base:
+    image:
+      tag: v1.1.1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And push the changes</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">git add .
+git commit -m "Change products version to v1.1.1"
+git push</code></pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI or configure the Argo CD Git Webhook.[^note2].</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>[^note2]:
+    Here you can see how to configure the Argo CD Git [Webhook]( <a href="https://argo-cd.readthedocs.io/en/stable/operator-manual/webhook/" class="bare">https://argo-cd.readthedocs.io/en/stable/operator-manual/webhook/</a>)
+    ![Argo CD Git Webhook](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-webhook.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-webhook.png</a>)</p>
+</div>
+<div class="paragraph">
+<p>![Refresh Shop](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-Shop-Refresh.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-Shop-Refresh.png</a>)</p>
+</div>
+<div class="paragraph">
+<p><strong>Argo Rollouts</strong> will automatically deploy the new products version and execute the <code>prePromotionAnalysis</code>.</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">NAME                                  KIND         STATUS        AGE  INFO
+⟳ products                            Rollout      ॥ Paused      27m
+├──# revision:2
+│  ├──⧉ products-9dc6f576f            ReplicaSet   ✔ Healthy     36s  preview
+│  │  ├──□ products-9dc6f576f-6vqp5   Pod          ✔ Running     36s  ready:1/1
+│  │  └──□ products-9dc6f576f-lmgd7   Pod          ✔ Running     36s  ready:1/1
+│  └──α products-9dc6f576f-2-pre      AnalysisRun  ✔ Successful  31s  ✔ 1
+└──# revision:1
+   └──⧉ products-67fc9fb79b           ReplicaSet   ✔ Healthy     27m  stable,active
+      ├──□ products-67fc9fb79b-49k25  Pod          ✔ Running     27m  ready:1/1
+      └──□ products-67fc9fb79b-p7jk9  Pod          ✔ Running     27m  ready:1/1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If the <code>prePromotionAnalysis</code> goes well, we can see that offline applications have version v1.1.1 and the new attribute description, but the online version has not changed.</p>
+</div>
+<div class="paragraph">
+<p>This is our current status:
+![Shop Step 1](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-1.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-1.png</a>)</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "products":[
+     {
+        "discountInfo":{...},
+        "name":"TV 4K",
+        "price":"1500€",
+        "description":"The best TV" &lt;--
+     }
+  ],
+  "metadata":{
+     "version":"v1.1.1", &lt;--
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Functional testing users can execute <code>Smoke tests</code> to validate this new v1.1.1 version.</p>
+</div>
+<div class="paragraph">
+<p>We have to be careful with those tests in a production environment because the product microservice will call the online dependencies.
+If this dependency is for example a production DB we will create the things that our <code>Smoke tests</code> do.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_step_2_promote_a_new_version"><a class="anchor" href="#_step_2_promote_a_new_version"></a>Step 2 - Promote a new version</h3>
+<div class="paragraph">
+<p>We are going to open the new version to final users.</p>
+</div>
+<div class="paragraph">
+<p>Execute this command to promote products:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts promote products -n %USER%-blue-green</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>First <strong>Argo Rollouts</strong> will just change the service to use the new release (ReplicaSet). We <code>minimize downtime</code> because it just changes the service label.</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">NAME                                  KIND         STATUS        AGE  INFO
+⟳ products                            Rollout      ✔ Healthy     88m
+├──# revision:2
+│  ├──⧉ products-9dc6f576f            ReplicaSet   ✔ Healthy     62m  stable,active
+│  │  ├──□ products-9dc6f576f-6vqp5   Pod          ✔ Running     62m  ready:1/1
+│  │  └──□ products-9dc6f576f-lmgd7   Pod          ✔ Running     62m  ready:1/1
+│  └──α products-9dc6f576f-2-pre      AnalysisRun  ✔ Successful  62m  ✔ 1
+└──# revision:1
+   └──⧉ products-67fc9fb79b           ReplicaSet   ✔ Healthy     88m  delay:27s
+      ├──□ products-67fc9fb79b-49k25  Pod          ✔ Running     88m  ready:1/1
+      └──□ products-67fc9fb79b-p7jk9  Pod          ✔ Running     88m  ready:1/1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This is our current status:
+![Shop Step 2 initial](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-2-initial.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-2-initial.png</a>)</p>
+</div>
+<div class="paragraph">
+<p>And after <code>scaleDownDelaySeconds</code> <strong>Argo Rollouts</strong> will scale down the first replicaSet (v1.0.1).</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input"> NAME                                 KIND         STATUS        AGE  INFO
+⟳ products                           Rollout      ✔ Healthy     89m
+├──# revision:2
+│  ├──⧉ products-9dc6f576f           ReplicaSet   ✔ Healthy     62m  stable,active
+│  │  ├──□ products-9dc6f576f-6vqp5  Pod          ✔ Running     62m  ready:1/1
+│  │  └──□ products-9dc6f576f-lmgd7  Pod          ✔ Running     62m  ready:1/1
+│  └──α products-9dc6f576f-2-pre     AnalysisRun  ✔ Successful  62m  ✔ 1
+└──# revision:1
+   └──⧉ products-67fc9fb79b          ReplicaSet   • ScaledDown  89m</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This is our final status:
+![Shop Step 2](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-2.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-2.png</a>)</p>
+</div>
+<div class="paragraph">
+<p><strong>We have in the online environment the new version v1.1.1!!!</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "products":[
+     {
+        "discountInfo":{...},
+        "name":"TV 4K",
+        "price":"1500€",
+        "description":"The best TV" &lt;--
+     }
+  ],
+  "metadata":{
+     "version":"v1.1.1", &lt;--
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_rollback"><a class="anchor" href="#_rollback"></a>Rollback</h3>
+<div class="paragraph">
+<p>Imagine that something goes wrong, we know that this never happens but just in case. We can do a very <code>quick rollback</code> just by undoing the change in the <code>Products</code> online service.</p>
+</div>
+<div class="paragraph">
+<p><strong>Argo Rollouts</strong> has an [undo](<a href="https://argoproj.github.io/argo-rollouts/generated/kubectl-argo-rollouts/kubectl-argo-rollouts_undo/" class="bare">https://argoproj.github.io/argo-rollouts/generated/kubectl-argo-rollouts/kubectl-argo-rollouts_undo/</a>) command to do the rollback. In my opinion, I don&#8217;t like this procedure because it is not aligned with GitOps. The changes that <strong>Argo Rollouts</strong> do does not come from git, so git is OutOfSync with what we have in Openshift.
+In our case the commit that we have done not only changes the ReplicaSet but also the ConfigMap. The <code>undo</code> command only changes the ReplicaSet, so it does not work for us.</p>
+</div>
+<div class="paragraph">
+<p>I recommend doing the changes in git. We will revert the last commit</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">git revert HEAD --no-edit
+git push</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>ArgoCD</strong> will get the changes and apply them. <strong>Argo Rollouts</strong> will create a new revision with the previous version.</p>
+</div>
+<div class="paragraph">
+<p>![Shop Step Rollback initial](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-rollback-initial.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-rollback-initial.png</a>)</p>
+</div>
+<div class="paragraph">
+<p>Execute this command to promote products to version <code>v1.0.1</code>:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts promote products -n %USER%-blue-green</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The rollback is done!
+![Shop Step Rollback](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-rollback.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-rollback.png</a>)</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+   "products":[
+      {
+         ...
+         "name":"TV 4K",
+         "price":"1500€"
+      }
+   ],
+   "metadata":{
+      "version":"v1.0.1", &lt;--
+      "colour":"none",
+      "mode":"online"
+   }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="04-access-the-tools.html" class="query-params-link">4. Access the tools</a></span>
+  <span class="next"><a href="06-canary-deployment.html" class="query-params-link">6. Canary deployment strategy</a></span>
+</nav>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <a class="rhd-logo" href="https://developers.redhat.com" target="_blank"></div>
+</footer>
+<script src="../_/js/vendor/clipboard.js"></script>
+<script src="../_/js/site.js"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

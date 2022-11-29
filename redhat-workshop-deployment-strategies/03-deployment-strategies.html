@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Deployment Strategies with Argo CD and Argo Rollouts :: Red Hat Workshop - Deployment Strategies with Argo CD and Argo Rollouts</title>
+    <link rel="canonical" href="https://github.com/davidseve/redhat-workshop-deployment-strategies/redhat-workshop-deployment-strategies/03-deployment-strategies.html">
+    <link rel="prev" href="02-cluster-setup.html">
+    <link rel="next" href="04-access-the-tools.html">
+    <meta name="generator" content="Antora 3.0.0">
+    <link rel="stylesheet" href="../_/css/site.css">
+<link rel="icon" href="../_/img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://developers.redhat.com" target="_blank"><img
+          src="../_/img/header_logo.png" height="40px" alt="Red Hat Developer Program"></a>
+      <a class="navbar-item" href="https://github.com/davidseve/redhat-workshop-deployment-strategies">Red Hat Workshop - Deployment Strategies with Argo CD and Argo Rollouts</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Books</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">CheatSheets</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">CheatSheet A</a>
+            <a class="navbar-item" href="#">CheatSheet B</a>
+            <a class="navbar-item" href="#">CheatSheet C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Upcoming Events</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Event A</a>
+            <a class="navbar-item" href="#">Event B</a>
+            <a class="navbar-item" href="#">Event C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">More Tutorials</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Tutorial A</a>
+            <a class="navbar-item" href="#">Tutorial B</a>
+            <a class="navbar-item" href="#">Tutorial C</a>
+          </div>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="button is-primary" href="#">Download</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="redhat-workshop-deployment-strategies" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html" class=" query-params-link">Workshop</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="01-setup.html">1. Environment Setup</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="01-setup.html#01-prerequisites">1.1 Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="01-setup.html#01-laboratory">1.2 Laboratory</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="01-setup.html#01-parameters">1.2.1 Parameters</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="01-setup.html#01-accessconsole">1.2.2 Access - OCP Console</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="02-cluster-setup.html">2. Cluster Setup</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="03-deployment-strategies.html">3. Deployment Strategies with Argo CD and Argo Rollouts</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="04-access-the-tools.html">4. Access the tools</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="05-blue-green-deployment.html">5. Blue/Green deployment strategy</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="06-canary-deployment.html">6. Canary deployment strategy</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Workshop</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Workshop</span>
+      <ul class="versions">
+        <li class="version is-current">
+          <a href="index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">Workshop</a></li>
+    <li><a href="03-deployment-strategies.html">3. Deployment Strategies with Argo CD and Argo Rollouts</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/davidseve/redhat-workshop-deployment-strategies/edit/master/documentation/modules/ROOT/pages/03-deployment-strategies.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Deployment Strategies with Argo CD and Argo Rollouts</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>TODO</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_introduction"><a class="anchor" href="#_introduction"></a>Introduction</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_microservices_architecture"><a class="anchor" href="#_microservices_architecture"></a>Microservices architecture</h3>
+<div class="paragraph">
+<p>The traditional approach to building applications has focused on the monolith - having all deployable parts of the app contained within that single app. <strong>Microservice Architectures</strong> help solve these issues and boost development and response. It&#8217;s one of the main factors of a <strong>Cloud Native development</strong>. Now, we have several applications that have dependencies on each other and also have other dependencies like brokers or databases.</p>
+</div>
+<div class="paragraph">
+<p>Applications have their own life cycle, so we should be able to execute independent deployments. All the applications and dependencies will not change their version at the same time. Therefore, microservices enable your development team to roll out software solutions more quickly and better react to customer needs.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_continuous_delivery"><a class="anchor" href="#_continuous_delivery"></a>Continuous delivery</h3>
+<div class="paragraph">
+<p>Another important topic in Cloud Native practices is <strong>Continuous Delivery</strong>. Continuous delivery, often abbreviated as CD, is a set of practices in which <strong>code changes are automatically deployed into an acceptance environment</strong>. CD crucially includes procedures to ensure that software is adequately tested before deployment and provides a way to roll back changes if deemed necessary.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_progressive_delivery"><a class="anchor" href="#_progressive_delivery"></a>Progressive Delivery</h3>
+<div class="paragraph">
+<p>Progressive delivery is the process of releasing updates of a product in a controlled and gradual manner, thereby reducing the risk of the release, typically coupling automation and metric analysis to drive the automated promotion or rollback of the update.</p>
+</div>
+<div class="paragraph">
+<p>Progressive delivery is often described as an evolution of continuous delivery, extending the speed benefits made in CI/CD to the deployment process. This is accomplished by limiting the exposure of the new version to a subset of users, observing and analyzing for correct behavior, then progressively increasing the exposure to a broader and wider audience while continuously verifying correctness.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_argo_rollouts"><a class="anchor" href="#_argo_rollouts"></a>Argo Rollouts</h3>
+<div class="paragraph">
+<p>[<strong>Argo Rollouts</strong>](<a href="https://argoproj.github.io/argo-rollouts/" class="bare">https://argoproj.github.io/argo-rollouts/</a>) is a Kubernetes controller and set of CRDs which provide advanced deployment capabilities such as blue-green, canary, canary analysis, experimentation, and progressive delivery features to Kubernetes.
+TODO improve this</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_deployment_strategies"><a class="anchor" href="#_deployment_strategies"></a>Deployment Strategies</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>TODO Briefly explain the 3 scenarios
+Blue/Green Deployment
+Canary Deployment
+(optional)Canary Deployment with Service Mesh
+## Explain the application that we are going to use for the 3 scenarios
+TODO with helm umbrella is already done</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="02-cluster-setup.html" class="query-params-link">2. Cluster Setup</a></span>
+  <span class="next"><a href="04-access-the-tools.html" class="query-params-link">4. Access the tools</a></span>
+</nav>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <a class="rhd-logo" href="https://developers.redhat.com" target="_blank"></div>
+</footer>
+<script src="../_/js/vendor/clipboard.js"></script>
+<script src="../_/js/site.js"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+  </body>
+</html>
