@@ -29,7 +29,8 @@ spec:
       - name: "global.namespace"
         value: {user}-blue-green
       valueFiles:
-        - values/vaues-blue-green.yaml
+        - values/blue-green/values.yaml
+        - values/blue-green/values-image-tag.yaml
   project: default
   syncPolicy:
     automated:
@@ -150,14 +151,15 @@ We have already deployed the products version v1.0.1, and we are ready to use a 
 ### Step 1 - Deploy a new version
  
  TODO is it the right path?
-We will deploy a new version v1.1.1. To do it, we have to edit the file `helm/quarkus-helm-umbrella/chart/values/vaues-blue-green.yaml` under `products-blue` set `tag` value to `v.1.1.1`
+
+We will deploy a new version v1.1.1. To do it, we have to edit the file `helm/quarkus-helm-umbrella/chart/values/blue-green/values-image-tag.yaml` under `products` set `tag` value to `v.1.1.1`
 
 [source,yaml,subs="+macros,+attributes"]
 ----
-products-blue:
-  mode: online
-  image:
-    tag: v1.1.1
+products:
+  quarkus-base:
+    image:
+      tag: v1.1.1
 ----
 
 And push the changes
@@ -367,7 +369,8 @@ spec:
       - name: "global.namespace"
         value: {user}-canary
       valueFiles:
-        - values/values-canary.yaml
+        - values/canary/values.yaml
+        - values/canary/values-image-tag.yaml
   project: default
   syncPolicy:
     automated:
@@ -456,18 +459,20 @@ NAME                                  KIND        STATUS     AGE  INFO
 
 We have defined an active or online service 'products-umbrella-online'. Final user will always use 'products-umbrella-online'. When a new version is deployed **Argo Rollouts** create a new revision (ReplicaSet). The number of replicas in the new release increases based on the information in the steps, and the number of replicas in the old release decreases by the same number. We have configured a pause duration between each step. To learn more about **Argo Rollouts**, please read [this](https://argoproj.github.io/argo-rollouts/features/canary/).
 
-This is how we have configured **Argo Rollouts** strategy for this demo:
+This is how we have configured **Argo Rollouts** strategy for this demo, you can check it here `helm/quarkus-helm-umbrella/chart/values/canary/values-rollouts-strategy.yaml`
 [source,yaml,subs="+macros,+attributes"]
 ----
-  strategy:
-    canary:
-      steps:
-        - setWeight: 10
-        - pause:
-            duration: 30s
-        - setWeight: 50
-        - pause:
-            duration: 30s
+products:
+  quarkus-base:
+    rollouts:
+      canary:
+        steps:
+          - setWeight: 25
+          - pause:
+              duration: 30s
+          - setWeight: 50
+          - pause:
+              duration: 30s
 ----
 TODO (improvement) uses Prometheus metrics
 
@@ -483,14 +488,14 @@ This is just an example. The key point here is that very easily we can have the 
 
 ### Step 1 - Deploy the canary version for 10%
  
-We will deploy a new version v1.1.1. To do it, we have to edit the file `helm/quarkus-helm-umbrella/chart/values/values-canary.yaml` under `products-blue` set `tag` value to `v.1.1.1`
+We will deploy a new version v1.1.1. To do it, we have to edit the file `helm/quarkus-helm-umbrella/chart/values/canary/values-image-tag.yaml` under `products` set `tag` value to `v.1.1.1`
 
 [source,yaml,subs="+macros,+attributes"]
 ----
-products-blue:
-  mode: online
-  image:
-    tag: v1.1.1
+products:
+  quarkus-base:
+    image:
+      tag: v1.1.1
 ----
 
 **Argo Rollouts** will automatically deploy a new products revision. The canary version will be 10% of the replicas. In this demo we are no using [traffic management](https://argoproj.github.io/argo-rollouts/features/traffic-management/). **Argo Rollouts** makes a best-effort attempt to achieve the percentage listed in the last setWeight step between the new and old version. This means that it will create only one replica in the new revision because it is rounded up. All the requests are load balanced between the old and the new replicas.
@@ -659,23 +664,17 @@ If we just revert the changes in git we will go back to the previous version. Bu
 
 Because we have our **Argo Rollouts** configuration as values in our Helm Chart, we have just to edit the values.yaml that we are using.
 
-In the file `helm/quarkus-helm-umbrella/chart/values/values-canary.yaml` under `products-blue` under the `steps` delete all the steps and only set one step `- setWeight: 100`
+In the file `helm/quarkus-helm-umbrella/chart/values/canary/values-rollouts-strategy.yaml` under `products` under the `steps` delete all the steps and only set one step `- setWeight: 100`
 
-`helm/quarkus-helm-umbrella/chart/values/values-canary.yaml` should looks like:
+`helm/quarkus-helm-umbrella/chart/values/canary/values-rollouts-strategy.yaml` should looks like:
 [source,yaml,subs="+macros,+attributes"]
 ----
-products-blue:
-  mode: online
-  image:
-    tag: v1.0.1
-  version: none
-  replicaCount: 4
-  fullnameOverride: "products"
-  rollouts:
-    enabled: true
-    canary:
-      steps:
-        - setWeight: 100
+products:
+  quarkus-base:
+    rollouts:
+      canary:
+        steps:
+          - setWeight: 100
 ----
 
 Execute those commands to push the changes:
