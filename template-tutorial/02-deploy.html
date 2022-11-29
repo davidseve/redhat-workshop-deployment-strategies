@@ -161,7 +161,8 @@ spec:
       - name: "global.namespace"
         value: %USER%-blue-green
       valueFiles:
-        - values/vaues-blue-green.yaml
+        - values/blue-green/values.yaml
+        - values/blue-green/values-image-tag.yaml
   project: default
   syncPolicy:
     automated:
@@ -330,16 +331,18 @@ Because right now we have both routers against the same rollout revision we will
 <h3 id="_step_1_deploy_a_new_version"><a class="anchor" href="#_step_1_deploy_a_new_version"></a>Step 1 - Deploy a new version</h3>
 <div class="literalblock">
 <div class="content">
-<pre> TODO is it the right path?
-We will deploy a new version v1.1.1. To do it, we have to edit the file `helm/quarkus-helm-umbrella/chart/values/vaues-blue-green.yaml` under `products-blue` set `tag` value to `v.1.1.1`</pre>
+<pre>TODO is it the right path?</pre>
 </div>
+</div>
+<div class="paragraph">
+<p>We will deploy a new version v1.1.1. To do it, we have to edit the file <code>helm/quarkus-helm-umbrella/chart/values/blue-green/values-image-tag.yaml</code> under <code>products</code> set <code>tag</code> value to <code>v.1.1.1</code></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">products-blue:
-  mode: online
-  image:
-    tag: v1.1.1</code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">products:
+  quarkus-base:
+    image:
+      tag: v1.1.1</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -583,7 +586,8 @@ spec:
       - name: "global.namespace"
         value: %USER%-canary
       valueFiles:
-        - values/values-canary.yaml
+        - values/canary/values.yaml
+        - values/canary/values-image-tag.yaml
   project: default
   syncPolicy:
     automated:
@@ -690,19 +694,21 @@ We can see that the current version is <code>v1.0.1</code>:</p>
 <p>We have defined an active or online service 'products-umbrella-online'. Final user will always use 'products-umbrella-online'. When a new version is deployed <strong>Argo Rollouts</strong> create a new revision (ReplicaSet). The number of replicas in the new release increases based on the information in the steps, and the number of replicas in the old release decreases by the same number. We have configured a pause duration between each step. To learn more about <strong>Argo Rollouts</strong>, please read [this](<a href="https://argoproj.github.io/argo-rollouts/features/canary/" class="bare">https://argoproj.github.io/argo-rollouts/features/canary/</a>).</p>
 </div>
 <div class="paragraph">
-<p>This is how we have configured <strong>Argo Rollouts</strong> strategy for this demo:</p>
+<p>This is how we have configured <strong>Argo Rollouts</strong> strategy for this demo, you can check it here <code>helm/quarkus-helm-umbrella/chart/values/canary/values-rollouts-strategy.yaml</code></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">  strategy:
-    canary:
-      steps:
-        - setWeight: 10
-        - pause:
-            duration: 30s
-        - setWeight: 50
-        - pause:
-            duration: 30s</code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">products:
+  quarkus-base:
+    rollouts:
+      canary:
+        steps:
+          - setWeight: 25
+          - pause:
+              duration: 30s
+          - setWeight: 50
+          - pause:
+              duration: 30s</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -736,14 +742,14 @@ We can see that the current version is <code>v1.0.1</code>:</p>
 <div class="sect2">
 <h3 id="_step_1_deploy_the_canary_version_for_10"><a class="anchor" href="#_step_1_deploy_the_canary_version_for_10"></a>Step 1 - Deploy the canary version for 10%</h3>
 <div class="paragraph">
-<p>We will deploy a new version v1.1.1. To do it, we have to edit the file <code>helm/quarkus-helm-umbrella/chart/values/values-canary.yaml</code> under <code>products-blue</code> set <code>tag</code> value to <code>v.1.1.1</code></p>
+<p>We will deploy a new version v1.1.1. To do it, we have to edit the file <code>helm/quarkus-helm-umbrella/chart/values/canary/values-image-tag.yaml</code> under <code>products</code> set <code>tag</code> value to <code>v.1.1.1</code></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">products-blue:
-  mode: online
-  image:
-    tag: v1.1.1</code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">products:
+  quarkus-base:
+    image:
+      tag: v1.1.1</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -938,25 +944,19 @@ In our case the commit that we have done not only changes the ReplicaSet but als
 <p>Because we have our <strong>Argo Rollouts</strong> configuration as values in our Helm Chart, we have just to edit the values.yaml that we are using.</p>
 </div>
 <div class="paragraph">
-<p>In the file <code>helm/quarkus-helm-umbrella/chart/values/values-canary.yaml</code> under <code>products-blue</code> under the <code>steps</code> delete all the steps and only set one step <code>- setWeight: 100</code></p>
+<p>In the file <code>helm/quarkus-helm-umbrella/chart/values/canary/values-rollouts-strategy.yaml</code> under <code>products</code> under the <code>steps</code> delete all the steps and only set one step <code>- setWeight: 100</code></p>
 </div>
 <div class="paragraph">
-<p><code>helm/quarkus-helm-umbrella/chart/values/values-canary.yaml</code> should looks like:</p>
+<p><code>helm/quarkus-helm-umbrella/chart/values/canary/values-rollouts-strategy.yaml</code> should looks like:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">products-blue:
-  mode: online
-  image:
-    tag: v1.0.1
-  version: none
-  replicaCount: 4
-  fullnameOverride: "products"
-  rollouts:
-    enabled: true
-    canary:
-      steps:
-        - setWeight: 100</code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">products:
+  quarkus-base:
+    rollouts:
+      canary:
+        steps:
+          - setWeight: 100</code></pre>
 </div>
 </div>
 <div class="paragraph">
