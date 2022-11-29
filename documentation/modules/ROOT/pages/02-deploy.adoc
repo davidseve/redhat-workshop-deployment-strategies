@@ -8,7 +8,7 @@ TODO edit repo
 
 We are going to create the application `shop`, that we will use to test Blue/Green deployment. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just forked. Please edit the file `blue-green-argo-rollouts/application-shop-blue-green-rollouts.yaml` and set your own GitHub repository in the `reportURL`.
 
-[source,yaml]
+[source,yaml,subs="+macros,+attributes"]
 ----
 apiVersion: argoproj.io/v1alpha1
 kind: Application
