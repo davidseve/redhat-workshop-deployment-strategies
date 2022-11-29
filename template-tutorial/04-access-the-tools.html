@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Access the tools :: Red Hat Workshop - Deployment Strategies with Argo CD and Argo Rollouts</title>
+    <link rel="canonical" href="https://github.com/davidseve/redhat-workshop-deployment-strategies/template-tutorial/04-access-the-tools.html">
+    <link rel="prev" href="03-deployment-strategies.html">
+    <link rel="next" href="05-blue-green-deployment.html">
+    <meta name="generator" content="Antora 3.0.0">
+    <link rel="stylesheet" href="../_/css/site.css">
+<link rel="icon" href="../_/img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://developers.redhat.com" target="_blank"><img
+          src="../_/img/header_logo.png" height="40px" alt="Red Hat Developer Program"></a>
+      <a class="navbar-item" href="https://github.com/davidseve/redhat-workshop-deployment-strategies">Red Hat Workshop - Deployment Strategies with Argo CD and Argo Rollouts</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Books</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">CheatSheets</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">CheatSheet A</a>
+            <a class="navbar-item" href="#">CheatSheet B</a>
+            <a class="navbar-item" href="#">CheatSheet C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Upcoming Events</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Event A</a>
+            <a class="navbar-item" href="#">Event B</a>
+            <a class="navbar-item" href="#">Event C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">More Tutorials</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Tutorial A</a>
+            <a class="navbar-item" href="#">Tutorial B</a>
+            <a class="navbar-item" href="#">Tutorial C</a>
+          </div>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="button is-primary" href="#">Download</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="template-tutorial" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html" class=" query-params-link">Template Tutorial</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="01-setup.html">1. Environment Setup</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="01-setup.html#01-prerequisites">1.1 Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="01-setup.html#01-laboratory">1.2 Laboratory</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="01-setup.html#01-parameters">1.2.1 Parameters</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="01-setup.html#01-accessconsole">1.2.2 Access - OCP Console</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="02-cluster-setup.html">2. Cluster Setup</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="03-deployment-strategies.html">3. Deployment Strategies with Argo CD and Argo Rollouts</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="04-access-the-tools.html">4. Access the tools</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="05-blue-green-deployment.html">5. Blue/Green deployment strategy</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="06-canary-deployment.html">6. Canary deployment strategy</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Template Tutorial</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Template Tutorial</span>
+      <ul class="versions">
+        <li class="version is-current">
+          <a href="index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">Template Tutorial</a></li>
+    <li><a href="04-access-the-tools.html">4. Access the tools</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/davidseve/redhat-workshop-deployment-strategies/edit/master/documentation/modules/ROOT/pages/04-access-the-tools.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Access the tools</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This section focuses on getting access to the four tools that we are going to use to control the deployment of the Shop application:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>OCP Client</strong>: The <code>oc</code> command will be used to create Openshift resources as well as to debug the application configuration.</p>
+</li>
+<li>
+<p><strong>OCP Web console</strong>: The Openshift web console will be used to create Openshift resources as well as to debug the application configuration.</p>
+</li>
+<li>
+<p><strong>ArgoCD web console</strong>: This web console helps us to visualize the sync status between Git and Openshift.</p>
+</li>
+<li>
+<p><strong>Clone the GitOps repo</strong>: This repository contains all the deployment configurations of the application and it&#8217;s the only source of truth of the configuration.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_1_openshift_oc_client"><a class="anchor" href="#_1_openshift_oc_client"></a>1. Openshift - OC Client</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The OpenShift Container Platform CLI (which needs to be installed first) exposes the commands for managing your applications as well as the lower-level tools to interact with each component of your system. With the <code>oc</code> command, you can create applications and manage OpenShift Container Platform projects from a terminal.</p>
+</div>
+<div class="paragraph">
+<p>Please check that you have followed the pre-requisites with your instructor and connect to the cluster executing the next command from your terminal:</p>
+</div>
+<div class="listingblock lines_space console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc login -u %USER% -p openshift https://api.%CLUSTER%:6443</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If the login is successful, it should show an output similar to the following screenshot:</p>
+</div>
+<div class="imageblock unresolved">
+<div class="content">
+<img src="oc_login_output.png" alt="OC CLI Login Output">
+</div>
+<div class="title">Figure 1. OC CLI Login Output</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Please pay special attention to <em>oc CLI</em>  because you will need to use this tool several times during this tutorial.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>As shown in the output, the user will have access to the following namespaces:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>%USER%-gitops-argocd</strong>: It will contain all the GitOps objects.</p>
+</li>
+<li>
+<p><strong>%USER%-blue-green</strong>: Will contain the application using Blue/Green deployment.</p>
+</li>
+<li>
+<p><strong>%USER%-canary</strong>: Will contain the application using Canary deployment.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Each user will have its own three namespaces.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_2_openshift_web_console"><a class="anchor" href="#_2_openshift_web_console"></a>2. Openshift - Web Console</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Access the <a href="https://console-openshift-console.apps.%CLUSTER%/k8s/cluster/projects" target="_blank" rel="noopener">OCP web console</a> and login with your assigned username and password:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Username: %USER%.</p>
+</li>
+<li>
+<p>Password: <code>%USER%</code>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Once logged in, you will see the same namespaces as using the <code>oc</code> command:</p>
+</div>
+<div class="imageblock unresolved">
+<div class="content">
+<img src="ocp_console_projects.png" alt="OCP web console projects view">
+</div>
+<div class="title">Figure 2. OCP web console projects view</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_3_argocd_dashboard"><a class="anchor" href="#_3_argocd_dashboard"></a>3. ArgoCD dashboard</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The ArgoCD web console will give you access to control how the git repo is synced with Openshift, as well as check the real status of the synchronization. In order to log in to the web console, access the Openshift web console and click on the following icon: You will get the link to the ArgoCD web console:</p>
+</div>
+<div class="paragraph">
+<p>TODO</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_4_clone_the_gitops_repository"><a class="anchor" href="#_4_clone_the_gitops_repository"></a>4. Clone the GitOps repository</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Following the GitOps practices, all the deployment configuration is stored in the git repo. We have created an initial repository that you will change to configure your deployment. As part of the demo, you will have to do some changes and commits. Fork the repository and clone it in your local machine, as you don&#8217;t have write permissions on the initial git repo.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Access the <a href="https://github.com/rhte2023-argo-rollouts/shop-application-helm-chart">Shop application Helm chart</a> repository and fork it on your GitHub account. If prompted, choose to fork the <code>main</code> branch.</p>
+</li>
+</ol>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">git clone <a href="https://github.com/chamge_me/shop-application-helm-chart" class="bare">https://github.com/chamge_me/shop-application-helm-chart</a>
+cd shop-application-helm-chart</code></pre>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="03-deployment-strategies.html" class="query-params-link">3. Deployment Strategies with Argo CD and Argo Rollouts</a></span>
+  <span class="next"><a href="05-blue-green-deployment.html" class="query-params-link">5. Blue/Green deployment strategy</a></span>
+</nav>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <a class="rhd-logo" href="https://developers.redhat.com" target="_blank"></div>
+</footer>
+<script src="../_/js/vendor/clipboard.js"></script>
+<script src="../_/js/site.js"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

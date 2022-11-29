@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Canary deployment strategy :: Red Hat Workshop - Deployment Strategies with Argo CD and Argo Rollouts</title>
+    <link rel="canonical" href="https://github.com/davidseve/redhat-workshop-deployment-strategies/template-tutorial/06-canary-deployment.html">
+    <link rel="prev" href="05-blue-green-deployment.html">
+    <meta name="generator" content="Antora 3.0.0">
+    <link rel="stylesheet" href="../_/css/site.css">
+<link rel="icon" href="../_/img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://developers.redhat.com" target="_blank"><img
+          src="../_/img/header_logo.png" height="40px" alt="Red Hat Developer Program"></a>
+      <a class="navbar-item" href="https://github.com/davidseve/redhat-workshop-deployment-strategies">Red Hat Workshop - Deployment Strategies with Argo CD and Argo Rollouts</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Books</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">CheatSheets</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">CheatSheet A</a>
+            <a class="navbar-item" href="#">CheatSheet B</a>
+            <a class="navbar-item" href="#">CheatSheet C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Upcoming Events</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Event A</a>
+            <a class="navbar-item" href="#">Event B</a>
+            <a class="navbar-item" href="#">Event C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">More Tutorials</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Tutorial A</a>
+            <a class="navbar-item" href="#">Tutorial B</a>
+            <a class="navbar-item" href="#">Tutorial C</a>
+          </div>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="button is-primary" href="#">Download</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="template-tutorial" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html" class=" query-params-link">Template Tutorial</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="01-setup.html">1. Environment Setup</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="01-setup.html#01-prerequisites">1.1 Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="01-setup.html#01-laboratory">1.2 Laboratory</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="01-setup.html#01-parameters">1.2.1 Parameters</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="01-setup.html#01-accessconsole">1.2.2 Access - OCP Console</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="02-cluster-setup.html">2. Cluster Setup</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="03-deployment-strategies.html">3. Deployment Strategies with Argo CD and Argo Rollouts</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="04-access-the-tools.html">4. Access the tools</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="05-blue-green-deployment.html">5. Blue/Green deployment strategy</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="06-canary-deployment.html">6. Canary deployment strategy</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Template Tutorial</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Template Tutorial</span>
+      <ul class="versions">
+        <li class="version is-current">
+          <a href="index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">Template Tutorial</a></li>
+    <li><a href="06-canary-deployment.html">6. Canary deployment strategy</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/davidseve/redhat-workshop-deployment-strategies/edit/master/documentation/modules/ROOT/pages/06-canary-deployment.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Canary deployment strategy</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>A canary deployment is a strategy where the operator releases a new version of their application to a small percentage of the production traffic. This small percentage may test the new version and provide feedback. If the new version is working well the operator may increase the percentage, till all the traffic is using the new version. Unlike Blue/Green, canary deployments are smoother, and failures have limited impact.</p>
+</div>
+<div class="paragraph">
+<p>TODO explain more</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_deploy_shop_application"><a class="anchor" href="#_deploy_shop_application"></a>Deploy Shop Application</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>TODO edit repo and file location</p>
+</div>
+<div class="paragraph">
+<p>We are going to create the application <code>shop</code>, that we will use to test canary deployment. Because we will make changes in the application&#8217;s GitHub repository, we have to use the repository that you have just forked. Please edit the file <code>canary-argo-rollouts/application-shop-canary-rollouts.yaml</code> and set your own GitHub repository in the <code>reportURL</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: shop-canary
+  namespace: {user}-gitops-argocd
+spec:
+  destination:
+    name: ''
+    namespace: {user}-canary
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: helm/quarkus-helm-umbrella/chart
+    repoURL: <a href="https://github.com/change_me/shop-application-helm-chart" class="bare">https://github.com/change_me/shop-application-helm-chart</a>
+    targetRevision: HEAD
+    helm:
+      parameters:
+      - name: "global.namespace"
+        value: {user}-canary
+      valueFiles:
+        - values/canary/values.yaml
+        - values/canary/values-image-tag.yaml
+        - values/canary/values-rollouts-strategy.yaml
+  project: default
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true</code></pre>
+</div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc apply -f canary-argo-rollouts/application-shop-canary-rollouts.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Looking at the Argo CD dashboard, you would notice that we have a new <code>shop</code> application.</p>
+</div>
+<div class="paragraph">
+<p>TODO add image</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_test_shop_application"><a class="anchor" href="#_test_shop_application"></a>Test Shop application</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We have deployed the <code>shop</code> with ArgoCD. We can test that it is up and running.</p>
+</div>
+<div class="paragraph">
+<p>We have to get the Online route</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">curl "$(oc get routes products-umbrella-online -n {user}-canary --template='https://{{.spec.host}}')/products"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Notice that in each microservice response we have added metadata information to see better the <code>version</code> of each application. This will help us to see the changes while we do the canary deployment.
+We can see that the current version is <code>v1.0.1</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+   "products":[
+      {
+         ...
+         "name":"TV 4K",
+         "price":"1500€"
+      }
+   ],
+   "metadata":{
+      "version":"v1.0.1", &lt;--
+      "colour":"none",
+      "mode":"online"
+   }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_initial_status"><a class="anchor" href="#_initial_status"></a>Initial status</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To achieve canary deployment with <code>Cloud Native</code> applications using <strong>Argo Rollouts</strong>, we have designed this architecture.</p>
+</div>
+<div class="paragraph">
+<p>![Shop initial status](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-0.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-0.png</a>)</p>
+</div>
+<div class="paragraph">
+<p>OpenShift Components - Online</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Routes and Services declared with the suffix -online</p>
+</li>
+<li>
+<p>Routes mapped only to the online services</p>
+</li>
+<li>
+<p>Services mapped to the rollout.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In Blue/Green deployment we always have an offline service to test the version that is not in production. In the case of canary deployment we do not need it because progressively we will have the new version in production.</p>
+</div>
+<div class="paragraph">
+<p>We can also see the rollout`s status[^note].</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout products --watch -n {user}-canary</code></pre>
+</div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">NAME                                  KIND        STATUS     AGE  INFO
+⟳ products                            Rollout     ✔ Healthy  38s
+└──# revision:1
+   └──⧉ products-67fc9fb79b           ReplicaSet  ✔ Healthy  38s  stable
+      ├──□ products-67fc9fb79b-4ql4z  Pod         ✔ Running  38s  ready:1/1
+      ├──□ products-67fc9fb79b-7c4jw  Pod         ✔ Running  38s  ready:1/1
+      ├──□ products-67fc9fb79b-lz86j  Pod         ✔ Running  38s  ready:1/1
+      └──□ products-67fc9fb79b-xlkhp  Pod         ✔ Running  38s  ready:1/1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We have defined an active or online service 'products-umbrella-online'. Final user will always use 'products-umbrella-online'. When a new version is deployed <strong>Argo Rollouts</strong> create a new revision (ReplicaSet). The number of replicas in the new release increases based on the information in the steps, and the number of replicas in the old release decreases by the same number. We have configured a pause duration between each step. To learn more about <strong>Argo Rollouts</strong>, please read [this](<a href="https://argoproj.github.io/argo-rollouts/features/canary/" class="bare">https://argoproj.github.io/argo-rollouts/features/canary/</a>).</p>
+</div>
+<div class="paragraph">
+<p>This is how we have configured <strong>Argo Rollouts</strong> strategy for this demo, you can check it here <code>helm/quarkus-helm-umbrella/chart/values/canary/values-rollouts-strategy.yaml</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">products:
+  quarkus-base:
+    rollouts:
+      canary:
+        steps:
+          - setWeight: 25
+          - pause:
+              duration: 30s
+          - setWeight: 50
+          - pause:
+              duration: 30s</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>TODO (improvement) uses Prometheus metrics</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_products_canary_deployment"><a class="anchor" href="#_products_canary_deployment"></a>Products canary deployment</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We have split a <code>Cloud Native</code> Canary deployment into three automatic step:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Deploy canary version for 10%</p>
+</li>
+<li>
+<p>Scale the canary version to 50%</p>
+</li>
+<li>
+<p>Scale the canary version to 100%</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>This is just an example. The key point here is that very easily we can have the canary deployment that better fits our needs. To make this demo faster we have not set a pause without duration in any step, so  <strong>Argo Rollouts</strong> will go throw each step automatically.</p>
+</div>
+<div class="sect2">
+<h3 id="_step_1_deploy_the_canary_version_for_10"><a class="anchor" href="#_step_1_deploy_the_canary_version_for_10"></a>Step 1 - Deploy the canary version for 10%</h3>
+<div class="paragraph">
+<p>We will deploy a new version v1.1.1. To do it, we have to edit the file <code>helm/quarkus-helm-umbrella/chart/values/canary/values-image-tag.yaml</code> under <code>products</code> set <code>tag</code> value to <code>v.1.1.1</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">products:
+  quarkus-base:
+    image:
+      tag: v1.1.1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Argo Rollouts</strong> will automatically deploy a new products revision. The canary version will be 10% of the replicas. In this demo we are no using [traffic management](<a href="https://argoproj.github.io/argo-rollouts/features/traffic-management/" class="bare">https://argoproj.github.io/argo-rollouts/features/traffic-management/</a>). <strong>Argo Rollouts</strong> makes a best-effort attempt to achieve the percentage listed in the last setWeight step between the new and old version. This means that it will create only one replica in the new revision because it is rounded up. All the requests are load balanced between the old and the new replicas.</p>
+</div>
+<div class="paragraph">
+<p>Push the changes to start the deployment.</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">git add .
+git commit -m "Change products version to v1.1.1"
+git push</code></pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI or configure the Argo CD Git Webhook.[^note2].</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>[^note2]:
+    Here you can see how to configure the Argo CD Git [Webhook]( <a href="https://argo-cd.readthedocs.io/en/stable/operator-manual/webhook/" class="bare">https://argo-cd.readthedocs.io/en/stable/operator-manual/webhook/</a>)
+    ![Argo CD Git Webhook](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-webhook.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-webhook.png</a>)</p>
+</div>
+<div class="paragraph">
+<p>![Refresh Shop](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-Shop-Refresh.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-Shop-Refresh.png</a>)</p>
+</div>
+<div class="paragraph">
+<p>This is our current status:
+![Shop Step 1](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-1.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-1.png</a>)</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout products --watch -n {user}-canary</code></pre>
+</div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">NAME                                  KIND        STATUS     AGE    INFO
+⟳ products                            Rollout     ॥ Paused   3m13s
+├──# revision:2
+│  └──⧉ products-9dc6f576f            ReplicaSet  ✔ Healthy  8s     canary
+│     └──□ products-9dc6f576f-fwq8m   Pod         ✔ Running  8s     ready:1/1
+└──# revision:1
+   └──⧉ products-67fc9fb79b           ReplicaSet  ✔ Healthy  3m13s  stable
+      ├──□ products-67fc9fb79b-4ql4z  Pod         ✔ Running  3m13s  ready:1/1
+      ├──□ products-67fc9fb79b-lz86j  Pod         ✔ Running  3m13s  ready:1/1
+      └──□ products-67fc9fb79b-xlkhp  Pod         ✔ Running  3m13s  ready:1/1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the products URL response, you will have the new version in 25% of the requests.</p>
+</div>
+<div class="paragraph">
+<p>New revision:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "products":[
+     {
+        "discountInfo":{...},
+        "name":"TV 4K",
+        "price":"1500€",
+        "description":"The best TV" &lt;--
+     }
+  ],
+  "metadata":{
+     "version":"v1.1.1", &lt;--
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Old revision:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "products":[
+     {
+        "discountInfo":{...},
+        "name":"TV 4K",
+        "price":"1500€"
+     }
+  ],
+  "metadata":{
+     "version":"v1.0.1", &lt;--
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_step_2_scale_the_canary_version_to_50"><a class="anchor" href="#_step_2_scale_the_canary_version_to_50"></a>Step 2 - Scale the canary version to 50%</h3>
+<div class="paragraph">
+<p>After 30 seconds <strong>Argo Rollouts</strong> automatically will increase the number of replicas in the new release to 2. Instead of increasing automatically after 30 seconds, we can configure <strong>Argo Rollouts</strong> to wait indefinitely until that <code>Pause</code> condition is removed. But this is not part of this demo.
+This is our current status:
+![Shop Step 2](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-2.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-2.png</a>)</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout products --watch -n {user}-canary</code></pre>
+</div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">NAME                                  KIND        STATUS     AGE    INFO
+⟳ products                            Rollout     ॥ Paused   3m47s
+├──# revision:2
+│  └──⧉ products-9dc6f576f            ReplicaSet  ✔ Healthy  42s    canary
+│     ├──□ products-9dc6f576f-fwq8m   Pod         ✔ Running  42s    ready:1/1
+│     └──□ products-9dc6f576f-8qppq   Pod         ✔ Running  6s     ready:1/1
+└──# revision:1
+   └──⧉ products-67fc9fb79b           ReplicaSet  ✔ Healthy  3m47s  stable
+      ├──□ products-67fc9fb79b-lz86j  Pod         ✔ Running  3m47s  ready:1/1
+      └──□ products-67fc9fb79b-xlkhp  Pod         ✔ Running  3m47s  ready:1/1</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_step_3_scale_the_canary_version_to_100"><a class="anchor" href="#_step_3_scale_the_canary_version_to_100"></a>Step 3 - Scale the canary version to 100%</h3>
+<div class="paragraph">
+<p>After another 30 seconds, <strong>Argo Rollouts</strong> will increase the number of replicas in the new release to 4 and scale down the old revision.</p>
+</div>
+<div class="paragraph">
+<p>This is our current status:
+![Shop Step 1](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-3.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-3.png</a>)</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout products --watch -n {user}-canary</code></pre>
+</div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">NAME                                 KIND        STATUS        AGE    INFO
+⟳ products                           Rollout     ✔ Healthy     4m32s
+├──# revision:2
+│  └──⧉ products-9dc6f576f           ReplicaSet  ✔ Healthy     87s    stable
+│     ├──□ products-9dc6f576f-fwq8m  Pod         ✔ Running     87s    ready:1/1
+│     ├──□ products-9dc6f576f-8qppq  Pod         ✔ Running     51s    ready:1/1
+│     ├──□ products-9dc6f576f-5ch92  Pod         ✔ Running     17s    ready:1/1
+│     └──□ products-9dc6f576f-kmvdh  Pod         ✔ Running     17s    ready:1/1
+└──# revision:1
+   └──⧉ products-67fc9fb79b          ReplicaSet  • ScaledDown  4m32s</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>We have in the online environment the new version v1.1.1!!!</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "products":[
+     {
+        "discountInfo":{...},
+        "name":"TV 4K",
+        "price":"1500€",
+        "description":"The best TV" &lt;--
+     }
+  ],
+  "metadata":{
+     "version":"v1.1.1", &lt;--
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_rollback"><a class="anchor" href="#_rollback"></a>Rollback</h3>
+<div class="paragraph">
+<p>Imagine that something goes wrong, we know that this never happens but just in case. We can do a very <code>quick rollback</code> just by undoing the change.</p>
+</div>
+<div class="paragraph">
+<p><strong>Argo Rollouts</strong> has an [undo](<a href="https://argoproj.github.io/argo-rollouts/generated/kubectl-argo-rollouts/kubectl-argo-rollouts_undo/" class="bare">https://argoproj.github.io/argo-rollouts/generated/kubectl-argo-rollouts/kubectl-argo-rollouts_undo/</a>) command to do the rollback. In my opinion, I don&#8217;t like this procedure because it is not aligned with GitOps. The changes that <strong>Argo Rollouts</strong> do does not come from git, so git is OutOfSync with what we have in Openshift.
+In our case the commit that we have done not only changes the ReplicaSet but also the ConfigMap. The <code>undo</code> command only changes the ReplicaSet, so it does not work for us.</p>
+</div>
+<div class="paragraph">
+<p>I recommend doing the changes in git. We will revert the last commit</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">git revert HEAD --no-edit</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If we just revert the changes in git we will go back to the previous version. But <strong>Argo Rollouts</strong> will take this revert as a new release so it will do it throw the steps that we have configured. We want a <code>quick rollback</code> we don&#8217;t want a step-by-step revert. To achieve the <code>quick rollback</code> we will configure <strong>Argo Rollouts</strong> without steps for the rollback.</p>
+</div>
+<div class="paragraph">
+<p>Because we have our <strong>Argo Rollouts</strong> configuration as values in our Helm Chart, we have just to edit the values.yaml that we are using.</p>
+</div>
+<div class="paragraph">
+<p>In the file <code>helm/quarkus-helm-umbrella/chart/values/canary/values-rollouts-strategy.yaml</code> under <code>products</code> under the <code>steps</code> delete all the steps and only set one step <code>- setWeight: 100</code></p>
+</div>
+<div class="paragraph">
+<p><code>helm/quarkus-helm-umbrella/chart/values/canary/values-rollouts-strategy.yaml</code> should looks like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">products:
+  quarkus-base:
+    rollouts:
+      canary:
+        steps:
+          - setWeight: 100</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Execute those commands to push the changes:
+.Offline route in the productive environment</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">git add .
+git commit -m "delete steps for rollback"
+git push</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>ArgoCD</strong> will get the changes and apply them. <strong>Argo Rollouts</strong> will create a new revision with the previous version.</p>
+</div>
+<div class="paragraph">
+<p>The rollback is done!
+![Shop Step Rollback](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-Rollback.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-Rollback.png</a>)</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "products":[
+     {
+        "discountInfo":{...},
+        "name":"TV 4K",
+        "price":"1500€"
+     }
+  ],
+  "metadata":{
+     "version":"v1.0.1", &lt;--
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To get the application ready for a new release we should configure again the  <strong>Argo Rollouts</strong> with the steps.
+## (optional)Canary deployment strategy with Service Mesh</p>
+</div>
+<div class="paragraph">
+<p>TODO quite similar to Canary deployment strategy</p>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="05-blue-green-deployment.html" class="query-params-link">5. Blue/Green deployment strategy</a></span>
+</nav>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <a class="rhd-logo" href="https://developers.redhat.com" target="_blank"></div>
+</footer>
+<script src="../_/js/vendor/clipboard.js"></script>
+<script src="../_/js/site.js"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

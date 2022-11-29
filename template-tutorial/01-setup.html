@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Setup :: Red Hat Workshop - Deployment Strategies with Argo CD and Argo Rollouts</title>
+    <title>Environment Setup :: Red Hat Workshop - Deployment Strategies with Argo CD and Argo Rollouts</title>
     <link rel="canonical" href="https://github.com/davidseve/redhat-workshop-deployment-strategies/template-tutorial/01-setup.html">
     <link rel="prev" href="index.html">
-    <link rel="next" href="02-deploy.html">
+    <link rel="next" href="02-cluster-setup.html">
     <meta name="generator" content="Antora 3.0.0">
     <link rel="stylesheet" href="../_/css/site.css">
 <link rel="icon" href="../_/img/favicon.ico" type="image/x-icon">
@@ -73,27 +73,39 @@
 <ul class="nav-list">
   <li class="nav-item is-current-page" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="01-setup.html">1. Setup</a>
+    <a class="nav-link" href="01-setup.html">1. Environment Setup</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="#prerequisite">Prerequisites</a>
+    <a class="nav-link" href="#01-prerequisites">1.1 Prerequisites</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="#minikube">Setup Minikube</a>
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="#01-laboratory">1.2 Laboratory</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#01-parameters">1.2.1 Parameters</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#01-accessconsole">1.2.2 Access - OCP Console</a>
+  </li>
+</ul>
   </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="02-deploy.html">2. Deploy Service</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="02-deploy.html#package">Build Service</a>
+    <a class="nav-link" href="02-cluster-setup.html">2. Cluster Setup</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="02-deploy.html#deploy">Deploy Dervice</a>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="03-deployment-strategies.html">3. Deployment Strategies with Argo CD and Argo Rollouts</a>
   </li>
-</ul>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="04-access-the-tools.html">4. Access the tools</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="05-blue-green-deployment.html">5. Blue/Green deployment strategy</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="06-canary-deployment.html">6. Canary deployment strategy</a>
   </li>
 </ul>
   </li>
@@ -125,20 +137,203 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">Template Tutorial</a></li>
-    <li><a href="01-setup.html">1. Setup</a></li>
+    <li><a href="01-setup.html">1. Environment Setup</a></li>
   </ul>
 </nav>
   <div class="edit-this-page"><a href="https://github.com/davidseve/redhat-workshop-deployment-strategies/edit/master/documentation/modules/ROOT/pages/01-setup.adoc">Edit this Page</a></div>
   </div>
   <div class="content">
 <article class="doc">
-<h1 class="page">Setup</h1>
+<h1 class="page">Environment Setup</h1>
+<div class="sect1">
+<h2 id="01-prerequisites"><a class="anchor" href="#01-prerequisites"></a>Prerequisites</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>TODO</p>
+<p>During this tutorial, will be required to work with different tools for running the exercises included. Please install the following software:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-center valign-top"><strong>Tool</strong></th>
+<th class="tableblock halign-center valign-top"><strong>Fedora</strong></th>
+<th class="tableblock halign-center valign-top"><strong>macOS</strong></th>
+<th class="tableblock halign-center valign-top"><strong>Windows</strong></th>
+<th class="tableblock halign-center valign-top"><strong>Official Documentation</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">oc</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-mac.tar.gz">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-windows.zip">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://docs.openshift.com/container-platform/4.6/cli_reference/openshift_cli/getting-started-cli.html">OpenShift CLI - Docs</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">git</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://git-scm.com/download/linux">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://git-scm.com/download/mac">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://git-scm.com/download/win">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://git-scm.com">Git - Docs</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Argo Rollouts CLI</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/argoproj/argo-rollouts/releases/download/v1.3.1/kubectl-argo-rollouts-linux-arm64">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/argoproj/argo-rollouts/releases/download/v1.3.1/kubectl-argo-rollouts-linux-arm64">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/argoproj/argo-rollouts/releases/download/v1.3.1/kubectl-argo-rollouts-windows-amd64">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://argoproj.github.io/argo-rollouts/installation/#kubectl-plugin-installation">Git - Docs</a></p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Please review the official documentation to install the latest versions of these tools on your laptop following the optimum procedure
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>It is also required to have a <a href="https://github.com">GitHub</a> account in order to create some repositories during this tutorial.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="01-laboratory"><a class="anchor" href="#01-laboratory"></a>Laboratory</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The technical exercises included in this tutorial are based on cloud native solutions which are extensively used in the IT market. Please review the following list which includes the basics around these cloud native solutions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/">GitHub</a> is a provider of Internet hosting for software development and version control using Git. It offers the distributed version control and source code management functionality of Git, plus its own features.</p>
+</li>
+<li>
+<p><a href="https://docs.openshift.com/container-platform/">Red Hat Openshift Container Platform Cluster</a> is an enterprise-ready Kubernetes container platform with full-stack automated operations to manage hybrid cloud, multicloud, and edge deployments. Red Hat OpenShift is optimized to improve developer productivity and promote innovation.</p>
+</li>
+<li>
+<p><a href="https://argoproj.github.io/argo-cd/">ArgoCD</a> is a declarative, GitOps continuous delivery tool for Kubernetes following the GitOps pattern of using Git repositories as the source of truth for defining the desired application state. Argo CD automates the deployment of the desired application states in the specified target environments. Application deployments can track updates to branches, tags, or pinned to a specific version of manifests at a Git commit.
+TODO add Argo Rollouts</p>
+</li>
+<li>
+<p><a href="https://helm.sh/">Helm</a> is a tool to find, share, and use software built for Kubernetes. Helm helps users manage Kubernetes applications in terms of definition, installing, and upgrading even the most complex Kubernetes applications.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>During this tutorial, a set of resources are provided by the instructor in order to be able to complete the exercises described in the following sections. The main objective of these resources is to provide a platform, multiple templates and other resources which are required to create different objects in Openshift.</p>
+</div>
+<div class="paragraph">
+<p>Please review the following list to have an overall understanding of the resources provided for completing this tutorial:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>An Openshift cluster that will host and make available a set of applications deployed</p>
+</li>
+<li>
+<p>An ArgoCD installation that allows attendees to deploy applications in a GitOps fashion
+TODO add Argo Rollouts</p>
+</li>
+<li>
+<p>A set of GitHub repositories that include the templates and automatisms required to deploy a group of applications</p>
+</li>
+<li>
+<p><a href="https://github.com/davidseve/cloud-native-deployment-strategies">GitHub - Cloud Native Deployment Strategies Repository</a></p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="01-parameters"><a class="anchor" href="#01-parameters"></a>Parameters</h3>
+<div class="paragraph">
+<p>The instructor provides the users with the necessary Openshift credentials and other important parameters at the beginning of this tutorial to access and complete the laboratory.</p>
+</div>
+<div class="paragraph">
+<p>The following table includes the parameters that the instructor should provide you at the beginning of the laboratory:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-center valign-top"><strong>Name</strong></th>
+<th class="tableblock halign-center valign-top"><strong>Value</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Openshift Cluster API (Access CLI)</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><em><a href="https://api.%CLUSTER%:6443" class="bare">https://api.%CLUSTER%:6443</a></em></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Openshift Cluster Console</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><em><a href="https://console-openshift-console.apps.%CLUSTER%" class="bare">https://console-openshift-console.apps.%CLUSTER%</a></em></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Username</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">%USER%</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Password</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">%USER%</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">App Namespace GitOps</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">%USER%-gitops-argocd</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">App Namespace for Blue-Green deployment</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">%USER%-blue-green</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">App Namespace for Canary deployment</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">%USER%-canary</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">ArgoCD console</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">TODO</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="01-accessconsole"><a class="anchor" href="#01-accessconsole"></a>Access - OCP Console</h3>
+<div class="paragraph">
+<p>In addition, access Openshift Console using your credentials via browser to check connectivity and accessibility to the console:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><em><a href="https://console-openshift-console.apps.%CLUSTER%" class="bare">https://console-openshift-console.apps.%CLUSTER%</a></em></p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/ocp_console.png" alt="ocp console">
+</div>
+<div class="title">Figure 1. Openshift Console</div>
+</div>
+</div>
+</div>
 </div>
 <nav class="pagination">
   <span class="prev"><a href="index.html" class="query-params-link">Template Tutorial</a></span>
-  <span class="next"><a href="02-deploy.html" class="query-params-link">2. Deploy Service</a></span>
+  <span class="next"><a href="02-cluster-setup.html" class="query-params-link">2. Cluster Setup</a></span>
 </nav>
 </article>
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
