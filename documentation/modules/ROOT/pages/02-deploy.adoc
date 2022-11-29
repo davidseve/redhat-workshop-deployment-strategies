@@ -126,7 +126,7 @@ NAME                                  KIND        STATUS     AGE INFO
 
 We have defined an active or online service 'products-umbrella-online' and a preview or offline service 'products-umbrella-offline'. Final user will always use 'products-umbrella-online'. We have created an AnalysisTemplate 'products-analysis-template' that just validates the health of the application, for production environments a better analysis should be done. **Argo Rollouts** use this AnalysisTemplate to validate a new version and set whether it is ready to be promoted or not. To learn more, please read [this](https://argoproj.github.io/argo-rollouts/features/bluegreen/).
 
-[source,yaml]
+[source,yaml,subs="+macros,+attributes"]
 ----
   strategy:
     blueGreen:
@@ -152,7 +152,7 @@ We have already deployed the products version v1.0.1, and we are ready to use a 
  TODO is it the right path?
 We will deploy a new version v1.1.1. To do it, we have to edit the file `helm/quarkus-helm-umbrella/chart/values/vaues-blue-green.yaml` under `products-blue` set `tag` value to `v.1.1.1`
 
-[source,yaml]
+[source,yaml,subs="+macros,+attributes"]
 ----
 products-blue:
   mode: online
@@ -346,7 +346,7 @@ TODO edit repo and file location
 
 We are going to create the application `shop`, that we will use to test canary deployment. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just forked. Please edit the file `canary-argo-rollouts/application-shop-canary-rollouts.yaml` and set your own GitHub repository in the `reportURL`.
 
-[source,yaml]
+[source,yaml,subs="+macros,+attributes"]
 ----
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -457,7 +457,7 @@ NAME                                  KIND        STATUS     AGE  INFO
 We have defined an active or online service 'products-umbrella-online'. Final user will always use 'products-umbrella-online'. When a new version is deployed **Argo Rollouts** create a new revision (ReplicaSet). The number of replicas in the new release increases based on the information in the steps, and the number of replicas in the old release decreases by the same number. We have configured a pause duration between each step. To learn more about **Argo Rollouts**, please read [this](https://argoproj.github.io/argo-rollouts/features/canary/).
 
 This is how we have configured **Argo Rollouts** strategy for this demo:
-[source,yaml]
+[source,yaml,subs="+macros,+attributes"]
 ----
   strategy:
     canary:
@@ -485,7 +485,7 @@ This is just an example. The key point here is that very easily we can have the 
  
 We will deploy a new version v1.1.1. To do it, we have to edit the file `helm/quarkus-helm-umbrella/chart/values/values-canary.yaml` under `products-blue` set `tag` value to `v.1.1.1`
 
-[source,yaml]
+[source,yaml,subs="+macros,+attributes"]
 ----
 products-blue:
   mode: online
@@ -662,7 +662,7 @@ Because we have our **Argo Rollouts** configuration as values in our Helm Chart,
 In the file `helm/quarkus-helm-umbrella/chart/values/values-canary.yaml` under `products-blue` under the `steps` delete all the steps and only set one step `- setWeight: 100`
 
 `helm/quarkus-helm-umbrella/chart/values/values-canary.yaml` should looks like:
-[source,yaml]
+[source,yaml,subs="+macros,+attributes"]
 ----
 products-blue:
   mode: online
