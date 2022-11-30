@@ -274,7 +274,7 @@ spec:
 </div>
 </div>
 <div class="sect1">
-<h2 id="_initial_status"><a class="anchor" href="#_initial_status"></a>Initial status</h2>
+<h2 id="_application_architecture"><a class="anchor" href="#_application_architecture"></a>Application architecture</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>To achieve Blue/Green deployment with <code>Cloud Native</code> applications using <strong>Argo Rollouts</strong>, we have designed this architecture.</p>
@@ -320,7 +320,10 @@ spec:
 </ul>
 </div>
 <div class="paragraph">
-<p>We have defined an active or online service 'products-umbrella-online' and a preview or offline service 'products-umbrella-offline'. Final user will always use 'products-umbrella-online'. We have created an AnalysisTemplate 'products-analysis-template' that just validates the health of the application, for production environments a better analysis should be done. <strong>Argo Rollouts</strong> use this AnalysisTemplate to validate a new version and set whether it is ready to be promoted or not. To learn more, please read [this](<a href="https://argoproj.github.io/argo-rollouts/features/bluegreen/" class="bare">https://argoproj.github.io/argo-rollouts/features/bluegreen/</a>).</p>
+<p>We have defined an active or online service 'products-umbrella-online' and a preview or offline service 'products-umbrella-offline'. Final user will always use 'products-umbrella-online'.</p>
+</div>
+<div class="paragraph">
+<p>We have created an AnalysisTemplate 'products-analysis-template' that just validates the health of the application, for production environments a better analysis should be done. <strong>Argo Rollouts</strong> use this AnalysisTemplate to validate a new version and set whether it is ready to be promoted or not. To learn more, please read <a href="https://argoproj.github.io/argo-rollouts/features/bluegreen/">this</a>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -337,7 +340,7 @@ spec:
 </div>
 </div>
 <div class="sect1">
-<h2 id="_application_architecture"><a class="anchor" href="#_application_architecture"></a>Application architecture</h2>
+<h2 id="_test_shop_application"><a class="anchor" href="#_test_shop_application"></a>Test Shop application</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>We have deployed the <code>shop</code> with ArgoCD. We can test that it is up and running.</p>
@@ -381,18 +384,26 @@ Because right now we have both routers against the same rollout revision we will
 </div>
 </div>
 <div class="paragraph">
-<p>We can also see the rollout`s status[^note].</p>
+<p>We can also see the rollout`s status.</p>
 </div>
-<div class="paragraph">
-<p>[^note]:
-    Argo Rollouts offers a Kubectl plugin to enrich the experience with Rollouts <a href="https://argoproj.github.io/argo-rollouts/installation/#kubectl-plugin-installation" class="bare">https://argoproj.github.io/argo-rollouts/installation/#kubectl-plugin-installation</a></p>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Argo Rollouts offers a Kubectl plugin to enrich the experience with Rollouts <a href="https://argoproj.github.io/argo-rollouts/installation/#kubectl-plugin-installation" class="bare">https://argoproj.github.io/argo-rollouts/installation/#kubectl-plugin-installation</a>
+</td>
+</tr>
+</table>
 </div>
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout products --watch -n %USER%-blue-green</code></pre>
 </div>
 </div>
-<div class="listingblock console-input">
+<div class="listingblock console-output">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">NAME                                  KIND        STATUS     AGE INFO
 ⟳ products                            Rollout     ✔ Healthy  12m
