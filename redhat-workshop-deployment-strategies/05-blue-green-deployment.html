@@ -194,14 +194,18 @@
 <div class="paragraph">
 <p>In this example, we have two versions up and running in production: online and offline. We also have routers and services for offline and online pointing to the corresponding microservice. As explained above, we can deploy a new version of the microservice in the green service ("offline") and perform <strong>smoke tests</strong> against it to ensure that the new version will perform correctly when real traffic begins to arrive to Green.</p>
 </div>
-<div class="paragraph">
-<p>![Blue/Green](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green.png</a>)</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/blue-green.png" alt="Blue/Green">
+</div>
 </div>
 <div class="paragraph">
 <p>When a new version is ready for real users, we only have to modify the k8s service to point to the new deployment (Green) as in the following image. There is minimal downtime and we can do a rapid rollback just by undoing the changes in the service.</p>
 </div>
-<div class="paragraph">
-<p>![Blue/Green switch](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green-switch.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green-switch.png</a>)</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/blue-green-switch.png" alt="Blue/Green switch">
+</div>
 </div>
 <div class="paragraph">
 <p>As with great power comes great responsibility, you have to take the following into account:</p>
@@ -224,10 +228,7 @@
 <h2 id="_deploy_shop_application"><a class="anchor" href="#_deploy_shop_application"></a>Deploy Shop Application</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>TODO edit repo</p>
-</div>
-<div class="paragraph">
-<p>We are going to create the application <code>shop</code>, that we will use to test Blue/Green deployment. Because we will make changes in the application&#8217;s GitHub repository, we have to use the repository that you have just forked. Please edit the file <code>blue-green-argo-rollouts/application-shop-blue-green-rollouts.yaml</code> and set your own GitHub repository in the <code>reportURL</code>.</p>
+<p>We are going to create the application <code>shop</code>, that we will use to test Blue/Green deployment. Because we will make changes in the application&#8217;s GitHub repository, we have to use the repository that you have just forked. Please edit the following yaml and set your own GitHub repository in the <code>reportURL</code>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -259,12 +260,9 @@ spec:
       selfHeal: true</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>TODO is it right?</p>
-</div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc apply -f blue-green-argo-rollouts/application-shop-blue-green-rollouts.yaml</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc apply -f application-shop-blue-green-rollouts.yaml</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -329,7 +327,7 @@ Because right now we have both routers against the same rollout revision we will
 </div>
 <div class="paragraph">
 <p>This is our current status:
-![Shop initial status](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-0.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-0.png</a>)</p>
+image::rollout-blue-green-step-0.png["Shop initial status"]</p>
 </div>
 <div class="paragraph">
 <p>OpenShift Components - Online</p>
@@ -423,11 +421,6 @@ Because right now we have both routers against the same rollout revision we will
 </div>
 <div class="sect2">
 <h3 id="_step_1_deploy_a_new_version"><a class="anchor" href="#_step_1_deploy_a_new_version"></a>Step 1 - Deploy a new version</h3>
-<div class="literalblock">
-<div class="content">
-<pre>TODO is it the right path?</pre>
-</div>
-</div>
 <div class="paragraph">
 <p>We will deploy a new version v1.1.1. To do it, we have to edit the file <code>helm/quarkus-helm-umbrella/chart/values/blue-green/values-image-tag.yaml</code> under <code>products</code> set <code>tag</code> value to <code>v.1.1.1</code></p>
 </div>
@@ -451,16 +444,13 @@ git push</code></pre>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI or configure the Argo CD Git Webhook.[^note2].</pre>
+<pre>ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI.</pre>
 </div>
 </div>
-<div class="paragraph">
-<p>[^note2]:
-    Here you can see how to configure the Argo CD Git [Webhook]( <a href="https://argo-cd.readthedocs.io/en/stable/operator-manual/webhook/" class="bare">https://argo-cd.readthedocs.io/en/stable/operator-manual/webhook/</a>)
-    ![Argo CD Git Webhook](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-webhook.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-webhook.png</a>)</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/ArgoCD-Shop-Refresh.png" alt="Refresh Shop">
 </div>
-<div class="paragraph">
-<p>![Refresh Shop](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-Shop-Refresh.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-Shop-Refresh.png</a>)</p>
 </div>
 <div class="paragraph">
 <p><strong>Argo Rollouts</strong> will automatically deploy the new products version and execute the <code>prePromotionAnalysis</code>.</p>
@@ -485,7 +475,7 @@ git push</code></pre>
 </div>
 <div class="paragraph">
 <p>This is our current status:
-![Shop Step 1](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-1.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-1.png</a>)</p>
+image::rollout-blue-green-step-1.png["Shop Step 1]"]</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -545,7 +535,7 @@ If this dependency is for example a production DB we will create the things that
 </div>
 <div class="paragraph">
 <p>This is our current status:
-![Shop Step 2 initial](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-2-initial.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-2-initial.png</a>)</p>
+image::rollout-blue-green-step-2-initial.png["Shop Step 2 initial"]</p>
 </div>
 <div class="paragraph">
 <p>And after <code>scaleDownDelaySeconds</code> <strong>Argo Rollouts</strong> will scale down the first replicaSet (v1.0.1).</p>
@@ -565,7 +555,7 @@ If this dependency is for example a production DB we will create the things that
 </div>
 <div class="paragraph">
 <p>This is our final status:
-![Shop Step 2](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-2.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-2.png</a>)</p>
+image::rollout-blue-green-step-2.png["Shop Step 2"]</p>
 </div>
 <div class="paragraph">
 <p><strong>We have in the online environment the new version v1.1.1!!!</strong></p>
@@ -609,8 +599,10 @@ git push</code></pre>
 <div class="paragraph">
 <p><strong>ArgoCD</strong> will get the changes and apply them. <strong>Argo Rollouts</strong> will create a new revision with the previous version.</p>
 </div>
-<div class="paragraph">
-<p>![Shop Step Rollback initial](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-rollback-initial.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-rollback-initial.png</a>)</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rollout-blue-green-step-rollback-initial.png" alt="Shop Step Rollback initial">
+</div>
 </div>
 <div class="paragraph">
 <p>Execute this command to promote products to version <code>v1.0.1</code>:</p>
@@ -622,7 +614,7 @@ git push</code></pre>
 </div>
 <div class="paragraph">
 <p>The rollback is done!
-![Shop Step Rollback](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-rollback.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-rollback.png</a>)</p>
+image::rollout-blue-green-step-rollback.png["Shop Step Rollback"]</p>
 </div>
 <div class="listingblock">
 <div class="content">

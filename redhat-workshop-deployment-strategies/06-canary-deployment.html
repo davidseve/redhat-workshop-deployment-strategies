@@ -159,10 +159,7 @@
 <h2 id="_deploy_shop_application"><a class="anchor" href="#_deploy_shop_application"></a>Deploy Shop Application</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>TODO edit repo and file location</p>
-</div>
-<div class="paragraph">
-<p>We are going to create the application <code>shop</code>, that we will use to test canary deployment. Because we will make changes in the application&#8217;s GitHub repository, we have to use the repository that you have just forked. Please edit the file <code>canary-argo-rollouts/application-shop-canary-rollouts.yaml</code> and set your own GitHub repository in the <code>reportURL</code>.</p>
+<p>We are going to create the application <code>shop</code>, that we will use to test canary deployment. Because we will make changes in the application&#8217;s GitHub repository, we have to use the repository that you have just forked. Please edit the following yaml and set your own GitHub repository in the <code>reportURL</code>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -197,7 +194,7 @@ spec:
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc apply -f canary-argo-rollouts/application-shop-canary-rollouts.yaml</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc apply -f application-shop-canary-rollouts.yaml</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -253,7 +250,8 @@ We can see that the current version is <code>v1.0.1</code>:</p>
 <p>To achieve canary deployment with <code>Cloud Native</code> applications using <strong>Argo Rollouts</strong>, we have designed this architecture.</p>
 </div>
 <div class="paragraph">
-<p>![Shop initial status](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-0.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-0.png</a>)</p>
+<p>![Shop initial status](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-0.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-0.png</a>)
+image::canary-rollout-step-0.png["Shop initial status"]</p>
 </div>
 <div class="paragraph">
 <p>OpenShift Components - Online</p>
@@ -370,20 +368,17 @@ git push</code></pre>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI or configure the Argo CD Git Webhook.[^note2].</pre>
+<pre>ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI.</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>[^note2]:
-    Here you can see how to configure the Argo CD Git [Webhook]( <a href="https://argo-cd.readthedocs.io/en/stable/operator-manual/webhook/" class="bare">https://argo-cd.readthedocs.io/en/stable/operator-manual/webhook/</a>)
-    ![Argo CD Git Webhook](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-webhook.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-webhook.png</a>)</p>
-</div>
-<div class="paragraph">
-<p>![Refresh Shop](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-Shop-Refresh.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-Shop-Refresh.png</a>)</p>
+<p>![Refresh Shop](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-Shop-Refresh.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-Shop-Refresh.png</a>)
+image::ArgoCD-Shop-Refresh.png["Refresh Shop"]</p>
 </div>
 <div class="paragraph">
 <p>This is our current status:
-![Shop Step 1](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-1.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-1.png</a>)</p>
+![Shop Step 1](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-1.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-1.png</a>)
+image::canary-rollout-step-1..png["Shop Step 1]"]</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
@@ -452,7 +447,8 @@ git push</code></pre>
 <div class="paragraph">
 <p>After 30 seconds <strong>Argo Rollouts</strong> automatically will increase the number of replicas in the new release to 2. Instead of increasing automatically after 30 seconds, we can configure <strong>Argo Rollouts</strong> to wait indefinitely until that <code>Pause</code> condition is removed. But this is not part of this demo.
 This is our current status:
-![Shop Step 2](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-2.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-2.png</a>)</p>
+![Shop Step 2](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-2.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-2.png</a>)
+image::canary-rollout-step-2.png["Shop Step 2"]</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
@@ -481,7 +477,8 @@ This is our current status:
 </div>
 <div class="paragraph">
 <p>This is our current status:
-![Shop Step 1](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-3.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-3.png</a>)</p>
+![Shop Step 1](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-3.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-3.png</a>)
+image::canary-rollout-step-3.png["Shop Step 1"]</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
@@ -578,7 +575,8 @@ git push</code></pre>
 </div>
 <div class="paragraph">
 <p>The rollback is done!
-![Shop Step Rollback](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-Rollback.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-Rollback.png</a>)</p>
+![Shop Step Rollback](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-Rollback.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-Rollback.png</a>)
+image::canary-rollout-step-Rollback.png["Shop Step Rollback"]</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -599,9 +597,6 @@ git push</code></pre>
 <div class="paragraph">
 <p>To get the application ready for a new release we should configure again the  <strong>Argo Rollouts</strong> with the steps.
 ## (optional)Canary deployment strategy with Service Mesh</p>
-</div>
-<div class="paragraph">
-<p>TODO quite similar to Canary deployment strategy</p>
 </div>
 </div>
 </div>
