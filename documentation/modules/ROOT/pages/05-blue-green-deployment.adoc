@@ -77,7 +77,41 @@ Looking at the Argo CD dashboard, you would notice that we have a new `shop` app
 
 TODO add image
 
-## Test Shop application
+## Initial status
+
+To achieve Blue/Green deployment with `Cloud Native` applications using **Argo Rollouts**, we have designed this architecture.
+
+This is our current status:
+
+image::rollout-blue-green-step-0.png["Shop initial status"]
+
+OpenShift Components - Online
+
+- Routes and Services declared with the suffix -online
+- Routes mapped only to the online services
+- Services mapped to the rollout.
+ 
+OpenShift Components - Offline
+
+- Routes and Services declared with the suffix -offline
+- Routes mapped only to the offline services
+- Services mapped to the rollout
+
+We have defined an active or online service 'products-umbrella-online' and a preview or offline service 'products-umbrella-offline'. Final user will always use 'products-umbrella-online'. We have created an AnalysisTemplate 'products-analysis-template' that just validates the health of the application, for production environments a better analysis should be done. **Argo Rollouts** use this AnalysisTemplate to validate a new version and set whether it is ready to be promoted or not. To learn more, please read [this](https://argoproj.github.io/argo-rollouts/features/bluegreen/).
+
+[source,yaml,subs="+macros,+attributes"]
+----
+  strategy:
+    blueGreen:
+      activeService: products-umbrella-online
+      previewService: products-umbrella-offline      
+      autoPromotionEnabled: false
+      prePromotionAnalysis:
+        templates:
+          - templateName: products-analysis-template
+----
+
+## Application architecture
  
 We have deployed the `shop` with ArgoCD. We can test that it is up and running.
  
@@ -113,24 +147,7 @@ Because right now we have both routers against the same rollout revision we will
    }
 }
 ----
-## Initial status
 
-To achieve Blue/Green deployment with `Cloud Native` applications using **Argo Rollouts**, we have designed this architecture.
-
-This is our current status:
-image::rollout-blue-green-step-0.png["Shop initial status"]
-
-OpenShift Components - Online
-
-- Routes and Services declared with the suffix -online
-- Routes mapped only to the online services
-- Services mapped to the rollout.
- 
-OpenShift Components - Offline
-
-- Routes and Services declared with the suffix -offline
-- Routes mapped only to the offline services
-- Services mapped to the rollout
 
 We can also see the rollout`s status[^note].
 
@@ -154,19 +171,6 @@ NAME                                  KIND        STATUS     AGE INFO
       └──□ products-67fc9fb79b-p7jk9  Pod         ✔ Running  12m  ready:1/1
 ----
 
-We have defined an active or online service 'products-umbrella-online' and a preview or offline service 'products-umbrella-offline'. Final user will always use 'products-umbrella-online'. We have created an AnalysisTemplate 'products-analysis-template' that just validates the health of the application, for production environments a better analysis should be done. **Argo Rollouts** use this AnalysisTemplate to validate a new version and set whether it is ready to be promoted or not. To learn more, please read [this](https://argoproj.github.io/argo-rollouts/features/bluegreen/).
-
-[source,yaml,subs="+macros,+attributes"]
-----
-  strategy:
-    blueGreen:
-      activeService: products-umbrella-online
-      previewService: products-umbrella-offline      
-      autoPromotionEnabled: false
-      prePromotionAnalysis:
-        templates:
-          - templateName: products-analysis-template
-----
 ## Products Blue/Green deployment
 We have split a `Cloud Native` Blue/Green deployment into two steps:
 
@@ -223,6 +227,7 @@ NAME                                  KIND         STATUS        AGE  INFO
 If the `prePromotionAnalysis` goes well, we can see that offline applications have version v1.1.1 and the new attribute description, but the online version has not changed.
 
 This is our current status:
+
 image::rollout-blue-green-step-1.png["Shop Step 1]"]
 
  
@@ -276,6 +281,7 @@ NAME                                  KIND         STATUS        AGE  INFO
       └──□ products-67fc9fb79b-p7jk9  Pod          ✔ Running     88m  ready:1/1
 ----
 This is our current status:
+
 image::rollout-blue-green-step-2-initial.png["Shop Step 2 initial"]
 
 And after `scaleDownDelaySeconds` **Argo Rollouts** will scale down the first replicaSet (v1.0.1).
@@ -295,6 +301,7 @@ And after `scaleDownDelaySeconds` **Argo Rollouts** will scale down the first re
 ----
 
 This is our final status:
+
 image::rollout-blue-green-step-2.png["Shop Step 2"]
 
 **We have in the online environment the new version v1.1.1!!!**

@@ -26,6 +26,7 @@ oc login -u {user} -p openshift {cluster_api}
 If the login is successful, it should show an output similar to the following screenshot:
 
 .OC CLI Login Output 
+TODO change this image
 image::oc_login_output.png["OC CLI Login Output"]
 
 TIP: Please pay special attention to _oc CLI_  because you will need to use this tool several times during this tutorial.
@@ -75,7 +76,7 @@ TODO
 
 Following the GitOps practices, all the deployment configuration is stored in the git repo. We have created an initial repository that you will change to configure your deployment. As part of the demo, you will have to do some changes and commits. Fork the repository and clone it in your local machine, as you don't have write permissions on the initial git repo.
 
-1. Access the https://github.com/rhte2023-argo-rollouts/shop-application-helm-chart[Shop application Helm chart] repository and fork it on your GitHub account. If prompted, choose to fork the `main` branch.
+Access the https://github.com/rhte2023-argo-rollouts/shop-application-helm-chart[Shop application Helm chart] repository and fork it on your GitHub account. If prompted, choose to fork the `main` branch.
 
 [.console-input]
 [source,input,subs="+macros,+attributes"]

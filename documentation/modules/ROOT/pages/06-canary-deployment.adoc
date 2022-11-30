@@ -52,38 +52,8 @@ Looking at the Argo CD dashboard, you would notice that we have a new `shop` app
 
 TODO add image
 
-## Test Shop application
- 
-We have deployed the `shop` with ArgoCD. We can test that it is up and running.
- 
-We have to get the Online route
-[.console-input]
-[source,input,subs="+macros,+attributes"]
-----
-curl "$(oc get routes products-umbrella-online -n {user}-canary --template='https://{{.spec.host}}')/products"
-----
 
-Notice that in each microservice response we have added metadata information to see better the `version` of each application. This will help us to see the changes while we do the canary deployment.
-We can see that the current version is `v1.0.1`:
-[source,json]
-----
-{
-   "products":[
-      {
-         ...
-         "name":"TV 4K",
-         "price":"1500€"
-      }
-   ],
-   "metadata":{
-      "version":"v1.0.1", <--
-      "colour":"none",
-      "mode":"online"
-   }
-}
-----
-
-## Initial status
+## Application architecture
 
 To achieve canary deployment with `Cloud Native` applications using **Argo Rollouts**, we have designed this architecture.
 
@@ -140,6 +110,37 @@ products:
 ----
 TODO (improvement) uses Prometheus metrics
 
+## Test Shop application
+ 
+We have deployed the `shop` with ArgoCD. We can test that it is up and running.
+ 
+We have to get the Online route
+[.console-input]
+[source,input,subs="+macros,+attributes"]
+----
+curl "$(oc get routes products-umbrella-online -n {user}-canary --template='https://{{.spec.host}}')/products"
+----
+
+Notice that in each microservice response we have added metadata information to see better the `version` of each application. This will help us to see the changes while we do the canary deployment.
+We can see that the current version is `v1.0.1`:
+[source,json]
+----
+{
+   "products":[
+      {
+         ...
+         "name":"TV 4K",
+         "price":"1500€"
+      }
+   ],
+   "metadata":{
+      "version":"v1.0.1", <--
+      "colour":"none",
+      "mode":"online"
+   }
+}
+----
+
 ## Products canary deployment
 
 We have split a `Cloud Native` Canary deployment into three automatic step:
@@ -175,11 +176,11 @@ git push
 
  ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI.
 
-![Refresh Shop](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-Shop-Refresh.png)
+
 image::ArgoCD-Shop-Refresh.png["Refresh Shop"]
 
 This is our current status:
-![Shop Step 1](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-1.png)
+
 image::canary-rollout-step-1..png["Shop Step 1]"]
 
 [.console-input]
@@ -242,7 +243,7 @@ Old revision:
 ### Step 2 - Scale the canary version to 50%
 After 30 seconds **Argo Rollouts** automatically will increase the number of replicas in the new release to 2. Instead of increasing automatically after 30 seconds, we can configure **Argo Rollouts** to wait indefinitely until that `Pause` condition is removed. But this is not part of this demo.
 This is our current status:
-![Shop Step 2](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-2.png)
+
 image::canary-rollout-step-2.png["Shop Step 2"]
 
 [.console-input]
@@ -269,8 +270,8 @@ NAME                                  KIND        STATUS     AGE    INFO
 After another 30 seconds, **Argo Rollouts** will increase the number of replicas in the new release to 4 and scale down the old revision.
 
 This is our current status:
-![Shop Step 1](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-3.png)
-image::canary-rollout-step-3.png["Shop Step 1"]
+
+image::canary-rollout-step-3.png["Shop Step 3"]
 
 [.console-input]
 [source,input,subs="+macros,+attributes"]
@@ -353,8 +354,9 @@ git push
 **ArgoCD** will get the changes and apply them. **Argo Rollouts** will create a new revision with the previous version.
 
 The rollback is done!
-![Shop Step Rollback](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-Rollback.png)
+
 image::canary-rollout-step-Rollback.png["Shop Step Rollback"]
+
 [source,json]
 ----
 {

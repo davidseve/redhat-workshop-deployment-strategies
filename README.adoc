@@ -2,14 +2,14 @@
 
 ## Introduction
 
-_Red Hat Workshop - Deployment Strategies with Argo CD and Argo Rollouts_ is a repository which includes a tutorial with a set of practices for the purpose of practicing with Kubernetes Native GitOps model, Blue/Green deployment and canary deployment using Argo Rollouts
+_Red Hat Workshop - Deployment Strategies with Argo CD and Argo Rollouts_ is a repository which includes a tutorial with a set of practices for the purpose of practicing with Kubernetes Native GitOps model, *Blue/Green* deployment and *Canary* deployment using *Argo Rollouts*
 
 The general idea behind this workshop is to get an initial understanding of the following points:
 
-- Deploy microservice-based applications in Kubernetes using ArgoCD and Helm
-- Operate applications in Kubernetes using ArgoCD in a GitOps model
-- Blue/Green deployment for Cloud Native applications
-- Canary deployment for Cloud Native applications
+- Deploy microservice-based applications in Kubernetes using ArgoCD and Helm.
+- Operate applications in Kubernetes using ArgoCD in a GitOps model.
+- Blue/Green deployment for Cloud Native applications using Argo Rollouts.
+- Canary deployment for Cloud Native applications using Argo Rollouts.
 
 ## Courseware official documentation
 

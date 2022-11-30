@@ -21,7 +21,7 @@ The technical exercises included in this tutorial are based on cloud native solu
 - https://github.com/[GitHub] is a provider of Internet hosting for software development and version control using Git. It offers the distributed version control and source code management functionality of Git, plus its own features.
 - https://docs.openshift.com/container-platform/[Red Hat Openshift Container Platform Cluster] is an enterprise-ready Kubernetes container platform with full-stack automated operations to manage hybrid cloud, multicloud, and edge deployments. Red Hat OpenShift is optimized to improve developer productivity and promote innovation.
 - https://argoproj.github.io/argo-cd/[ArgoCD] is a declarative, GitOps continuous delivery tool for Kubernetes following the GitOps pattern of using Git repositories as the source of truth for defining the desired application state. Argo CD automates the deployment of the desired application states in the specified target environments. Application deployments can track updates to branches, tags, or pinned to a specific version of manifests at a Git commit.
-TODO add Argo Rollouts
+- https://argoproj.github.io/argo-rollouts/[Argo Rollouts] provides advanced deployment capabilities such as blue-green, canary, canary analysis, experimentation, and progressive delivery features to Kubernetes.
 - https://helm.sh/[Helm] is a tool to find, share, and use software built for Kubernetes. Helm helps users manage Kubernetes applications in terms of definition, installing, and upgrading even the most complex Kubernetes applications.
 
 
@@ -31,9 +31,9 @@ Please review the following list to have an overall understanding of the resourc
 
 - An Openshift cluster that will host and make available a set of applications deployed
 - An ArgoCD installation that allows attendees to deploy applications in a GitOps fashion
-TODO add Argo Rollouts
+- An Argo Rollouts installation that allows attendees to deploy applications using deployment strategies such as Blue/Green and Canary 
 - A set of GitHub repositories that include the templates and automatisms required to deploy a group of applications
-  - https://github.com/davidseve/cloud-native-deployment-strategies[GitHub - Cloud Native Deployment Strategies Repository] 
+- https://github.com/davidseve/cloud-native-deployment-strategies[GitHub - Cloud Native Deployment Strategies Repository] 
 
 
 [#01-parameters]
