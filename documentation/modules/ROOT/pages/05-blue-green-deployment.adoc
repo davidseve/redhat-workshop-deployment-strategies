@@ -19,11 +19,11 @@ For instance, the old version is the blue environment, while the new version is 
 In this example, we have two versions up and running in production: online and offline. We also have routers and services for offline and online pointing to the corresponding microservice. As explained above, we can deploy a new version of the microservice in the green service ("offline") and perform *smoke tests* against it to ensure that the new version will perform correctly when real traffic begins to arrive to Green.
 
 
-![Blue/Green](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green.png)
+image::blue-green.png["Blue/Green"]
 
 When a new version is ready for real users, we only have to modify the k8s service to point to the new deployment (Green) as in the following image. There is minimal downtime and we can do a rapid rollback just by undoing the changes in the service.
 
-![Blue/Green switch](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green-switch.png)
+image::blue-green-switch.png["Blue/Green switch"]
 
 As with great power comes great responsibility, you have to take the following into account:
 
@@ -35,9 +35,7 @@ As with great power comes great responsibility, you have to take the following i
 
 ## Deploy Shop Application
 
-TODO edit repo
-
-We are going to create the application `shop`, that we will use to test Blue/Green deployment. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just forked. Please edit the file `blue-green-argo-rollouts/application-shop-blue-green-rollouts.yaml` and set your own GitHub repository in the `reportURL`.
+We are going to create the application `shop`, that we will use to test Blue/Green deployment. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just forked. Please edit the following yaml and set your own GitHub repository in the `reportURL`.
 
 [source,yaml,subs="+macros,+attributes"]
 ----
@@ -68,11 +66,11 @@ spec:
       prune: false
       selfHeal: true
 ----
-TODO is it right?
+
 [.console-input]
 [source,input,subs="+macros,+attributes"]
 ----
-oc apply -f blue-green-argo-rollouts/application-shop-blue-green-rollouts.yaml
+oc apply -f application-shop-blue-green-rollouts.yaml
 ----
 
 Looking at the Argo CD dashboard, you would notice that we have a new `shop` application.
@@ -120,7 +118,7 @@ Because right now we have both routers against the same rollout revision we will
 To achieve Blue/Green deployment with `Cloud Native` applications using **Argo Rollouts**, we have designed this architecture.
 
 This is our current status:
-![Shop initial status](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-0.png)
+image::rollout-blue-green-step-0.png["Shop initial status"]
 
 OpenShift Components - Online
 
@@ -181,8 +179,6 @@ We have already deployed the products version v1.0.1, and we are ready to use a 
 
 ### Step 1 - Deploy a new version
  
- TODO is it the right path?
-
 We will deploy a new version v1.1.1. To do it, we have to edit the file `helm/quarkus-helm-umbrella/chart/values/blue-green/values-image-tag.yaml` under `products` set `tag` value to `v.1.1.1`
 
 [source,yaml,subs="+macros,+attributes"]
@@ -202,14 +198,9 @@ git commit -m "Change products version to v1.1.1"
 git push
 ----
 
- ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI or configure the Argo CD Git Webhook.[^note2].
- 
-[^note2]:
-    Here you can see how to configure the Argo CD Git [Webhook]( https://argo-cd.readthedocs.io/en/stable/operator-manual/webhook/)
-    ![Argo CD Git Webhook](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-webhook.png)
+ ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI.
 
-
-![Refresh Shop](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-Shop-Refresh.png)
+image::ArgoCD-Shop-Refresh.png["Refresh Shop"]
  
 **Argo Rollouts** will automatically deploy the new products version and execute the `prePromotionAnalysis`. 
 
@@ -232,7 +223,7 @@ NAME                                  KIND         STATUS        AGE  INFO
 If the `prePromotionAnalysis` goes well, we can see that offline applications have version v1.1.1 and the new attribute description, but the online version has not changed.
 
 This is our current status:
-![Shop Step 1](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-1.png)
+image::rollout-blue-green-step-1.png["Shop Step 1]"]
 
  
 [source,json]
@@ -285,7 +276,7 @@ NAME                                  KIND         STATUS        AGE  INFO
       └──□ products-67fc9fb79b-p7jk9  Pod          ✔ Running     88m  ready:1/1
 ----
 This is our current status:
-![Shop Step 2 initial](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-2-initial.png)
+image::rollout-blue-green-step-2-initial.png["Shop Step 2 initial"]
 
 And after `scaleDownDelaySeconds` **Argo Rollouts** will scale down the first replicaSet (v1.0.1).
  
@@ -304,7 +295,7 @@ And after `scaleDownDelaySeconds` **Argo Rollouts** will scale down the first re
 ----
 
 This is our final status:
-![Shop Step 2](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-2.png)
+image::rollout-blue-green-step-2.png["Shop Step 2"]
 
 **We have in the online environment the new version v1.1.1!!!**
 [source,json]
@@ -340,7 +331,7 @@ git push
 ----
 **ArgoCD** will get the changes and apply them. **Argo Rollouts** will create a new revision with the previous version.
 
-![Shop Step Rollback initial](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-rollback-initial.png)
+image::rollout-blue-green-step-rollback-initial.png["Shop Step Rollback initial"]
 
 Execute this command to promote products to version `v1.0.1`:
 [.console-input]
@@ -349,7 +340,7 @@ Execute this command to promote products to version `v1.0.1`:
 kubectl argo rollouts promote products -n {user}-blue-green
 ----
 The rollback is done!
-![Shop Step Rollback](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-rollback.png)
+image::rollout-blue-green-step-rollback.png["Shop Step Rollback"]
 [source,json]
 ----
 {

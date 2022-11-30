@@ -8,10 +8,7 @@ TODO explain more
 
 ## Deploy Shop Application
 
-TODO edit repo and file location
-
-
-We are going to create the application `shop`, that we will use to test canary deployment. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just forked. Please edit the file `canary-argo-rollouts/application-shop-canary-rollouts.yaml` and set your own GitHub repository in the `reportURL`.
+We are going to create the application `shop`, that we will use to test canary deployment. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just forked. Please edit the following yaml and set your own GitHub repository in the `reportURL`.
 
 [source,yaml,subs="+macros,+attributes"]
 ----
@@ -48,7 +45,7 @@ spec:
 [.console-input]
 [source,input,subs="+macros,+attributes"]
 ----
-oc apply -f canary-argo-rollouts/application-shop-canary-rollouts.yaml
+oc apply -f application-shop-canary-rollouts.yaml
 ----
 
 Looking at the Argo CD dashboard, you would notice that we have a new `shop` application.
@@ -91,6 +88,7 @@ We can see that the current version is `v1.0.1`:
 To achieve canary deployment with `Cloud Native` applications using **Argo Rollouts**, we have designed this architecture.
 
 ![Shop initial status](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-0.png)
+image::canary-rollout-step-0.png["Shop initial status"]
 
 OpenShift Components - Online
 
@@ -175,16 +173,14 @@ git commit -m "Change products version to v1.1.1"
 git push
 ----
 
- ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI or configure the Argo CD Git Webhook.[^note2].
- 
-[^note2]:
-    Here you can see how to configure the Argo CD Git [Webhook]( https://argo-cd.readthedocs.io/en/stable/operator-manual/webhook/)
-    ![Argo CD Git Webhook](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-webhook.png)
+ ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI.
 
 ![Refresh Shop](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-Shop-Refresh.png)
+image::ArgoCD-Shop-Refresh.png["Refresh Shop"]
 
 This is our current status:
 ![Shop Step 1](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-1.png)
+image::canary-rollout-step-1..png["Shop Step 1]"]
 
 [.console-input]
 [source,input,subs="+macros,+attributes"]
@@ -247,6 +243,7 @@ Old revision:
 After 30 seconds **Argo Rollouts** automatically will increase the number of replicas in the new release to 2. Instead of increasing automatically after 30 seconds, we can configure **Argo Rollouts** to wait indefinitely until that `Pause` condition is removed. But this is not part of this demo.
 This is our current status:
 ![Shop Step 2](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-2.png)
+image::canary-rollout-step-2.png["Shop Step 2"]
 
 [.console-input]
 [source,input,subs="+macros,+attributes"]
@@ -273,6 +270,7 @@ After another 30 seconds, **Argo Rollouts** will increase the number of replicas
 
 This is our current status:
 ![Shop Step 1](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-3.png)
+image::canary-rollout-step-3.png["Shop Step 1"]
 
 [.console-input]
 [source,input,subs="+macros,+attributes"]
@@ -356,6 +354,7 @@ git push
 
 The rollback is done!
 ![Shop Step Rollback](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-Rollback.png)
+image::canary-rollout-step-Rollback.png["Shop Step Rollback"]
 [source,json]
 ----
 {
@@ -373,6 +372,3 @@ The rollback is done!
 ----
 To get the application ready for a new release we should configure again the  **Argo Rollouts** with the steps.
 ## (optional)Canary deployment strategy with Service Mesh
-
-TODO quite similar to Canary deployment strategy
-

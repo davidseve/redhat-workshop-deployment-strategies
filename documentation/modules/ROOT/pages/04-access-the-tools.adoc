@@ -25,7 +25,7 @@ oc login -u {user} -p openshift {cluster_api}
 
 If the login is successful, it should show an output similar to the following screenshot:
 
-.OC CLI Login Output
+.OC CLI Login Output 
 image::oc_login_output.png["OC CLI Login Output"]
 
 TIP: Please pay special attention to _oc CLI_  because you will need to use this tool several times during this tutorial.
@@ -48,6 +48,7 @@ Access the https://console-openshift-console.apps.%CLUSTER%/k8s/cluster/projects
 Once logged in, you will see the same namespaces as using the `oc` command:
 
 .OCP web console projects view
+TODO change this image
 image::ocp_console_projects.png["OCP web console projects view"]
 
 
