@@ -206,45 +206,7 @@ spec:
 </div>
 </div>
 <div class="sect1">
-<h2 id="_test_shop_application"><a class="anchor" href="#_test_shop_application"></a>Test Shop application</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>We have deployed the <code>shop</code> with ArgoCD. We can test that it is up and running.</p>
-</div>
-<div class="paragraph">
-<p>We have to get the Online route</p>
-</div>
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">curl "$(oc get routes products-umbrella-online -n {user}-canary --template='https://{{.spec.host}}')/products"</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Notice that in each microservice response we have added metadata information to see better the <code>version</code> of each application. This will help us to see the changes while we do the canary deployment.
-We can see that the current version is <code>v1.0.1</code>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-   "products":[
-      {
-         ...
-         "name":"TV 4K",
-         "price":"1500€"
-      }
-   ],
-   "metadata":{
-      "version":"v1.0.1", &lt;--
-      "colour":"none",
-      "mode":"online"
-   }
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_initial_status"><a class="anchor" href="#_initial_status"></a>Initial status</h2>
+<h2 id="_application_architecture"><a class="anchor" href="#_application_architecture"></a>Application architecture</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>To achieve canary deployment with <code>Cloud Native</code> applications using <strong>Argo Rollouts</strong>, we have designed this architecture.</p>
@@ -319,6 +281,44 @@ image::canary-rollout-step-0.png["Shop initial status"]</p>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_test_shop_application"><a class="anchor" href="#_test_shop_application"></a>Test Shop application</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We have deployed the <code>shop</code> with ArgoCD. We can test that it is up and running.</p>
+</div>
+<div class="paragraph">
+<p>We have to get the Online route</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">curl "$(oc get routes products-umbrella-online -n {user}-canary --template='https://{{.spec.host}}')/products"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Notice that in each microservice response we have added metadata information to see better the <code>version</code> of each application. This will help us to see the changes while we do the canary deployment.
+We can see that the current version is <code>v1.0.1</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+   "products":[
+      {
+         ...
+         "name":"TV 4K",
+         "price":"1500€"
+      }
+   ],
+   "metadata":{
+      "version":"v1.0.1", &lt;--
+      "colour":"none",
+      "mode":"online"
+   }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_products_canary_deployment"><a class="anchor" href="#_products_canary_deployment"></a>Products canary deployment</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -371,14 +371,18 @@ git push</code></pre>
 <pre>ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI.</pre>
 </div>
 </div>
-<div class="paragraph">
-<p>![Refresh Shop](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-Shop-Refresh.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-Shop-Refresh.png</a>)
-image::ArgoCD-Shop-Refresh.png["Refresh Shop"]</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/ArgoCD-Shop-Refresh.png" alt="Refresh Shop">
+</div>
 </div>
 <div class="paragraph">
-<p>This is our current status:
-![Shop Step 1](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-1.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-1.png</a>)
-image::canary-rollout-step-1..png["Shop Step 1]"]</p>
+<p>This is our current status:</p>
+</div>
+<div class="imageblock unresolved">
+<div class="content">
+<img src="canary-rollout-step-1..png" alt="Shop Step 1]">
+</div>
 </div>
 <div class="listingblock console-input">
 <div class="content">
@@ -446,9 +450,12 @@ image::canary-rollout-step-1..png["Shop Step 1]"]</p>
 <h3 id="_step_2_scale_the_canary_version_to_50"><a class="anchor" href="#_step_2_scale_the_canary_version_to_50"></a>Step 2 - Scale the canary version to 50%</h3>
 <div class="paragraph">
 <p>After 30 seconds <strong>Argo Rollouts</strong> automatically will increase the number of replicas in the new release to 2. Instead of increasing automatically after 30 seconds, we can configure <strong>Argo Rollouts</strong> to wait indefinitely until that <code>Pause</code> condition is removed. But this is not part of this demo.
-This is our current status:
-![Shop Step 2](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-2.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-2.png</a>)
-image::canary-rollout-step-2.png["Shop Step 2"]</p>
+This is our current status:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/canary-rollout-step-2.png" alt="Shop Step 2">
+</div>
 </div>
 <div class="listingblock console-input">
 <div class="content">
@@ -476,9 +483,12 @@ image::canary-rollout-step-2.png["Shop Step 2"]</p>
 <p>After another 30 seconds, <strong>Argo Rollouts</strong> will increase the number of replicas in the new release to 4 and scale down the old revision.</p>
 </div>
 <div class="paragraph">
-<p>This is our current status:
-![Shop Step 1](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-3.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-3.png</a>)
-image::canary-rollout-step-3.png["Shop Step 1"]</p>
+<p>This is our current status:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/canary-rollout-step-3.png" alt="Shop Step 3">
+</div>
 </div>
 <div class="listingblock console-input">
 <div class="content">
@@ -574,9 +584,12 @@ git push</code></pre>
 <p><strong>ArgoCD</strong> will get the changes and apply them. <strong>Argo Rollouts</strong> will create a new revision with the previous version.</p>
 </div>
 <div class="paragraph">
-<p>The rollback is done!
-![Shop Step Rollback](<a href="https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-Rollback.png" class="bare">https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-Rollback.png</a>)
-image::canary-rollout-step-Rollback.png["Shop Step Rollback"]</p>
+<p>The rollback is done!</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/canary-rollout-step-Rollback.png" alt="Shop Step Rollback">
+</div>
 </div>
 <div class="listingblock">
 <div class="content">

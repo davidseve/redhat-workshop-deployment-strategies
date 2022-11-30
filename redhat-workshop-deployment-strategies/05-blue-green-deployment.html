@@ -274,7 +274,70 @@ spec:
 </div>
 </div>
 <div class="sect1">
-<h2 id="_test_shop_application"><a class="anchor" href="#_test_shop_application"></a>Test Shop application</h2>
+<h2 id="_initial_status"><a class="anchor" href="#_initial_status"></a>Initial status</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To achieve Blue/Green deployment with <code>Cloud Native</code> applications using <strong>Argo Rollouts</strong>, we have designed this architecture.</p>
+</div>
+<div class="paragraph">
+<p>This is our current status:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rollout-blue-green-step-0.png" alt="Shop initial status">
+</div>
+</div>
+<div class="paragraph">
+<p>OpenShift Components - Online</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Routes and Services declared with the suffix -online</p>
+</li>
+<li>
+<p>Routes mapped only to the online services</p>
+</li>
+<li>
+<p>Services mapped to the rollout.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>OpenShift Components - Offline</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Routes and Services declared with the suffix -offline</p>
+</li>
+<li>
+<p>Routes mapped only to the offline services</p>
+</li>
+<li>
+<p>Services mapped to the rollout</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>We have defined an active or online service 'products-umbrella-online' and a preview or offline service 'products-umbrella-offline'. Final user will always use 'products-umbrella-online'. We have created an AnalysisTemplate 'products-analysis-template' that just validates the health of the application, for production environments a better analysis should be done. <strong>Argo Rollouts</strong> use this AnalysisTemplate to validate a new version and set whether it is ready to be promoted or not. To learn more, please read [this](<a href="https://argoproj.github.io/argo-rollouts/features/bluegreen/" class="bare">https://argoproj.github.io/argo-rollouts/features/bluegreen/</a>).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">  strategy:
+    blueGreen:
+      activeService: products-umbrella-online
+      previewService: products-umbrella-offline
+      autoPromotionEnabled: false
+      prePromotionAnalysis:
+        templates:
+          - templateName: products-analysis-template</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_application_architecture"><a class="anchor" href="#_application_architecture"></a>Application architecture</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>We have deployed the <code>shop</code> with ArgoCD. We can test that it is up and running.</p>
@@ -317,50 +380,6 @@ Because right now we have both routers against the same rollout revision we will
 }</code></pre>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_initial_status"><a class="anchor" href="#_initial_status"></a>Initial status</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>To achieve Blue/Green deployment with <code>Cloud Native</code> applications using <strong>Argo Rollouts</strong>, we have designed this architecture.</p>
-</div>
-<div class="paragraph">
-<p>This is our current status:
-image::rollout-blue-green-step-0.png["Shop initial status"]</p>
-</div>
-<div class="paragraph">
-<p>OpenShift Components - Online</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Routes and Services declared with the suffix -online</p>
-</li>
-<li>
-<p>Routes mapped only to the online services</p>
-</li>
-<li>
-<p>Services mapped to the rollout.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>OpenShift Components - Offline</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Routes and Services declared with the suffix -offline</p>
-</li>
-<li>
-<p>Routes mapped only to the offline services</p>
-</li>
-<li>
-<p>Services mapped to the rollout</p>
-</li>
-</ul>
-</div>
 <div class="paragraph">
 <p>We can also see the rollout`s status[^note].</p>
 </div>
@@ -381,21 +400,6 @@ image::rollout-blue-green-step-0.png["Shop initial status"]</p>
    └──⧉ products-67fc9fb79b           ReplicaSet  ✔ Healthy  12m  stable,active
       ├──□ products-67fc9fb79b-49k25  Pod         ✔ Running  12m  ready:1/1
       └──□ products-67fc9fb79b-p7jk9  Pod         ✔ Running  12m  ready:1/1</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>We have defined an active or online service 'products-umbrella-online' and a preview or offline service 'products-umbrella-offline'. Final user will always use 'products-umbrella-online'. We have created an AnalysisTemplate 'products-analysis-template' that just validates the health of the application, for production environments a better analysis should be done. <strong>Argo Rollouts</strong> use this AnalysisTemplate to validate a new version and set whether it is ready to be promoted or not. To learn more, please read [this](<a href="https://argoproj.github.io/argo-rollouts/features/bluegreen/" class="bare">https://argoproj.github.io/argo-rollouts/features/bluegreen/</a>).</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">  strategy:
-    blueGreen:
-      activeService: products-umbrella-online
-      previewService: products-umbrella-offline
-      autoPromotionEnabled: false
-      prePromotionAnalysis:
-        templates:
-          - templateName: products-analysis-template</code></pre>
 </div>
 </div>
 </div>
@@ -474,8 +478,12 @@ git push</code></pre>
 <p>If the <code>prePromotionAnalysis</code> goes well, we can see that offline applications have version v1.1.1 and the new attribute description, but the online version has not changed.</p>
 </div>
 <div class="paragraph">
-<p>This is our current status:
-image::rollout-blue-green-step-1.png["Shop Step 1]"]</p>
+<p>This is our current status:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rollout-blue-green-step-1.png" alt="Shop Step 1]">
+</div>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -534,8 +542,12 @@ If this dependency is for example a production DB we will create the things that
 </div>
 </div>
 <div class="paragraph">
-<p>This is our current status:
-image::rollout-blue-green-step-2-initial.png["Shop Step 2 initial"]</p>
+<p>This is our current status:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rollout-blue-green-step-2-initial.png" alt="Shop Step 2 initial">
+</div>
 </div>
 <div class="paragraph">
 <p>And after <code>scaleDownDelaySeconds</code> <strong>Argo Rollouts</strong> will scale down the first replicaSet (v1.0.1).</p>
@@ -554,8 +566,12 @@ image::rollout-blue-green-step-2-initial.png["Shop Step 2 initial"]</p>
 </div>
 </div>
 <div class="paragraph">
-<p>This is our final status:
-image::rollout-blue-green-step-2.png["Shop Step 2"]</p>
+<p>This is our final status:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rollout-blue-green-step-2.png" alt="Shop Step 2">
+</div>
 </div>
 <div class="paragraph">
 <p><strong>We have in the online environment the new version v1.1.1!!!</strong></p>
