@@ -457,10 +457,8 @@ git commit -m "Change products version to v1.1.1"
 git push</code></pre>
 </div>
 </div>
-<div class="literalblock">
-<div class="content">
-<pre>ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI.</pre>
-</div>
+<div class="paragraph">
+<p>ArgoCD will refresh the status after some minutes. If you don&#8217;t want to wait you can refresh it manually from ArgoCD UI.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -611,7 +609,7 @@ If this dependency is for example a production DB we will create the things that
 <p>Imagine that something goes wrong, we know that this never happens but just in case. We can do a very <code>quick rollback</code> just by undoing the change in the <code>Products</code> online service.</p>
 </div>
 <div class="paragraph">
-<p><strong>Argo Rollouts</strong> has an [undo](<a href="https://argoproj.github.io/argo-rollouts/generated/kubectl-argo-rollouts/kubectl-argo-rollouts_undo/" class="bare">https://argoproj.github.io/argo-rollouts/generated/kubectl-argo-rollouts/kubectl-argo-rollouts_undo/</a>) command to do the rollback. In my opinion, I don&#8217;t like this procedure because it is not aligned with GitOps. The changes that <strong>Argo Rollouts</strong> do does not come from git, so git is OutOfSync with what we have in Openshift.
+<p><strong>Argo Rollouts</strong> has an <a href="https://argoproj.github.io/argo-rollouts/generated/kubectl-argo-rollouts/kubectl-argo-rollouts_undo/">undo</a> command to do the rollback. In our opinion, we don&#8217;t like this procedure because it is not aligned with GitOps. The changes that <strong>Argo Rollouts</strong> do does not come from git, so git is OutOfSync with what we have in Openshift.
 In our case the commit that we have done not only changes the ReplicaSet but also the ConfigMap. The <code>undo</code> command only changes the ReplicaSet, so it does not work for us.</p>
 </div>
 <div class="paragraph">
@@ -640,8 +638,12 @@ git push</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The rollback is done!
-image::rollout-blue-green-step-rollback.png["Shop Step Rollback"]</p>
+<p>The rollback is done!</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rollout-blue-green-step-rollback.png" alt="Shop Step Rollback">
+</div>
 </div>
 <div class="listingblock">
 <div class="content">
