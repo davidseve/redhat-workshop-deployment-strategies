@@ -69,7 +69,7 @@ OpenShift Components - Online
 In Blue/Green deployment we always have an offline service to test the version that is not in production. In the case of canary deployment we do not need it because progressively we will have the new version in production. 
 
 
-We can also see the rollout`s status[^note].
+We can also see the rollout`s status.
 
 
 [.console-input]

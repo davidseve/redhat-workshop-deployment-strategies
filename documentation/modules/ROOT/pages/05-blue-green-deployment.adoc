@@ -77,7 +77,7 @@ Looking at the Argo CD dashboard, you would notice that we have a new `shop` app
 
 TODO add image
 
-## Initial status
+## Application architecture
 
 To achieve Blue/Green deployment with `Cloud Native` applications using **Argo Rollouts**, we have designed this architecture.
 
@@ -97,7 +97,9 @@ OpenShift Components - Offline
 - Routes mapped only to the offline services
 - Services mapped to the rollout
 
-We have defined an active or online service 'products-umbrella-online' and a preview or offline service 'products-umbrella-offline'. Final user will always use 'products-umbrella-online'. We have created an AnalysisTemplate 'products-analysis-template' that just validates the health of the application, for production environments a better analysis should be done. **Argo Rollouts** use this AnalysisTemplate to validate a new version and set whether it is ready to be promoted or not. To learn more, please read [this](https://argoproj.github.io/argo-rollouts/features/bluegreen/).
+We have defined an active or online service 'products-umbrella-online' and a preview or offline service 'products-umbrella-offline'. Final user will always use 'products-umbrella-online'. 
+
+We have created an AnalysisTemplate 'products-analysis-template' that just validates the health of the application, for production environments a better analysis should be done. **Argo Rollouts** use this AnalysisTemplate to validate a new version and set whether it is ready to be promoted or not. To learn more, please read https://argoproj.github.io/argo-rollouts/features/bluegreen/[this].
 
 [source,yaml,subs="+macros,+attributes"]
 ----
@@ -111,7 +113,7 @@ We have defined an active or online service 'products-umbrella-online' and a pre
           - templateName: products-analysis-template
 ----
 
-## Application architecture
+## Test Shop application
  
 We have deployed the `shop` with ArgoCD. We can test that it is up and running.
  
@@ -149,10 +151,9 @@ Because right now we have both routers against the same rollout revision we will
 ----
 
 
-We can also see the rollout`s status[^note].
+We can also see the rollout`s status.
 
-[^note]:
-    Argo Rollouts offers a Kubectl plugin to enrich the experience with Rollouts https://argoproj.github.io/argo-rollouts/installation/#kubectl-plugin-installation 
+TIP: Argo Rollouts offers a Kubectl plugin to enrich the experience with Rollouts https://argoproj.github.io/argo-rollouts/installation/#kubectl-plugin-installation 
 
 [.console-input]
 [source,input,subs="+macros,+attributes"]
@@ -160,7 +161,7 @@ We can also see the rollout`s status[^note].
 kubectl argo rollouts get rollout products --watch -n {user}-blue-green
 ----
 
-[.console-input]
+[.console-output]
 [source,input,subs="+macros,+attributes"]
 ----
 NAME                                  KIND        STATUS     AGE INFO
