@@ -139,7 +139,8 @@ This is just an example. The key point here is that very easily we can have the 
  
 We will deploy a new version V2.0.0. To do it, we have to edit the file `helm/helm-umbrella-dstrategies/chart/values/canary/values-image-tag.yaml` under `dstrategies-back` set `tag` value to `v.1.1.1`
 
-[source,yaml,subs="+macros,+attributes"]
+[.console-input]
+[source,input,yaml,subs="+macros,+attributes"]
 ----
 dstrategies-back:
    image:
@@ -274,7 +275,9 @@ Because we have our **Argo Rollouts** configuration as values in our Helm Chart,
 In the file `helm/helm-umbrella-dstrategies/chart/values/canary/values-rollouts-strategy.yaml` under `dstrategies-back` under the `steps` delete all the steps and only set one step `- setWeight: 100`
 
 `helm/helm-umbrella-dstrategies/chart/values/canary/values-rollouts-strategy.yaml` should looks like:
-[source,yaml,subs="+macros,+attributes"]
+
+[.console-input]
+[source,input,yaml,subs="+macros,+attributes"]
 ----
 dstrategies-back:
    rollouts:
