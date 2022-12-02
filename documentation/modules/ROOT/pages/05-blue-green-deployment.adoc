@@ -168,18 +168,18 @@ We have split a `Cloud Native` Blue/Green deployment into two steps:
  
 
  
-We have already deployed the dstrategies-back version v1.0.0, and we are ready to use a new dstrategies-back version V2.0.0 that has a new `description` attribute.
+We have already deployed the dstrategies-back version V1.0.0, and we are ready to use a new dstrategies-back version V2.0.0 that has a new `description` attribute.
 
 ### Step 1 - Deploy a new version
  
-We will deploy a new version V2.0.0. To do it, we have to edit the file `helm/helm-dstrategies/chart/values/blue-green/values-image-tag.yaml` under `dstrategies-back` set `tag` value to `v.1.1.1`
+We will deploy a new version `V2.0.0`. To do it, we have to edit the file `helm/helm-dstrategies/chart/values/blue-green/values-image-tag.yaml` under `dstrategies-back` set `tag` value to `V2.0.0`
 
 [.console-input]
 [source,input,yaml,subs="+macros,+attributes"]
 ----
 dstrategies-back:
    image:
-   tag: v2.0.0
+     tag: V2.0.0
 ----
 
 And push the changes
@@ -302,7 +302,7 @@ git push
 
 image::rollout-blue-green-step-rollback-initial.png["Shop Step Rollback initial"]
 
-Execute this command to promote dstrategies-back to version `v1.0.0`:
+Execute this command to promote dstrategies-back to version `V1.0.0`:
 [.console-input]
 [source,input,subs="+macros,+attributes"]
 ----
