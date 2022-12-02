@@ -8,14 +8,14 @@ TODO explain more
 
 ## Deploy Shop Application
 
-We are going to create the application `shop`, that we will use to test canary deployment. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just forked. Please edit the following yaml and set your own GitHub repository in the `reportURL`.
+We are going to create the application `dstrategies`, that we will use to test canary deployment. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just forked. Please edit the following yaml and set your own GitHub repository in the `reportURL`. Create a file called `application-dstrategies-canary.yaml`
 
 [source,yaml,subs="+macros,+attributes"]
 ----
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: shop-canary
+  name: dstrategies-canary
   namespace: {user}-gitops-argocd
 spec:
   destination:
@@ -23,8 +23,8 @@ spec:
     namespace: {user}-canary
     server: 'https://kubernetes.default.svc'
   source:
-    path: helm/quarkus-helm-umbrella/chart
-    repoURL: https://github.com/change_me/shop-application-helm-chart
+    path: helm/helm-umbrella-dstrategies/chart
+    repoURL: https://github.com/change_me/dstrategies-helm-chart
     targetRevision: HEAD
     helm:
       parameters:
@@ -45,10 +45,10 @@ spec:
 [.console-input]
 [source,input,subs="+macros,+attributes"]
 ----
-oc apply -f application-shop-canary-rollouts.yaml
+oc apply -f application-dstrategies-canary.yaml
 ----
 
-Looking at the Argo CD dashboard, you would notice that we have a new `shop` application.
+Looking at the Argo CD dashboard, you would notice that we have a new `dstrategies` application.
 
 TODO add image
 
@@ -74,73 +74,57 @@ We can also see the rollout`s status.
 [.console-input]
 [source,input,subs="+macros,+attributes"]
 ----
-kubectl argo rollouts get rollout products --watch -n {user}-canary
+kubectl argo rollouts get rollout dstrategies-back --watch -n {user}-canary
 ----
 
 [.console-output]
 [source,input,subs="+macros,+attributes"]
 ----
 NAME                                  KIND        STATUS     AGE  INFO
-⟳ products                            Rollout     ✔ Healthy  38s  
+⟳ dstrategies-back                            Rollout     ✔ Healthy  38s  
 └──# revision:1                                                   
-   └──⧉ products-67fc9fb79b           ReplicaSet  ✔ Healthy  38s  stable
-      ├──□ products-67fc9fb79b-4ql4z  Pod         ✔ Running  38s  ready:1/1
-      ├──□ products-67fc9fb79b-7c4jw  Pod         ✔ Running  38s  ready:1/1
-      ├──□ products-67fc9fb79b-lz86j  Pod         ✔ Running  38s  ready:1/1
-      └──□ products-67fc9fb79b-xlkhp  Pod         ✔ Running  38s  ready:1/1
+   └──⧉ dstrategies-back-67fc9fb79b           ReplicaSet  ✔ Healthy  38s  stable
+      ├──□ dstrategies-back-67fc9fb79b-4ql4z  Pod         ✔ Running  38s  ready:1/1
+      ├──□ dstrategies-back-67fc9fb79b-7c4jw  Pod         ✔ Running  38s  ready:1/1
+      ├──□ dstrategies-back-67fc9fb79b-lz86j  Pod         ✔ Running  38s  ready:1/1
+      └──□ dstrategies-back-67fc9fb79b-xlkhp  Pod         ✔ Running  38s  ready:1/1
 ----
 
-We have defined an active or online service 'products-umbrella-online'. Final user will always use 'products-umbrella-online'. When a new version is deployed **Argo Rollouts** create a new revision (ReplicaSet). The number of replicas in the new release increases based on the information in the steps, and the number of replicas in the old release decreases by the same number. We have configured a pause duration between each step. To learn more about **Argo Rollouts**, please read [this](https://argoproj.github.io/argo-rollouts/features/canary/).
+We have defined an active or online service 'dstrategies-back-online'. Final user will always use 'dstrategies-back-online'. When a new version is deployed **Argo Rollouts** create a new revision (ReplicaSet). The number of replicas in the new release increases based on the information in the steps, and the number of replicas in the old release decreases by the same number. We have configured a pause duration between each step. To learn more about **Argo Rollouts**, please read [this](https://argoproj.github.io/argo-rollouts/features/canary/).
 
-This is how we have configured **Argo Rollouts** strategy for this demo, you can check it here `helm/quarkus-helm-umbrella/chart/values/canary/values-rollouts-strategy.yaml`
+This is how we have configured **Argo Rollouts** strategy for this demo, you can check it here `helm/helm-umbrella-dstrategies/chart/values/canary/values-rollouts-strategy.yaml`
 [source,yaml,subs="+macros,+attributes"]
 ----
-products:
-  quarkus-base:
-    rollouts:
-      canary:
-        steps:
-          - setWeight: 25
-          - pause:
-              duration: 30s
-          - setWeight: 50
-          - pause:
-              duration: 30s
+dstrategies-back:
+   rollouts:
+   canary:
+      steps:
+         - setWeight: 25
+         - pause:
+            duration: 30s
+         - setWeight: 50
+         - pause:
+            duration: 30s
 ----
 TODO (improvement) uses Prometheus metrics
 
 ## Test Shop application
  
-We have deployed the `shop` with ArgoCD. We can test that it is up and running.
+We have deployed the `dstrategies` with ArgoCD. We can test that it is up and running.
  
+ TODO change to front image
 We have to get the Online route
 [.console-input]
 [source,input,subs="+macros,+attributes"]
 ----
-curl "$(oc get routes products-umbrella-online -n {user}-canary --template='https://{{.spec.host}}')/products"
+curl "$(oc get routes dstrategies-back-online -n {user}-canary --template='https://{{.spec.host}}')/dstrategies-back"
 ----
 
 Notice that in each microservice response we have added metadata information to see better the `version` of each application. This will help us to see the changes while we do the canary deployment.
-We can see that the current version is `v1.0.1`:
-[source,json]
-----
-{
-   "products":[
-      {
-         ...
-         "name":"TV 4K",
-         "price":"1500€"
-      }
-   ],
-   "metadata":{
-      "version":"v1.0.1", <--
-      "colour":"none",
-      "mode":"online"
-   }
-}
-----
+We can see that the current version is `V1.0.0`:
 
-## Products canary deployment
+
+## Dstrategies-back canary deployment
 
 We have split a `Cloud Native` Canary deployment into three automatic step:
 
@@ -152,24 +136,23 @@ This is just an example. The key point here is that very easily we can have the 
 
 ### Step 1 - Deploy the canary version for 10%
  
-We will deploy a new version v1.1.1. To do it, we have to edit the file `helm/quarkus-helm-umbrella/chart/values/canary/values-image-tag.yaml` under `products` set `tag` value to `v.1.1.1`
+We will deploy a new version V2.0.0. To do it, we have to edit the file `helm/helm-umbrella-dstrategies/chart/values/canary/values-image-tag.yaml` under `dstrategies-back` set `tag` value to `v.1.1.1`
 
 [source,yaml,subs="+macros,+attributes"]
 ----
-products:
-  quarkus-base:
-    image:
-      tag: v1.1.1
+dstrategies-back:
+   image:
+   tag: V2.0.0
 ----
 
-**Argo Rollouts** will automatically deploy a new products revision. The canary version will be 10% of the replicas. In this demo we are no using [traffic management](https://argoproj.github.io/argo-rollouts/features/traffic-management/). **Argo Rollouts** makes a best-effort attempt to achieve the percentage listed in the last setWeight step between the new and old version. This means that it will create only one replica in the new revision because it is rounded up. All the requests are load balanced between the old and the new replicas.
+**Argo Rollouts** will automatically deploy a new dstrategies-back revision. The canary version will be 10% of the replicas. In this demo we are no using [traffic management](https://argoproj.github.io/argo-rollouts/features/traffic-management/). **Argo Rollouts** makes a best-effort attempt to achieve the percentage listed in the last setWeight step between the new and old version. This means that it will create only one replica in the new revision because it is rounded up. All the requests are load balanced between the old and the new replicas.
 
 Push the changes to start the deployment.
 [.console-input]
 [source,input,subs="+macros,+attributes"]
 ----
 git add .
-git commit -m "Change products version to v1.1.1"
+git commit -m "Change dstrategies-back version to V2.0.0"
 git push
 ----
 
@@ -185,59 +168,31 @@ image::canary-rollout-step-1..png["Shop Step 1]"]
 [.console-input]
 [source,input,subs="+macros,+attributes"]
 ----
-kubectl argo rollouts get rollout products --watch -n {user}-canary
+kubectl argo rollouts get rollout dstrategies-back --watch -n {user}-canary
 ----
 [.console-output]
 [source,input,subs="+macros,+attributes"]
 ----
 NAME                                  KIND        STATUS     AGE    INFO
-⟳ products                            Rollout     ॥ Paused   3m13s  
+⟳ dstrategies-back                            Rollout     ॥ Paused   3m13s  
 ├──# revision:2                                                     
-│  └──⧉ products-9dc6f576f            ReplicaSet  ✔ Healthy  8s     canary
-│     └──□ products-9dc6f576f-fwq8m   Pod         ✔ Running  8s     ready:1/1
+│  └──⧉ dstrategies-back-9dc6f576f            ReplicaSet  ✔ Healthy  8s     canary
+│     └──□ dstrategies-back-9dc6f576f-fwq8m   Pod         ✔ Running  8s     ready:1/1
 └──# revision:1                                                     
-   └──⧉ products-67fc9fb79b           ReplicaSet  ✔ Healthy  3m13s  stable
-      ├──□ products-67fc9fb79b-4ql4z  Pod         ✔ Running  3m13s  ready:1/1
-      ├──□ products-67fc9fb79b-lz86j  Pod         ✔ Running  3m13s  ready:1/1
-      └──□ products-67fc9fb79b-xlkhp  Pod         ✔ Running  3m13s  ready:1/1
+   └──⧉ dstrategies-back-67fc9fb79b           ReplicaSet  ✔ Healthy  3m13s  stable
+      ├──□ dstrategies-back-67fc9fb79b-4ql4z  Pod         ✔ Running  3m13s  ready:1/1
+      ├──□ dstrategies-back-67fc9fb79b-lz86j  Pod         ✔ Running  3m13s  ready:1/1
+      └──□ dstrategies-back-67fc9fb79b-xlkhp  Pod         ✔ Running  3m13s  ready:1/1
 ----
 
-In the products URL response, you will have the new version in 25% of the requests.
+TODO chang to front image
+In the dstrategies-back URL response, you will have the new version in 25% of the requests.
 
 New revision:
-[source,json]
-----
-{
-  "products":[
-     {
-        "discountInfo":{...},
-        "name":"TV 4K",
-        "price":"1500€",
-        "description":"The best TV" <--
-     }
-  ],
-  "metadata":{
-     "version":"v1.1.1", <--
-  }
-}
-----
+
 
 Old revision:
-[source,json]
-----
-{
-  "products":[
-     {
-        "discountInfo":{...},
-        "name":"TV 4K",
-        "price":"1500€"
-     }
-  ],
-  "metadata":{
-     "version":"v1.0.1", <--
-  }
-}
-----
+
 
 ### Step 2 - Scale the canary version to 50%
 After 30 seconds **Argo Rollouts** automatically will increase the number of replicas in the new release to 2. Instead of increasing automatically after 30 seconds, we can configure **Argo Rollouts** to wait indefinitely until that `Pause` condition is removed. But this is not part of this demo.
@@ -248,21 +203,21 @@ image::canary-rollout-step-2.png["Shop Step 2"]
 [.console-input]
 [source,input,subs="+macros,+attributes"]
 ----
-kubectl argo rollouts get rollout products --watch -n {user}-canary
+kubectl argo rollouts get rollout dstrategies-back --watch -n {user}-canary
 ----
 [.console-output]
 [source,input,subs="+macros,+attributes"]
 ----
 NAME                                  KIND        STATUS     AGE    INFO
-⟳ products                            Rollout     ॥ Paused   3m47s  
+⟳ dstrategies-back                            Rollout     ॥ Paused   3m47s  
 ├──# revision:2                                                     
-│  └──⧉ products-9dc6f576f            ReplicaSet  ✔ Healthy  42s    canary
-│     ├──□ products-9dc6f576f-fwq8m   Pod         ✔ Running  42s    ready:1/1
-│     └──□ products-9dc6f576f-8qppq   Pod         ✔ Running  6s     ready:1/1
+│  └──⧉ dstrategies-back-9dc6f576f            ReplicaSet  ✔ Healthy  42s    canary
+│     ├──□ dstrategies-back-9dc6f576f-fwq8m   Pod         ✔ Running  42s    ready:1/1
+│     └──□ dstrategies-back-9dc6f576f-8qppq   Pod         ✔ Running  6s     ready:1/1
 └──# revision:1                                                     
-   └──⧉ products-67fc9fb79b           ReplicaSet  ✔ Healthy  3m47s  stable
-      ├──□ products-67fc9fb79b-lz86j  Pod         ✔ Running  3m47s  ready:1/1
-      └──□ products-67fc9fb79b-xlkhp  Pod         ✔ Running  3m47s  ready:1/1
+   └──⧉ dstrategies-back-67fc9fb79b           ReplicaSet  ✔ Healthy  3m47s  stable
+      ├──□ dstrategies-back-67fc9fb79b-lz86j  Pod         ✔ Running  3m47s  ready:1/1
+      └──□ dstrategies-back-67fc9fb79b-xlkhp  Pod         ✔ Running  3m47s  ready:1/1
 ----
 
 ### Step 3 - Scale the canary version to 100%
@@ -275,40 +230,27 @@ image::canary-rollout-step-3.png["Shop Step 3"]
 [.console-input]
 [source,input,subs="+macros,+attributes"]
 ----
-kubectl argo rollouts get rollout products --watch -n {user}-canary
+kubectl argo rollouts get rollout dstrategies-back --watch -n {user}-canary
 ----
 [.console-output]
 [source,input,subs="+macros,+attributes"]
 ----
 NAME                                 KIND        STATUS        AGE    INFO
-⟳ products                           Rollout     ✔ Healthy     4m32s  
+⟳ dstrategies-back                           Rollout     ✔ Healthy     4m32s  
 ├──# revision:2                                                       
-│  └──⧉ products-9dc6f576f           ReplicaSet  ✔ Healthy     87s    stable
-│     ├──□ products-9dc6f576f-fwq8m  Pod         ✔ Running     87s    ready:1/1
-│     ├──□ products-9dc6f576f-8qppq  Pod         ✔ Running     51s    ready:1/1
-│     ├──□ products-9dc6f576f-5ch92  Pod         ✔ Running     17s    ready:1/1
-│     └──□ products-9dc6f576f-kmvdh  Pod         ✔ Running     17s    ready:1/1
+│  └──⧉ dstrategies-back-9dc6f576f           ReplicaSet  ✔ Healthy     87s    stable
+│     ├──□ dstrategies-back-9dc6f576f-fwq8m  Pod         ✔ Running     87s    ready:1/1
+│     ├──□ dstrategies-back-9dc6f576f-8qppq  Pod         ✔ Running     51s    ready:1/1
+│     ├──□ dstrategies-back-9dc6f576f-5ch92  Pod         ✔ Running     17s    ready:1/1
+│     └──□ dstrategies-back-9dc6f576f-kmvdh  Pod         ✔ Running     17s    ready:1/1
 └──# revision:1                                                       
-   └──⧉ products-67fc9fb79b          ReplicaSet  • ScaledDown  4m32s  
+   └──⧉ dstrategies-back-67fc9fb79b          ReplicaSet  • ScaledDown  4m32s  
 ----
 
-**We have in the online environment the new version v1.1.1!!!**
-[source,json]
-----
-{
-  "products":[
-     {
-        "discountInfo":{...},
-        "name":"TV 4K",
-        "price":"1500€",
-        "description":"The best TV" <--
-     }
-  ],
-  "metadata":{
-     "version":"v1.1.1", <--
-  }
-}
-----
+**We have in the online environment the new version V2.0.0!!!**
+
+TODO chang to front image
+
 
 ### Rollback
 
@@ -328,17 +270,16 @@ If we just revert the changes in git we will go back to the previous version. Bu
 
 Because we have our **Argo Rollouts** configuration as values in our Helm Chart, we have just to edit the values.yaml that we are using.
 
-In the file `helm/quarkus-helm-umbrella/chart/values/canary/values-rollouts-strategy.yaml` under `products` under the `steps` delete all the steps and only set one step `- setWeight: 100`
+In the file `helm/helm-umbrella-dstrategies/chart/values/canary/values-rollouts-strategy.yaml` under `dstrategies-back` under the `steps` delete all the steps and only set one step `- setWeight: 100`
 
-`helm/quarkus-helm-umbrella/chart/values/canary/values-rollouts-strategy.yaml` should looks like:
+`helm/helm-umbrella-dstrategies/chart/values/canary/values-rollouts-strategy.yaml` should looks like:
 [source,yaml,subs="+macros,+attributes"]
 ----
-products:
-  quarkus-base:
-    rollouts:
-      canary:
-        steps:
-          - setWeight: 100
+dstrategies-back:
+   rollouts:
+   canary:
+      steps:
+         - setWeight: 100
 ----
 
 Execute those commands to push the changes:
@@ -356,20 +297,8 @@ The rollback is done!
 
 image::canary-rollout-step-Rollback.png["Shop Step Rollback"]
 
-[source,json]
-----
-{
-  "products":[
-     {
-        "discountInfo":{...},
-        "name":"TV 4K",
-        "price":"1500€"
-     }
-  ],
-  "metadata":{
-     "version":"v1.0.1", <--
-  }
-}
-----
+TODO chang to front image
+
+
 To get the application ready for a new release we should configure again the  **Argo Rollouts** with the steps.
 

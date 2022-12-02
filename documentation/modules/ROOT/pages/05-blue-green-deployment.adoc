@@ -35,14 +35,14 @@ As with great power comes great responsibility, you have to take the following i
 
 ## Deploy Shop Application
 
-We are going to create the application `shop`, that we will use to test Blue/Green deployment. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just forked. Please edit the following yaml and set your own GitHub repository in the `reportURL`.
+We are going to create the application `dstrategies`, that we will use to test Blue/Green deployment. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just forked. Please edit the following yaml and set your own GitHub repository in the `reportURL`. Create a file called `application-dstrategies-blue-green.yaml`
 
 [source,yaml,subs="+macros,+attributes"]
 ----
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: shop-blue-green
+  name: dstrategies-blue-green
   namespace: {user}-gitops-argocd
 spec:
   destination:
@@ -50,8 +50,8 @@ spec:
     namespace: {user}-blue-green
     server: 'https://kubernetes.default.svc'
   source:
-    path: helm/quarkus-helm-umbrella/chart
-    repoURL: https://github.com/rhte2023-argo-rollouts/shop-application-helm-chart
+    path: helm/helm-umbrella-dstrategies/chart
+    repoURL: https://github.com/change_me/dstrategies-helm-chart
     targetRevision: HEAD
     helm:
       parameters:
@@ -70,10 +70,10 @@ spec:
 [.console-input]
 [source,input,subs="+macros,+attributes"]
 ----
-oc apply -f application-shop-blue-green-rollouts.yaml
+oc apply -f application-dstrategies-blue-green.yaml
 ----
 
-Looking at the Argo CD dashboard, you would notice that we have a new `shop` application.
+Looking at the Argo CD dashboard, you would notice that we have a new `dstrategies` application.
 
 TODO add image
 
@@ -83,6 +83,7 @@ To achieve Blue/Green deployment with `Cloud Native` applications using **Argo R
 
 This is our current status:
 
+TODO
 image::rollout-blue-green-step-0.png["Shop initial status"]
 
 OpenShift Components - Online
@@ -97,58 +98,44 @@ OpenShift Components - Offline
 - Routes mapped only to the offline services
 - Services mapped to the rollout
 
-We have defined an active or online service 'products-umbrella-online' and a preview or offline service 'products-umbrella-offline'. Final user will always use 'products-umbrella-online'. 
+We have defined an active or online service 'dstrategies-back-online' and a preview or offline service 'dstrategies-back-offline'. Final user will always use 'dstrategies-back-online'. 
 
-We have created an AnalysisTemplate 'products-analysis-template' that just validates the health of the application, for production environments a better analysis should be done. **Argo Rollouts** use this AnalysisTemplate to validate a new version and set whether it is ready to be promoted or not. To learn more, please read https://argoproj.github.io/argo-rollouts/features/bluegreen/[this].
+We have created an AnalysisTemplate 'dstrategies-back-analysis-template' that just validates the health of the application, for production environments a better analysis should be done. **Argo Rollouts** use this AnalysisTemplate to validate a new version and set whether it is ready to be promoted or not. To learn more, please read https://argoproj.github.io/argo-rollouts/features/bluegreen/[this].
 
 [source,yaml,subs="+macros,+attributes"]
 ----
   strategy:
     blueGreen:
-      activeService: products-umbrella-online
-      previewService: products-umbrella-offline      
+      activeService: dstrategies-back-online
+      previewService: dstrategies-back-offline      
       autoPromotionEnabled: false
       prePromotionAnalysis:
         templates:
-          - templateName: products-analysis-template
+          - templateName: dstrategies-back-analysis-template
 ----
 
 ## Test Shop application
  
-We have deployed the `shop` with ArgoCD. We can test that it is up and running.
+We have deployed the `dstrategies` with ArgoCD. We can test that it is up and running.
+
+TODO change to front
  
 We have to get the Online route
 [.console-input]
 [source,input,subs="+macros,+attributes"]
 ----
-curl "$(oc get routes products-umbrella-online -n {user}-blue-green --template='https://{{.spec.host}}')/products"
+curl "$(oc get routes dstrategies-back-online -n {user}-blue-green --template='https://{{.spec.host}}')/dstrategies-back"
 ----
 And the Offline route
 [.console-input]
 [source,input,subs="+macros,+attributes"]
 ----
-curl "$(oc get routes products-umbrella-offline -n {user}-blue-green --template='https://{{.spec.host}}')/products"
+curl "$(oc get routes dstrategies-back-offline -n {user}-blue-green --template='https://{{.spec.host}}')/dstrategies-back"
 ----
 Notice that in each microservice response we have added metadata information to see better the `version` of each application. This will help us to see the changes while we do the Blue/Green deployment.
-Because right now we have both routers against the same rollout revision we will have the same response with version `v1.0.1`:
+Because right now we have both routers against the same rollout revision we will have the same response with version `V1.0.0`:
 
-[source,json]
-----
-{
-   "products":[
-      {
-         ...
-         "name":"TV 4K",
-         "price":"1500€"
-      }
-   ],
-   "metadata":{
-      "version":"v1.0.1", <--
-      "colour":"none",
-      "mode":"online"
-   }
-}
-----
+
 
 
 We can also see the rollout`s status.
@@ -158,21 +145,21 @@ TIP: Argo Rollouts offers a Kubectl plugin to enrich the experience with Rollout
 [.console-input]
 [source,input,subs="+macros,+attributes"]
 ----
-kubectl argo rollouts get rollout products --watch -n {user}-blue-green
+kubectl argo rollouts get rollout dstrategies-back --watch -n {user}-blue-green
 ----
 
 [.console-output]
 [source,input,subs="+macros,+attributes"]
 ----
 NAME                                  KIND        STATUS     AGE INFO
-⟳ products                            Rollout     ✔ Healthy  12m  
+⟳ dstrategies-back                            Rollout     ✔ Healthy  12m  
 └──# revision:1                                                   
-   └──⧉ products-67fc9fb79b           ReplicaSet  ✔ Healthy  12m  stable,active
-      ├──□ products-67fc9fb79b-49k25  Pod         ✔ Running  12m  ready:1/1
-      └──□ products-67fc9fb79b-p7jk9  Pod         ✔ Running  12m  ready:1/1
+   └──⧉ dstrategies-back-67fc9fb79b           ReplicaSet  ✔ Healthy  12m  stable,active
+      ├──□ dstrategies-back-67fc9fb79b-49k25  Pod         ✔ Running  12m  ready:1/1
+      └──□ dstrategies-back-67fc9fb79b-p7jk9  Pod         ✔ Running  12m  ready:1/1
 ----
 
-## Products Blue/Green deployment
+## Dstrategies-back Blue/Green deployment
 We have split a `Cloud Native` Blue/Green deployment into two steps:
 
 1. Deploy a new version.
@@ -180,18 +167,17 @@ We have split a `Cloud Native` Blue/Green deployment into two steps:
  
 
  
-We have already deployed the products version v1.0.1, and we are ready to use a new products version v1.1.1 that has a new `description` attribute.
+We have already deployed the dstrategies-back version v1.0.0, and we are ready to use a new dstrategies-back version V2.0.0 that has a new `description` attribute.
 
 ### Step 1 - Deploy a new version
  
-We will deploy a new version v1.1.1. To do it, we have to edit the file `helm/quarkus-helm-umbrella/chart/values/blue-green/values-image-tag.yaml` under `products` set `tag` value to `v.1.1.1`
+We will deploy a new version V2.0.0. To do it, we have to edit the file `helm/helm-umbrella-dstrategies/chart/values/blue-green/values-image-tag.yaml` under `dstrategies-back` set `tag` value to `v.1.1.1`
 
 [source,yaml,subs="+macros,+attributes"]
 ----
-products:
-  quarkus-base:
-    image:
-      tag: v1.1.1
+dstrategies-back:
+   image:
+   tag: v2.0.0
 ----
 
 And push the changes
@@ -199,7 +185,7 @@ And push the changes
 [source,input,subs="+macros,+attributes"]
 ----
 git add .
-git commit -m "Change products version to v1.1.1"
+git commit -m "Change dstrategies-back version to V2.0.0"
 git push
 ----
 
@@ -207,48 +193,34 @@ ArgoCD will refresh the status after some minutes. If you don't want to wait you
 
 image::ArgoCD-Shop-Refresh.png["Refresh Shop"]
  
-**Argo Rollouts** will automatically deploy the new products version and execute the `prePromotionAnalysis`. 
+**Argo Rollouts** will automatically deploy the new dstrategies-back version and execute the `prePromotionAnalysis`. 
 
 [.console-output]
 [source,input,subs="+macros,+attributes"]
 ----
 NAME                                  KIND         STATUS        AGE  INFO
-⟳ products                            Rollout      ॥ Paused      27m  
+⟳ dstrategies-back                            Rollout      ॥ Paused      27m  
 ├──# revision:2                                                       
-│  ├──⧉ products-9dc6f576f            ReplicaSet   ✔ Healthy     36s  preview
-│  │  ├──□ products-9dc6f576f-6vqp5   Pod          ✔ Running     36s  ready:1/1
-│  │  └──□ products-9dc6f576f-lmgd7   Pod          ✔ Running     36s  ready:1/1
-│  └──α products-9dc6f576f-2-pre      AnalysisRun  ✔ Successful  31s  ✔ 1
+│  ├──⧉ dstrategies-back-9dc6f576f            ReplicaSet   ✔ Healthy     36s  preview
+│  │  ├──□ dstrategies-back-9dc6f576f-6vqp5   Pod          ✔ Running     36s  ready:1/1
+│  │  └──□ dstrategies-back-9dc6f576f-lmgd7   Pod          ✔ Running     36s  ready:1/1
+│  └──α dstrategies-back-9dc6f576f-2-pre      AnalysisRun  ✔ Successful  31s  ✔ 1
 └──# revision:1                                                       
-   └──⧉ products-67fc9fb79b           ReplicaSet   ✔ Healthy     27m  stable,active
-      ├──□ products-67fc9fb79b-49k25  Pod          ✔ Running     27m  ready:1/1
-      └──□ products-67fc9fb79b-p7jk9  Pod          ✔ Running     27m  ready:1/1
+   └──⧉ dstrategies-back-67fc9fb79b           ReplicaSet   ✔ Healthy     27m  stable,active
+      ├──□ dstrategies-back-67fc9fb79b-49k25  Pod          ✔ Running     27m  ready:1/1
+      └──□ dstrategies-back-67fc9fb79b-p7jk9  Pod          ✔ Running     27m  ready:1/1
 ----
   
-If the `prePromotionAnalysis` goes well, we can see that offline applications have version v1.1.1 and the new attribute description, but the online version has not changed.
+If the `prePromotionAnalysis` goes well, we can see that offline applications have version V2.0.0 and the new attribute description, but the online version has not changed.
 
 This is our current status:
 
 image::rollout-blue-green-step-1.png["Shop Step 1]"]
 
- 
-[source,json]
-----
-{
-  "products":[
-     {
-        "discountInfo":{...},
-        "name":"TV 4K",
-        "price":"1500€",
-        "description":"The best TV" <--
-     }
-  ],
-  "metadata":{
-     "version":"v1.1.1", <--
-  }
-}
-----
-Functional testing users can execute `Smoke tests` to validate this new v1.1.1 version.
+ TODO add fornt image
+
+
+Functional testing users can execute `Smoke tests` to validate this new V2.0.0 version.
 
 We have to be careful with those tests in a production environment because the product microservice will call the online dependencies.
 If this dependency is for example a production DB we will create the things that our `Smoke tests` do.
@@ -257,11 +229,11 @@ If this dependency is for example a production DB we will create the things that
  
 We are going to open the new version to final users.
 
-Execute this command to promote products:
+Execute this command to promote dstrategies-back:
 [.console-input]
 [source,input,subs="+macros,+attributes"]
 ----
-kubectl argo rollouts promote products -n {user}-blue-green
+kubectl argo rollouts promote dstrategies-back -n {user}-blue-green
 ----
 
 First **Argo Rollouts** will just change the service to use the new release (ReplicaSet). We `minimize downtime` because it just changes the service label. 
@@ -270,62 +242,49 @@ First **Argo Rollouts** will just change the service to use the new release (Rep
 [source,input,subs="+macros,+attributes"]
 ----
 NAME                                  KIND         STATUS        AGE  INFO
-⟳ products                            Rollout      ✔ Healthy     88m  
+⟳ dstrategies-back                            Rollout      ✔ Healthy     88m  
 ├──# revision:2                                                       
-│  ├──⧉ products-9dc6f576f            ReplicaSet   ✔ Healthy     62m  stable,active
-│  │  ├──□ products-9dc6f576f-6vqp5   Pod          ✔ Running     62m  ready:1/1
-│  │  └──□ products-9dc6f576f-lmgd7   Pod          ✔ Running     62m  ready:1/1
-│  └──α products-9dc6f576f-2-pre      AnalysisRun  ✔ Successful  62m  ✔ 1
+│  ├──⧉ dstrategies-back-9dc6f576f            ReplicaSet   ✔ Healthy     62m  stable,active
+│  │  ├──□ dstrategies-back-9dc6f576f-6vqp5   Pod          ✔ Running     62m  ready:1/1
+│  │  └──□ dstrategies-back-9dc6f576f-lmgd7   Pod          ✔ Running     62m  ready:1/1
+│  └──α dstrategies-back-9dc6f576f-2-pre      AnalysisRun  ✔ Successful  62m  ✔ 1
 └──# revision:1                                                       
-   └──⧉ products-67fc9fb79b           ReplicaSet   ✔ Healthy     88m  delay:27s
-      ├──□ products-67fc9fb79b-49k25  Pod          ✔ Running     88m  ready:1/1
-      └──□ products-67fc9fb79b-p7jk9  Pod          ✔ Running     88m  ready:1/1
+   └──⧉ dstrategies-back-67fc9fb79b           ReplicaSet   ✔ Healthy     88m  delay:27s
+      ├──□ dstrategies-back-67fc9fb79b-49k25  Pod          ✔ Running     88m  ready:1/1
+      └──□ dstrategies-back-67fc9fb79b-p7jk9  Pod          ✔ Running     88m  ready:1/1
 ----
 This is our current status:
 
 image::rollout-blue-green-step-2-initial.png["Shop Step 2 initial"]
 
-And after `scaleDownDelaySeconds` **Argo Rollouts** will scale down the first replicaSet (v1.0.1).
+And after `scaleDownDelaySeconds` **Argo Rollouts** will scale down the first replicaSet (V1.0.0).
  
 [.console-output]
 [source,input,subs="+macros,+attributes"]
 ----
  NAME                                 KIND         STATUS        AGE  INFO
-⟳ products                           Rollout      ✔ Healthy     89m  
+⟳ dstrategies-back                           Rollout      ✔ Healthy     89m  
 ├──# revision:2                                                      
-│  ├──⧉ products-9dc6f576f           ReplicaSet   ✔ Healthy     62m  stable,active
-│  │  ├──□ products-9dc6f576f-6vqp5  Pod          ✔ Running     62m  ready:1/1
-│  │  └──□ products-9dc6f576f-lmgd7  Pod          ✔ Running     62m  ready:1/1
-│  └──α products-9dc6f576f-2-pre     AnalysisRun  ✔ Successful  62m  ✔ 1
+│  ├──⧉ dstrategies-back-9dc6f576f           ReplicaSet   ✔ Healthy     62m  stable,active
+│  │  ├──□ dstrategies-back-9dc6f576f-6vqp5  Pod          ✔ Running     62m  ready:1/1
+│  │  └──□ dstrategies-back-9dc6f576f-lmgd7  Pod          ✔ Running     62m  ready:1/1
+│  └──α dstrategies-back-9dc6f576f-2-pre     AnalysisRun  ✔ Successful  62m  ✔ 1
 └──# revision:1                                                      
-   └──⧉ products-67fc9fb79b          ReplicaSet   • ScaledDown  89m  
+   └──⧉ dstrategies-back-67fc9fb79b          ReplicaSet   • ScaledDown  89m  
 ----
 
 This is our final status:
 
 image::rollout-blue-green-step-2.png["Shop Step 2"]
 
-**We have in the online environment the new version v1.1.1!!!**
-[source,json]
-----
-{
-  "products":[
-     {
-        "discountInfo":{...},
-        "name":"TV 4K",
-        "price":"1500€",
-        "description":"The best TV" <--
-     }
-  ],
-  "metadata":{
-     "version":"v1.1.1", <--
-  }
-}
-----
+TODO add front image
+
+**We have in the online environment the new version V2.0.0!!!**
+
 
 ### Rollback
 
-Imagine that something goes wrong, we know that this never happens but just in case. We can do a very `quick rollback` just by undoing the change in the `Products` online service.
+Imagine that something goes wrong, we know that this never happens but just in case. We can do a very `quick rollback` just by undoing the change in the `dstrategies-back` online service.
 
 **Argo Rollouts** has an https://argoproj.github.io/argo-rollouts/generated/kubectl-argo-rollouts/kubectl-argo-rollouts_undo/[undo] command to do the rollback. In our opinion, we don't like this procedure because it is not aligned with GitOps. The changes that **Argo Rollouts** do does not come from git, so git is OutOfSync with what we have in Openshift.
 In our case the commit that we have done not only changes the ReplicaSet but also the ConfigMap. The `undo` command only changes the ReplicaSet, so it does not work for us.
@@ -341,31 +300,16 @@ git push
 
 image::rollout-blue-green-step-rollback-initial.png["Shop Step Rollback initial"]
 
-Execute this command to promote products to version `v1.0.1`:
+Execute this command to promote dstrategies-back to version `v1.0.0`:
 [.console-input]
 [source,input,subs="+macros,+attributes"]
 ----
-kubectl argo rollouts promote products -n {user}-blue-green
+kubectl argo rollouts promote dstrategies-back -n {user}-blue-green
 ----
 The rollback is done!
 
 image::rollout-blue-green-step-rollback.png["Shop Step Rollback"]
 
-[source,json]
-----
-{
-   "products":[
-      {
-         ...
-         "name":"TV 4K",
-         "price":"1500€"
-      }
-   ],
-   "metadata":{
-      "version":"v1.0.1", <--
-      "colour":"none",
-      "mode":"online"
-   }
-}
-----
+TODO add front image
+
 
