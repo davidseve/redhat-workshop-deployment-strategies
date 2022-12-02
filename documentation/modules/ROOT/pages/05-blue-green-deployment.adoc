@@ -172,7 +172,7 @@ We have already deployed the dstrategies-back version V1.0.0, and we are ready t
 
 ### Step 1 - Deploy a new version
  
-We will deploy a new version `V2.0.0`. To do it, we have to edit the file `helm/helm-dstrategies/chart/values/blue-green/values-image-tag.yaml` under `dstrategies-back` set `tag` value to `V2.0.0`
+We will deploy a new version `V2.0.0`. To do it, we have to edit the file `helm/helm-umbrella-dstrategies/chart/values/blue-green/values-image-tag.yaml` under `dstrategies-back` set `tag` value to `V2.0.0`
 
 [.console-input]
 [source,input,yaml,subs="+macros,+attributes"]
