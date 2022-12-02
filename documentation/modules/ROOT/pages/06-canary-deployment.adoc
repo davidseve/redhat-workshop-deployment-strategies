@@ -157,7 +157,7 @@ git commit -m "Change dstrategies-back version to V2.0.0"
 git push
 ----
 
- ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI.
+ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI.
 
 
 image::ArgoCD-Shop-Refresh.png["Refresh Shop"]
@@ -280,20 +280,21 @@ In the file `helm/helm-umbrella-dstrategies/chart/values/canary/values-rollouts-
 ----
 dstrategies-back:
    rollouts:
-   canary:
-      steps:
-         - setWeight: 100
+      canary:
+         steps:
+            - setWeight: 100
 ----
 
 Execute those commands to push the changes:
-.Offline route in the productive environment
-[.console-output]
+
+[.console-input]
 [source,input,subs="+macros,+attributes"]
 ----
 git add .
 git commit -m "delete steps for rollback"
 git push
 ----
+
 **ArgoCD** will get the changes and apply them. **Argo Rollouts** will create a new revision with the previous version.
 
 The rollback is done!
