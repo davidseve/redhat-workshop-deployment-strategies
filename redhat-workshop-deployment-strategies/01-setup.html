@@ -409,9 +409,9 @@ Please pay special attention to <em>oc CLI</em>  because you will need to use th
 <div class="paragraph">
 <p>Argo CD upon installation generates an initial admin password which is stored in a Kubernetes secret. In order to retrieve this password, run the following command to decrypt the admin password:</p>
 </div>
-<div class="listingblock">
+<div class="listingblock lines_space console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc extract secret/argocd-cluster -n {user}-gitops-argocd --to=-</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc extract secret/argocd-cluster -n %USER%-gitops-argocd --to=-</code></pre>
 </div>
 </div>
 <div class="paragraph">
