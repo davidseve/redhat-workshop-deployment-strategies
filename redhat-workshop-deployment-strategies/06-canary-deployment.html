@@ -357,10 +357,8 @@ git commit -m "Change dstrategies-back version to V2.0.0"
 git push</code></pre>
 </div>
 </div>
-<div class="literalblock">
-<div class="content">
-<pre>ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI.</pre>
-</div>
+<div class="paragraph">
+<p>ArgoCD will refresh the status after some minutes. If you don&#8217;t want to wait you can refresh it manually from ArgoCD UI.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -508,16 +506,15 @@ In our case the commit that we have done not only changes the ReplicaSet but als
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">dstrategies-back:
    rollouts:
-   canary:
-      steps:
-         - setWeight: 100</code></pre>
+      canary:
+         steps:
+            - setWeight: 100</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Execute those commands to push the changes:
-.Offline route in the productive environment</p>
+<p>Execute those commands to push the changes:</p>
 </div>
-<div class="listingblock console-output">
+<div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">git add .
 git commit -m "delete steps for rollback"
