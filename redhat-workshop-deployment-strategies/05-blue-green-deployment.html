@@ -231,7 +231,7 @@
 </div>
 </div>
 <div class="sect1">
-<h2 id="_deploy_shop_application"><a class="anchor" href="#_deploy_shop_application"></a>Deploy Shop Application</h2>
+<h2 id="_deploy_dstrategies_application"><a class="anchor" href="#_deploy_dstrategies_application"></a>Deploy Dstrategies Application</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>We are going to create the application <code>dstrategies</code>, that we will use to test Blue/Green deployment. Because we will make changes in the application&#8217;s GitHub repository, we have to use the repository that you have just forked. Please edit the following yaml and set your own GitHub repository in the <code>reportURL</code>. Create a file called <code>application-dstrategies-blue-green.yaml</code></p>
@@ -275,7 +275,8 @@ spec:
 <p>Looking at the Argo CD dashboard, you would notice that we have a new <code>dstrategies</code> application.</p>
 </div>
 <div class="paragraph">
-<p>TODO add image</p>
+<p>TODO
+image::argocd_dstrategies-blue-green.png["ArgoCD Dstrategies"]</p>
 </div>
 </div>
 </div>
@@ -290,7 +291,7 @@ spec:
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="_images/rollout-blue-green-step-0.png" alt="Shop initial status">
+<img src="_images/rollout-blue-green-step-0.png" alt="Dstrategies initial status">
 </div>
 </div>
 <div class="paragraph">
@@ -346,7 +347,7 @@ spec:
 </div>
 </div>
 <div class="sect1">
-<h2 id="_test_shop_application"><a class="anchor" href="#_test_shop_application"></a>Test Shop application</h2>
+<h2 id="_test_dstrategies_application"><a class="anchor" href="#_test_dstrategies_application"></a>Test Dstrategies application</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>We have deployed the <code>dstrategies</code> with ArgoCD. We can test that it is up and running.</p>
@@ -450,10 +451,9 @@ git push</code></pre>
 <div class="paragraph">
 <p>ArgoCD will refresh the status after some minutes. If you don&#8217;t want to wait you can refresh it manually from ArgoCD UI.</p>
 </div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/ArgoCD-Shop-Refresh.png" alt="Refresh Shop">
-</div>
+<div class="paragraph">
+<p>TODO
+image::ArgoCD-Dstrategies-Refresh.png["Refresh Dstrategies"]</p>
 </div>
 <div class="paragraph">
 <p><strong>Argo Rollouts</strong> will automatically deploy the new dstrategies-back version and execute the <code>prePromotionAnalysis</code>.</p>
@@ -481,7 +481,7 @@ git push</code></pre>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="_images/rollout-blue-green-step-1.png" alt="Shop Step 1]">
+<img src="_images/rollout-blue-green-step-1.png" alt="Dstrategies Step 1]">
 </div>
 </div>
 <div class="literalblock">
@@ -533,7 +533,7 @@ If this dependency is for example a production DB we will create the things that
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="_images/rollout-blue-green-step-2-initial.png" alt="Shop Step 2 initial">
+<img src="_images/rollout-blue-green-step-2-initial.png" alt="Dstrategies Step 2 initial">
 </div>
 </div>
 <div class="paragraph">
@@ -557,7 +557,7 @@ If this dependency is for example a production DB we will create the things that
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="_images/rollout-blue-green-step-2.png" alt="Shop Step 2">
+<img src="_images/rollout-blue-green-step-2.png" alt="Dstrategies Step 2">
 </div>
 </div>
 <div class="paragraph">
@@ -590,7 +590,7 @@ git push</code></pre>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="_images/rollout-blue-green-step-rollback-initial.png" alt="Shop Step Rollback initial">
+<img src="_images/rollout-blue-green-step-rollback-initial.png" alt="Dstrategies Step Rollback initial">
 </div>
 </div>
 <div class="paragraph">
@@ -606,7 +606,7 @@ git push</code></pre>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="_images/rollout-blue-green-step-rollback.png" alt="Shop Step Rollback">
+<img src="_images/rollout-blue-green-step-rollback.png" alt="Dstrategies Step Rollback">
 </div>
 </div>
 <div class="paragraph">
