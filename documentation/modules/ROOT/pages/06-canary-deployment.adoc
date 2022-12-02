@@ -57,7 +57,6 @@ TODO add image
 
 To achieve canary deployment with `Cloud Native` applications using **Argo Rollouts**, we have designed this architecture.
 
-![Shop initial status](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-0.png)
 image::canary-rollout-step-0.png["Shop initial status"]
 
 OpenShift Components - Online
@@ -78,7 +77,7 @@ We can also see the rollout`s status.
 kubectl argo rollouts get rollout products --watch -n {user}-canary
 ----
 
-[.console-input]
+[.console-output]
 [source,input,subs="+macros,+attributes"]
 ----
 NAME                                  KIND        STATUS     AGE  INFO
@@ -188,7 +187,7 @@ image::canary-rollout-step-1..png["Shop Step 1]"]
 ----
 kubectl argo rollouts get rollout products --watch -n {user}-canary
 ----
-[.console-input]
+[.console-output]
 [source,input,subs="+macros,+attributes"]
 ----
 NAME                                  KIND        STATUS     AGE    INFO
@@ -251,7 +250,7 @@ image::canary-rollout-step-2.png["Shop Step 2"]
 ----
 kubectl argo rollouts get rollout products --watch -n {user}-canary
 ----
-[.console-input]
+[.console-output]
 [source,input,subs="+macros,+attributes"]
 ----
 NAME                                  KIND        STATUS     AGE    INFO
@@ -278,7 +277,7 @@ image::canary-rollout-step-3.png["Shop Step 3"]
 ----
 kubectl argo rollouts get rollout products --watch -n {user}-canary
 ----
-[.console-input]
+[.console-output]
 [source,input,subs="+macros,+attributes"]
 ----
 NAME                                 KIND        STATUS        AGE    INFO
@@ -344,7 +343,7 @@ products:
 
 Execute those commands to push the changes:
 .Offline route in the productive environment
-[.console-input]
+[.console-output]
 [source,input,subs="+macros,+attributes"]
 ----
 git add .
@@ -373,4 +372,4 @@ image::canary-rollout-step-Rollback.png["Shop Step Rollback"]
 }
 ----
 To get the application ready for a new release we should configure again the  **Argo Rollouts** with the steps.
-## (optional)Canary deployment strategy with Service Mesh
+

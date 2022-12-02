@@ -209,7 +209,7 @@ image::ArgoCD-Shop-Refresh.png["Refresh Shop"]
  
 **Argo Rollouts** will automatically deploy the new products version and execute the `prePromotionAnalysis`. 
 
-[.console-input]
+[.console-output]
 [source,input,subs="+macros,+attributes"]
 ----
 NAME                                  KIND         STATUS        AGE  INFO
@@ -266,7 +266,7 @@ kubectl argo rollouts promote products -n {user}-blue-green
 
 First **Argo Rollouts** will just change the service to use the new release (ReplicaSet). We `minimize downtime` because it just changes the service label. 
 
-[.console-input]
+[.console-output]
 [source,input,subs="+macros,+attributes"]
 ----
 NAME                                  KIND         STATUS        AGE  INFO
@@ -287,7 +287,7 @@ image::rollout-blue-green-step-2-initial.png["Shop Step 2 initial"]
 
 And after `scaleDownDelaySeconds` **Argo Rollouts** will scale down the first replicaSet (v1.0.1).
  
-[.console-input]
+[.console-output]
 [source,input,subs="+macros,+attributes"]
 ----
  NAME                                 KIND         STATUS        AGE  INFO
