@@ -50,6 +50,7 @@ oc apply -f application-dstrategies-canary.yaml
 
 Looking at the Argo CD dashboard, you would notice that we have a new `dstrategies` application.
 
+TODO
 image::argocd_dstrategies-canary.png["ArgoCD Dstrategies"]
 
 
