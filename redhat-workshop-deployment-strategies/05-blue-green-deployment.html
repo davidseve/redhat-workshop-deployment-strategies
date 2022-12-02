@@ -234,14 +234,14 @@
 <h2 id="_deploy_shop_application"><a class="anchor" href="#_deploy_shop_application"></a>Deploy Shop Application</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>We are going to create the application <code>shop</code>, that we will use to test Blue/Green deployment. Because we will make changes in the application&#8217;s GitHub repository, we have to use the repository that you have just forked. Please edit the following yaml and set your own GitHub repository in the <code>reportURL</code>.</p>
+<p>We are going to create the application <code>dstrategies</code>, that we will use to test Blue/Green deployment. Because we will make changes in the application&#8217;s GitHub repository, we have to use the repository that you have just forked. Please edit the following yaml and set your own GitHub repository in the <code>reportURL</code>. Create a file called <code>application-dstrategies-blue-green.yaml</code></p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: shop-blue-green
+  name: dstrategies-blue-green
   namespace: %USER%-gitops-argocd
 spec:
   destination:
@@ -249,8 +249,8 @@ spec:
     namespace: %USER%-blue-green
     server: 'https://kubernetes.default.svc'
   source:
-    path: helm/quarkus-helm-umbrella/chart
-    repoURL: <a href="https://github.com/rhte2023-argo-rollouts/shop-application-helm-chart" class="bare">https://github.com/rhte2023-argo-rollouts/shop-application-helm-chart</a>
+    path: helm/helm-umbrella-dstrategies/chart
+    repoURL: <a href="https://github.com/change_me/dstrategies-helm-chart" class="bare">https://github.com/change_me/dstrategies-helm-chart</a>
     targetRevision: HEAD
     helm:
       parameters:
@@ -268,11 +268,11 @@ spec:
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc apply -f application-shop-blue-green-rollouts.yaml</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc apply -f application-dstrategies-blue-green.yaml</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Looking at the Argo CD dashboard, you would notice that we have a new <code>shop</code> application.</p>
+<p>Looking at the Argo CD dashboard, you would notice that we have a new <code>dstrategies</code> application.</p>
 </div>
 <div class="paragraph">
 <p>TODO add image</p>
@@ -288,10 +288,9 @@ spec:
 <div class="paragraph">
 <p>This is our current status:</p>
 </div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/rollout-blue-green-step-0.png" alt="Shop initial status">
-</div>
+<div class="paragraph">
+<p>TODO
+image::rollout-blue-green-step-0.png["Shop initial status"]</p>
 </div>
 <div class="paragraph">
 <p>OpenShift Components - Online</p>
@@ -326,21 +325,21 @@ spec:
 </ul>
 </div>
 <div class="paragraph">
-<p>We have defined an active or online service 'products-umbrella-online' and a preview or offline service 'products-umbrella-offline'. Final user will always use 'products-umbrella-online'.</p>
+<p>We have defined an active or online service 'dstrategies-back-online' and a preview or offline service 'dstrategies-back-offline'. Final user will always use 'dstrategies-back-online'.</p>
 </div>
 <div class="paragraph">
-<p>We have created an AnalysisTemplate 'products-analysis-template' that just validates the health of the application, for production environments a better analysis should be done. <strong>Argo Rollouts</strong> use this AnalysisTemplate to validate a new version and set whether it is ready to be promoted or not. To learn more, please read <a href="https://argoproj.github.io/argo-rollouts/features/bluegreen/">this</a>.</p>
+<p>We have created an AnalysisTemplate 'dstrategies-back-analysis-template' that just validates the health of the application, for production environments a better analysis should be done. <strong>Argo Rollouts</strong> use this AnalysisTemplate to validate a new version and set whether it is ready to be promoted or not. To learn more, please read <a href="https://argoproj.github.io/argo-rollouts/features/bluegreen/">this</a>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">  strategy:
     blueGreen:
-      activeService: products-umbrella-online
-      previewService: products-umbrella-offline
+      activeService: dstrategies-back-online
+      previewService: dstrategies-back-offline
       autoPromotionEnabled: false
       prePromotionAnalysis:
         templates:
-          - templateName: products-analysis-template</code></pre>
+          - templateName: dstrategies-back-analysis-template</code></pre>
 </div>
 </div>
 </div>
@@ -349,14 +348,17 @@ spec:
 <h2 id="_test_shop_application"><a class="anchor" href="#_test_shop_application"></a>Test Shop application</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>We have deployed the <code>shop</code> with ArgoCD. We can test that it is up and running.</p>
+<p>We have deployed the <code>dstrategies</code> with ArgoCD. We can test that it is up and running.</p>
+</div>
+<div class="paragraph">
+<p>TODO change to front</p>
 </div>
 <div class="paragraph">
 <p>We have to get the Online route</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">curl "$(oc get routes products-umbrella-online -n %USER%-blue-green --template='https://{{.spec.host}}')/products"</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">curl "$(oc get routes dstrategies-back-online -n %USER%-blue-green --template='https://{{.spec.host}}')/dstrategies-back"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -364,30 +366,12 @@ spec:
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">curl "$(oc get routes products-umbrella-offline -n %USER%-blue-green --template='https://{{.spec.host}}')/products"</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">curl "$(oc get routes dstrategies-back-offline -n %USER%-blue-green --template='https://{{.spec.host}}')/dstrategies-back"</code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p>Notice that in each microservice response we have added metadata information to see better the <code>version</code> of each application. This will help us to see the changes while we do the Blue/Green deployment.
-Because right now we have both routers against the same rollout revision we will have the same response with version <code>v1.0.1</code>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-   "products":[
-      {
-         ...
-         "name":"TV 4K",
-         "price":"1500€"
-      }
-   ],
-   "metadata":{
-      "version":"v1.0.1", &lt;--
-      "colour":"none",
-      "mode":"online"
-   }
-}</code></pre>
-</div>
+Because right now we have both routers against the same rollout revision we will have the same response with version <code>V1.0.0</code>:</p>
 </div>
 <div class="paragraph">
 <p>We can also see the rollout`s status.</p>
@@ -406,23 +390,23 @@ Argo Rollouts offers a Kubectl plugin to enrich the experience with Rollouts <a 
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout products --watch -n %USER%-blue-green</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout dstrategies-back --watch -n %USER%-blue-green</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">NAME                                  KIND        STATUS     AGE INFO
-⟳ products                            Rollout     ✔ Healthy  12m
+⟳ dstrategies-back                            Rollout     ✔ Healthy  12m
 └──# revision:1
-   └──⧉ products-67fc9fb79b           ReplicaSet  ✔ Healthy  12m  stable,active
-      ├──□ products-67fc9fb79b-49k25  Pod         ✔ Running  12m  ready:1/1
-      └──□ products-67fc9fb79b-p7jk9  Pod         ✔ Running  12m  ready:1/1</code></pre>
+   └──⧉ dstrategies-back-67fc9fb79b           ReplicaSet  ✔ Healthy  12m  stable,active
+      ├──□ dstrategies-back-67fc9fb79b-49k25  Pod         ✔ Running  12m  ready:1/1
+      └──□ dstrategies-back-67fc9fb79b-p7jk9  Pod         ✔ Running  12m  ready:1/1</code></pre>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_products_bluegreen_deployment"><a class="anchor" href="#_products_bluegreen_deployment"></a>Products Blue/Green deployment</h2>
+<h2 id="_dstrategies_back_bluegreen_deployment"><a class="anchor" href="#_dstrategies_back_bluegreen_deployment"></a>Dstrategies-back Blue/Green deployment</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>We have split a <code>Cloud Native</code> Blue/Green deployment into two steps:</p>
@@ -438,19 +422,18 @@ Argo Rollouts offers a Kubectl plugin to enrich the experience with Rollouts <a 
 </ol>
 </div>
 <div class="paragraph">
-<p>We have already deployed the products version v1.0.1, and we are ready to use a new products version v1.1.1 that has a new <code>description</code> attribute.</p>
+<p>We have already deployed the dstrategies-back version v1.0.0, and we are ready to use a new dstrategies-back version V2.0.0 that has a new <code>description</code> attribute.</p>
 </div>
 <div class="sect2">
 <h3 id="_step_1_deploy_a_new_version"><a class="anchor" href="#_step_1_deploy_a_new_version"></a>Step 1 - Deploy a new version</h3>
 <div class="paragraph">
-<p>We will deploy a new version v1.1.1. To do it, we have to edit the file <code>helm/quarkus-helm-umbrella/chart/values/blue-green/values-image-tag.yaml</code> under <code>products</code> set <code>tag</code> value to <code>v.1.1.1</code></p>
+<p>We will deploy a new version V2.0.0. To do it, we have to edit the file <code>helm/helm-umbrella-dstrategies/chart/values/blue-green/values-image-tag.yaml</code> under <code>dstrategies-back</code> set <code>tag</code> value to <code>v.1.1.1</code></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">products:
-  quarkus-base:
-    image:
-      tag: v1.1.1</code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">dstrategies-back:
+   image:
+   tag: v2.0.0</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -459,7 +442,7 @@ Argo Rollouts offers a Kubectl plugin to enrich the experience with Rollouts <a 
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">git add .
-git commit -m "Change products version to v1.1.1"
+git commit -m "Change dstrategies-back version to V2.0.0"
 git push</code></pre>
 </div>
 </div>
@@ -472,25 +455,25 @@ git push</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p><strong>Argo Rollouts</strong> will automatically deploy the new products version and execute the <code>prePromotionAnalysis</code>.</p>
+<p><strong>Argo Rollouts</strong> will automatically deploy the new dstrategies-back version and execute the <code>prePromotionAnalysis</code>.</p>
 </div>
 <div class="listingblock console-output">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">NAME                                  KIND         STATUS        AGE  INFO
-⟳ products                            Rollout      ॥ Paused      27m
+⟳ dstrategies-back                            Rollout      ॥ Paused      27m
 ├──# revision:2
-│  ├──⧉ products-9dc6f576f            ReplicaSet   ✔ Healthy     36s  preview
-│  │  ├──□ products-9dc6f576f-6vqp5   Pod          ✔ Running     36s  ready:1/1
-│  │  └──□ products-9dc6f576f-lmgd7   Pod          ✔ Running     36s  ready:1/1
-│  └──α products-9dc6f576f-2-pre      AnalysisRun  ✔ Successful  31s  ✔ 1
+│  ├──⧉ dstrategies-back-9dc6f576f            ReplicaSet   ✔ Healthy     36s  preview
+│  │  ├──□ dstrategies-back-9dc6f576f-6vqp5   Pod          ✔ Running     36s  ready:1/1
+│  │  └──□ dstrategies-back-9dc6f576f-lmgd7   Pod          ✔ Running     36s  ready:1/1
+│  └──α dstrategies-back-9dc6f576f-2-pre      AnalysisRun  ✔ Successful  31s  ✔ 1
 └──# revision:1
-   └──⧉ products-67fc9fb79b           ReplicaSet   ✔ Healthy     27m  stable,active
-      ├──□ products-67fc9fb79b-49k25  Pod          ✔ Running     27m  ready:1/1
-      └──□ products-67fc9fb79b-p7jk9  Pod          ✔ Running     27m  ready:1/1</code></pre>
+   └──⧉ dstrategies-back-67fc9fb79b           ReplicaSet   ✔ Healthy     27m  stable,active
+      ├──□ dstrategies-back-67fc9fb79b-49k25  Pod          ✔ Running     27m  ready:1/1
+      └──□ dstrategies-back-67fc9fb79b-p7jk9  Pod          ✔ Running     27m  ready:1/1</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>If the <code>prePromotionAnalysis</code> goes well, we can see that offline applications have version v1.1.1 and the new attribute description, but the online version has not changed.</p>
+<p>If the <code>prePromotionAnalysis</code> goes well, we can see that offline applications have version V2.0.0 and the new attribute description, but the online version has not changed.</p>
 </div>
 <div class="paragraph">
 <p>This is our current status:</p>
@@ -500,25 +483,13 @@ git push</code></pre>
 <img src="_images/rollout-blue-green-step-1.png" alt="Shop Step 1]">
 </div>
 </div>
-<div class="listingblock">
+<div class="literalblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-  "products":[
-     {
-        "discountInfo":{...},
-        "name":"TV 4K",
-        "price":"1500€",
-        "description":"The best TV" &lt;--
-     }
-  ],
-  "metadata":{
-     "version":"v1.1.1", &lt;--
-  }
-}</code></pre>
+<pre>TODO add fornt image</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Functional testing users can execute <code>Smoke tests</code> to validate this new v1.1.1 version.</p>
+<p>Functional testing users can execute <code>Smoke tests</code> to validate this new V2.0.0 version.</p>
 </div>
 <div class="paragraph">
 <p>We have to be careful with those tests in a production environment because the product microservice will call the online dependencies.
@@ -531,11 +502,11 @@ If this dependency is for example a production DB we will create the things that
 <p>We are going to open the new version to final users.</p>
 </div>
 <div class="paragraph">
-<p>Execute this command to promote products:</p>
+<p>Execute this command to promote dstrategies-back:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts promote products -n %USER%-blue-green</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts promote dstrategies-back -n %USER%-blue-green</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -544,16 +515,16 @@ If this dependency is for example a production DB we will create the things that
 <div class="listingblock console-output">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">NAME                                  KIND         STATUS        AGE  INFO
-⟳ products                            Rollout      ✔ Healthy     88m
+⟳ dstrategies-back                            Rollout      ✔ Healthy     88m
 ├──# revision:2
-│  ├──⧉ products-9dc6f576f            ReplicaSet   ✔ Healthy     62m  stable,active
-│  │  ├──□ products-9dc6f576f-6vqp5   Pod          ✔ Running     62m  ready:1/1
-│  │  └──□ products-9dc6f576f-lmgd7   Pod          ✔ Running     62m  ready:1/1
-│  └──α products-9dc6f576f-2-pre      AnalysisRun  ✔ Successful  62m  ✔ 1
+│  ├──⧉ dstrategies-back-9dc6f576f            ReplicaSet   ✔ Healthy     62m  stable,active
+│  │  ├──□ dstrategies-back-9dc6f576f-6vqp5   Pod          ✔ Running     62m  ready:1/1
+│  │  └──□ dstrategies-back-9dc6f576f-lmgd7   Pod          ✔ Running     62m  ready:1/1
+│  └──α dstrategies-back-9dc6f576f-2-pre      AnalysisRun  ✔ Successful  62m  ✔ 1
 └──# revision:1
-   └──⧉ products-67fc9fb79b           ReplicaSet   ✔ Healthy     88m  delay:27s
-      ├──□ products-67fc9fb79b-49k25  Pod          ✔ Running     88m  ready:1/1
-      └──□ products-67fc9fb79b-p7jk9  Pod          ✔ Running     88m  ready:1/1</code></pre>
+   └──⧉ dstrategies-back-67fc9fb79b           ReplicaSet   ✔ Healthy     88m  delay:27s
+      ├──□ dstrategies-back-67fc9fb79b-49k25  Pod          ✔ Running     88m  ready:1/1
+      └──□ dstrategies-back-67fc9fb79b-p7jk9  Pod          ✔ Running     88m  ready:1/1</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -565,19 +536,19 @@ If this dependency is for example a production DB we will create the things that
 </div>
 </div>
 <div class="paragraph">
-<p>And after <code>scaleDownDelaySeconds</code> <strong>Argo Rollouts</strong> will scale down the first replicaSet (v1.0.1).</p>
+<p>And after <code>scaleDownDelaySeconds</code> <strong>Argo Rollouts</strong> will scale down the first replicaSet (V1.0.0).</p>
 </div>
 <div class="listingblock console-output">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input"> NAME                                 KIND         STATUS        AGE  INFO
-⟳ products                           Rollout      ✔ Healthy     89m
+⟳ dstrategies-back                           Rollout      ✔ Healthy     89m
 ├──# revision:2
-│  ├──⧉ products-9dc6f576f           ReplicaSet   ✔ Healthy     62m  stable,active
-│  │  ├──□ products-9dc6f576f-6vqp5  Pod          ✔ Running     62m  ready:1/1
-│  │  └──□ products-9dc6f576f-lmgd7  Pod          ✔ Running     62m  ready:1/1
-│  └──α products-9dc6f576f-2-pre     AnalysisRun  ✔ Successful  62m  ✔ 1
+│  ├──⧉ dstrategies-back-9dc6f576f           ReplicaSet   ✔ Healthy     62m  stable,active
+│  │  ├──□ dstrategies-back-9dc6f576f-6vqp5  Pod          ✔ Running     62m  ready:1/1
+│  │  └──□ dstrategies-back-9dc6f576f-lmgd7  Pod          ✔ Running     62m  ready:1/1
+│  └──α dstrategies-back-9dc6f576f-2-pre     AnalysisRun  ✔ Successful  62m  ✔ 1
 └──# revision:1
-   └──⧉ products-67fc9fb79b          ReplicaSet   • ScaledDown  89m</code></pre>
+   └──⧉ dstrategies-back-67fc9fb79b          ReplicaSet   • ScaledDown  89m</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -589,30 +560,16 @@ If this dependency is for example a production DB we will create the things that
 </div>
 </div>
 <div class="paragraph">
-<p><strong>We have in the online environment the new version v1.1.1!!!</strong></p>
+<p>TODO add front image</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-  "products":[
-     {
-        "discountInfo":{...},
-        "name":"TV 4K",
-        "price":"1500€",
-        "description":"The best TV" &lt;--
-     }
-  ],
-  "metadata":{
-     "version":"v1.1.1", &lt;--
-  }
-}</code></pre>
-</div>
+<div class="paragraph">
+<p><strong>We have in the online environment the new version V2.0.0!!!</strong></p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_rollback"><a class="anchor" href="#_rollback"></a>Rollback</h3>
 <div class="paragraph">
-<p>Imagine that something goes wrong, we know that this never happens but just in case. We can do a very <code>quick rollback</code> just by undoing the change in the <code>Products</code> online service.</p>
+<p>Imagine that something goes wrong, we know that this never happens but just in case. We can do a very <code>quick rollback</code> just by undoing the change in the <code>dstrategies-back</code> online service.</p>
 </div>
 <div class="paragraph">
 <p><strong>Argo Rollouts</strong> has an <a href="https://argoproj.github.io/argo-rollouts/generated/kubectl-argo-rollouts/kubectl-argo-rollouts_undo/">undo</a> command to do the rollback. In our opinion, we don&#8217;t like this procedure because it is not aligned with GitOps. The changes that <strong>Argo Rollouts</strong> do does not come from git, so git is OutOfSync with what we have in Openshift.
@@ -636,11 +593,11 @@ git push</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Execute this command to promote products to version <code>v1.0.1</code>:</p>
+<p>Execute this command to promote dstrategies-back to version <code>v1.0.0</code>:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts promote products -n %USER%-blue-green</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts promote dstrategies-back -n %USER%-blue-green</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -651,23 +608,8 @@ git push</code></pre>
 <img src="_images/rollout-blue-green-step-rollback.png" alt="Shop Step Rollback">
 </div>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-   "products":[
-      {
-         ...
-         "name":"TV 4K",
-         "price":"1500€"
-      }
-   ],
-   "metadata":{
-      "version":"v1.0.1", &lt;--
-      "colour":"none",
-      "mode":"online"
-   }
-}</code></pre>
-</div>
+<div class="paragraph">
+<p>TODO add front image</p>
 </div>
 </div>
 </div>

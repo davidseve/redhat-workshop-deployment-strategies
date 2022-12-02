@@ -166,14 +166,14 @@
 <h2 id="_deploy_shop_application"><a class="anchor" href="#_deploy_shop_application"></a>Deploy Shop Application</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>We are going to create the application <code>shop</code>, that we will use to test canary deployment. Because we will make changes in the application&#8217;s GitHub repository, we have to use the repository that you have just forked. Please edit the following yaml and set your own GitHub repository in the <code>reportURL</code>.</p>
+<p>We are going to create the application <code>dstrategies</code>, that we will use to test canary deployment. Because we will make changes in the application&#8217;s GitHub repository, we have to use the repository that you have just forked. Please edit the following yaml and set your own GitHub repository in the <code>reportURL</code>. Create a file called <code>application-dstrategies-canary.yaml</code></p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: shop-canary
+  name: dstrategies-canary
   namespace: {user}-gitops-argocd
 spec:
   destination:
@@ -181,8 +181,8 @@ spec:
     namespace: {user}-canary
     server: 'https://kubernetes.default.svc'
   source:
-    path: helm/quarkus-helm-umbrella/chart
-    repoURL: <a href="https://github.com/change_me/shop-application-helm-chart" class="bare">https://github.com/change_me/shop-application-helm-chart</a>
+    path: helm/helm-umbrella-dstrategies/chart
+    repoURL: <a href="https://github.com/change_me/dstrategies-helm-chart" class="bare">https://github.com/change_me/dstrategies-helm-chart</a>
     targetRevision: HEAD
     helm:
       parameters:
@@ -201,11 +201,11 @@ spec:
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc apply -f application-shop-canary-rollouts.yaml</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc apply -f application-dstrategies-canary.yaml</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Looking at the Argo CD dashboard, you would notice that we have a new <code>shop</code> application.</p>
+<p>Looking at the Argo CD dashboard, you would notice that we have a new <code>dstrategies</code> application.</p>
 </div>
 <div class="paragraph">
 <p>TODO add image</p>
@@ -247,40 +247,39 @@ spec:
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout products --watch -n {user}-canary</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout dstrategies-back --watch -n {user}-canary</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">NAME                                  KIND        STATUS     AGE  INFO
-⟳ products                            Rollout     ✔ Healthy  38s
+⟳ dstrategies-back                            Rollout     ✔ Healthy  38s
 └──# revision:1
-   └──⧉ products-67fc9fb79b           ReplicaSet  ✔ Healthy  38s  stable
-      ├──□ products-67fc9fb79b-4ql4z  Pod         ✔ Running  38s  ready:1/1
-      ├──□ products-67fc9fb79b-7c4jw  Pod         ✔ Running  38s  ready:1/1
-      ├──□ products-67fc9fb79b-lz86j  Pod         ✔ Running  38s  ready:1/1
-      └──□ products-67fc9fb79b-xlkhp  Pod         ✔ Running  38s  ready:1/1</code></pre>
+   └──⧉ dstrategies-back-67fc9fb79b           ReplicaSet  ✔ Healthy  38s  stable
+      ├──□ dstrategies-back-67fc9fb79b-4ql4z  Pod         ✔ Running  38s  ready:1/1
+      ├──□ dstrategies-back-67fc9fb79b-7c4jw  Pod         ✔ Running  38s  ready:1/1
+      ├──□ dstrategies-back-67fc9fb79b-lz86j  Pod         ✔ Running  38s  ready:1/1
+      └──□ dstrategies-back-67fc9fb79b-xlkhp  Pod         ✔ Running  38s  ready:1/1</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>We have defined an active or online service 'products-umbrella-online'. Final user will always use 'products-umbrella-online'. When a new version is deployed <strong>Argo Rollouts</strong> create a new revision (ReplicaSet). The number of replicas in the new release increases based on the information in the steps, and the number of replicas in the old release decreases by the same number. We have configured a pause duration between each step. To learn more about <strong>Argo Rollouts</strong>, please read [this](<a href="https://argoproj.github.io/argo-rollouts/features/canary/" class="bare">https://argoproj.github.io/argo-rollouts/features/canary/</a>).</p>
+<p>We have defined an active or online service 'dstrategies-back-online'. Final user will always use 'dstrategies-back-online'. When a new version is deployed <strong>Argo Rollouts</strong> create a new revision (ReplicaSet). The number of replicas in the new release increases based on the information in the steps, and the number of replicas in the old release decreases by the same number. We have configured a pause duration between each step. To learn more about <strong>Argo Rollouts</strong>, please read [this](<a href="https://argoproj.github.io/argo-rollouts/features/canary/" class="bare">https://argoproj.github.io/argo-rollouts/features/canary/</a>).</p>
 </div>
 <div class="paragraph">
-<p>This is how we have configured <strong>Argo Rollouts</strong> strategy for this demo, you can check it here <code>helm/quarkus-helm-umbrella/chart/values/canary/values-rollouts-strategy.yaml</code></p>
+<p>This is how we have configured <strong>Argo Rollouts</strong> strategy for this demo, you can check it here <code>helm/helm-umbrella-dstrategies/chart/values/canary/values-rollouts-strategy.yaml</code></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">products:
-  quarkus-base:
-    rollouts:
-      canary:
-        steps:
-          - setWeight: 25
-          - pause:
-              duration: 30s
-          - setWeight: 50
-          - pause:
-              duration: 30s</code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">dstrategies-back:
+   rollouts:
+   canary:
+      steps:
+         - setWeight: 25
+         - pause:
+            duration: 30s
+         - setWeight: 50
+         - pause:
+            duration: 30s</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -292,42 +291,27 @@ spec:
 <h2 id="_test_shop_application"><a class="anchor" href="#_test_shop_application"></a>Test Shop application</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>We have deployed the <code>shop</code> with ArgoCD. We can test that it is up and running.</p>
+<p>We have deployed the <code>dstrategies</code> with ArgoCD. We can test that it is up and running.</p>
 </div>
-<div class="paragraph">
-<p>We have to get the Online route</p>
+<div class="literalblock">
+<div class="content">
+<pre> TODO change to front image
+We have to get the Online route</pre>
+</div>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">curl "$(oc get routes products-umbrella-online -n {user}-canary --template='https://{{.spec.host}}')/products"</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">curl "$(oc get routes dstrategies-back-online -n {user}-canary --template='https://{{.spec.host}}')/dstrategies-back"</code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p>Notice that in each microservice response we have added metadata information to see better the <code>version</code> of each application. This will help us to see the changes while we do the canary deployment.
-We can see that the current version is <code>v1.0.1</code>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-   "products":[
-      {
-         ...
-         "name":"TV 4K",
-         "price":"1500€"
-      }
-   ],
-   "metadata":{
-      "version":"v1.0.1", &lt;--
-      "colour":"none",
-      "mode":"online"
-   }
-}</code></pre>
-</div>
+We can see that the current version is <code>V1.0.0</code>:</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_products_canary_deployment"><a class="anchor" href="#_products_canary_deployment"></a>Products canary deployment</h2>
+<h2 id="_dstrategies_back_canary_deployment"><a class="anchor" href="#_dstrategies_back_canary_deployment"></a>Dstrategies-back canary deployment</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>We have split a <code>Cloud Native</code> Canary deployment into three automatic step:</p>
@@ -351,18 +335,17 @@ We can see that the current version is <code>v1.0.1</code>:</p>
 <div class="sect2">
 <h3 id="_step_1_deploy_the_canary_version_for_10"><a class="anchor" href="#_step_1_deploy_the_canary_version_for_10"></a>Step 1 - Deploy the canary version for 10%</h3>
 <div class="paragraph">
-<p>We will deploy a new version v1.1.1. To do it, we have to edit the file <code>helm/quarkus-helm-umbrella/chart/values/canary/values-image-tag.yaml</code> under <code>products</code> set <code>tag</code> value to <code>v.1.1.1</code></p>
+<p>We will deploy a new version V2.0.0. To do it, we have to edit the file <code>helm/helm-umbrella-dstrategies/chart/values/canary/values-image-tag.yaml</code> under <code>dstrategies-back</code> set <code>tag</code> value to <code>v.1.1.1</code></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">products:
-  quarkus-base:
-    image:
-      tag: v1.1.1</code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">dstrategies-back:
+   image:
+   tag: V2.0.0</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p><strong>Argo Rollouts</strong> will automatically deploy a new products revision. The canary version will be 10% of the replicas. In this demo we are no using [traffic management](<a href="https://argoproj.github.io/argo-rollouts/features/traffic-management/" class="bare">https://argoproj.github.io/argo-rollouts/features/traffic-management/</a>). <strong>Argo Rollouts</strong> makes a best-effort attempt to achieve the percentage listed in the last setWeight step between the new and old version. This means that it will create only one replica in the new revision because it is rounded up. All the requests are load balanced between the old and the new replicas.</p>
+<p><strong>Argo Rollouts</strong> will automatically deploy a new dstrategies-back revision. The canary version will be 10% of the replicas. In this demo we are no using [traffic management](<a href="https://argoproj.github.io/argo-rollouts/features/traffic-management/" class="bare">https://argoproj.github.io/argo-rollouts/features/traffic-management/</a>). <strong>Argo Rollouts</strong> makes a best-effort attempt to achieve the percentage listed in the last setWeight step between the new and old version. This means that it will create only one replica in the new revision because it is rounded up. All the requests are load balanced between the old and the new replicas.</p>
 </div>
 <div class="paragraph">
 <p>Push the changes to start the deployment.</p>
@@ -370,7 +353,7 @@ We can see that the current version is <code>v1.0.1</code>:</p>
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">git add .
-git commit -m "Change products version to v1.1.1"
+git commit -m "Change dstrategies-back version to V2.0.0"
 git push</code></pre>
 </div>
 </div>
@@ -394,64 +377,32 @@ git push</code></pre>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout products --watch -n {user}-canary</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout dstrategies-back --watch -n {user}-canary</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">NAME                                  KIND        STATUS     AGE    INFO
-⟳ products                            Rollout     ॥ Paused   3m13s
+⟳ dstrategies-back                            Rollout     ॥ Paused   3m13s
 ├──# revision:2
-│  └──⧉ products-9dc6f576f            ReplicaSet  ✔ Healthy  8s     canary
-│     └──□ products-9dc6f576f-fwq8m   Pod         ✔ Running  8s     ready:1/1
+│  └──⧉ dstrategies-back-9dc6f576f            ReplicaSet  ✔ Healthy  8s     canary
+│     └──□ dstrategies-back-9dc6f576f-fwq8m   Pod         ✔ Running  8s     ready:1/1
 └──# revision:1
-   └──⧉ products-67fc9fb79b           ReplicaSet  ✔ Healthy  3m13s  stable
-      ├──□ products-67fc9fb79b-4ql4z  Pod         ✔ Running  3m13s  ready:1/1
-      ├──□ products-67fc9fb79b-lz86j  Pod         ✔ Running  3m13s  ready:1/1
-      └──□ products-67fc9fb79b-xlkhp  Pod         ✔ Running  3m13s  ready:1/1</code></pre>
+   └──⧉ dstrategies-back-67fc9fb79b           ReplicaSet  ✔ Healthy  3m13s  stable
+      ├──□ dstrategies-back-67fc9fb79b-4ql4z  Pod         ✔ Running  3m13s  ready:1/1
+      ├──□ dstrategies-back-67fc9fb79b-lz86j  Pod         ✔ Running  3m13s  ready:1/1
+      └──□ dstrategies-back-67fc9fb79b-xlkhp  Pod         ✔ Running  3m13s  ready:1/1</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>In the products URL response, you will have the new version in 25% of the requests.</p>
+<p>TODO chang to front image
+In the dstrategies-back URL response, you will have the new version in 25% of the requests.</p>
 </div>
 <div class="paragraph">
 <p>New revision:</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-  "products":[
-     {
-        "discountInfo":{...},
-        "name":"TV 4K",
-        "price":"1500€",
-        "description":"The best TV" &lt;--
-     }
-  ],
-  "metadata":{
-     "version":"v1.1.1", &lt;--
-  }
-}</code></pre>
-</div>
-</div>
 <div class="paragraph">
 <p>Old revision:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-  "products":[
-     {
-        "discountInfo":{...},
-        "name":"TV 4K",
-        "price":"1500€"
-     }
-  ],
-  "metadata":{
-     "version":"v1.0.1", &lt;--
-  }
-}</code></pre>
-</div>
 </div>
 </div>
 <div class="sect2">
@@ -467,21 +418,21 @@ This is our current status:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout products --watch -n {user}-canary</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout dstrategies-back --watch -n {user}-canary</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">NAME                                  KIND        STATUS     AGE    INFO
-⟳ products                            Rollout     ॥ Paused   3m47s
+⟳ dstrategies-back                            Rollout     ॥ Paused   3m47s
 ├──# revision:2
-│  └──⧉ products-9dc6f576f            ReplicaSet  ✔ Healthy  42s    canary
-│     ├──□ products-9dc6f576f-fwq8m   Pod         ✔ Running  42s    ready:1/1
-│     └──□ products-9dc6f576f-8qppq   Pod         ✔ Running  6s     ready:1/1
+│  └──⧉ dstrategies-back-9dc6f576f            ReplicaSet  ✔ Healthy  42s    canary
+│     ├──□ dstrategies-back-9dc6f576f-fwq8m   Pod         ✔ Running  42s    ready:1/1
+│     └──□ dstrategies-back-9dc6f576f-8qppq   Pod         ✔ Running  6s     ready:1/1
 └──# revision:1
-   └──⧉ products-67fc9fb79b           ReplicaSet  ✔ Healthy  3m47s  stable
-      ├──□ products-67fc9fb79b-lz86j  Pod         ✔ Running  3m47s  ready:1/1
-      └──□ products-67fc9fb79b-xlkhp  Pod         ✔ Running  3m47s  ready:1/1</code></pre>
+   └──⧉ dstrategies-back-67fc9fb79b           ReplicaSet  ✔ Healthy  3m47s  stable
+      ├──□ dstrategies-back-67fc9fb79b-lz86j  Pod         ✔ Running  3m47s  ready:1/1
+      └──□ dstrategies-back-67fc9fb79b-xlkhp  Pod         ✔ Running  3m47s  ready:1/1</code></pre>
 </div>
 </div>
 </div>
@@ -500,42 +451,28 @@ This is our current status:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout products --watch -n {user}-canary</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout dstrategies-back --watch -n {user}-canary</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">NAME                                 KIND        STATUS        AGE    INFO
-⟳ products                           Rollout     ✔ Healthy     4m32s
+⟳ dstrategies-back                           Rollout     ✔ Healthy     4m32s
 ├──# revision:2
-│  └──⧉ products-9dc6f576f           ReplicaSet  ✔ Healthy     87s    stable
-│     ├──□ products-9dc6f576f-fwq8m  Pod         ✔ Running     87s    ready:1/1
-│     ├──□ products-9dc6f576f-8qppq  Pod         ✔ Running     51s    ready:1/1
-│     ├──□ products-9dc6f576f-5ch92  Pod         ✔ Running     17s    ready:1/1
-│     └──□ products-9dc6f576f-kmvdh  Pod         ✔ Running     17s    ready:1/1
+│  └──⧉ dstrategies-back-9dc6f576f           ReplicaSet  ✔ Healthy     87s    stable
+│     ├──□ dstrategies-back-9dc6f576f-fwq8m  Pod         ✔ Running     87s    ready:1/1
+│     ├──□ dstrategies-back-9dc6f576f-8qppq  Pod         ✔ Running     51s    ready:1/1
+│     ├──□ dstrategies-back-9dc6f576f-5ch92  Pod         ✔ Running     17s    ready:1/1
+│     └──□ dstrategies-back-9dc6f576f-kmvdh  Pod         ✔ Running     17s    ready:1/1
 └──# revision:1
-   └──⧉ products-67fc9fb79b          ReplicaSet  • ScaledDown  4m32s</code></pre>
+   └──⧉ dstrategies-back-67fc9fb79b          ReplicaSet  • ScaledDown  4m32s</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p><strong>We have in the online environment the new version v1.1.1!!!</strong></p>
+<p><strong>We have in the online environment the new version V2.0.0!!!</strong></p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-  "products":[
-     {
-        "discountInfo":{...},
-        "name":"TV 4K",
-        "price":"1500€",
-        "description":"The best TV" &lt;--
-     }
-  ],
-  "metadata":{
-     "version":"v1.1.1", &lt;--
-  }
-}</code></pre>
-</div>
+<div class="paragraph">
+<p>TODO chang to front image</p>
 </div>
 </div>
 <div class="sect2">
@@ -562,19 +499,18 @@ In our case the commit that we have done not only changes the ReplicaSet but als
 <p>Because we have our <strong>Argo Rollouts</strong> configuration as values in our Helm Chart, we have just to edit the values.yaml that we are using.</p>
 </div>
 <div class="paragraph">
-<p>In the file <code>helm/quarkus-helm-umbrella/chart/values/canary/values-rollouts-strategy.yaml</code> under <code>products</code> under the <code>steps</code> delete all the steps and only set one step <code>- setWeight: 100</code></p>
+<p>In the file <code>helm/helm-umbrella-dstrategies/chart/values/canary/values-rollouts-strategy.yaml</code> under <code>dstrategies-back</code> under the <code>steps</code> delete all the steps and only set one step <code>- setWeight: 100</code></p>
 </div>
 <div class="paragraph">
-<p><code>helm/quarkus-helm-umbrella/chart/values/canary/values-rollouts-strategy.yaml</code> should looks like:</p>
+<p><code>helm/helm-umbrella-dstrategies/chart/values/canary/values-rollouts-strategy.yaml</code> should looks like:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">products:
-  quarkus-base:
-    rollouts:
-      canary:
-        steps:
-          - setWeight: 100</code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">dstrategies-back:
+   rollouts:
+   canary:
+      steps:
+         - setWeight: 100</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -599,21 +535,8 @@ git push</code></pre>
 <img src="_images/canary-rollout-step-Rollback.png" alt="Shop Step Rollback">
 </div>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-  "products":[
-     {
-        "discountInfo":{...},
-        "name":"TV 4K",
-        "price":"1500€"
-     }
-  ],
-  "metadata":{
-     "version":"v1.0.1", &lt;--
-  }
-}</code></pre>
-</div>
+<div class="paragraph">
+<p>TODO chang to front image</p>
 </div>
 <div class="paragraph">
 <p>To get the application ready for a new release we should configure again the  <strong>Argo Rollouts</strong> with the steps.</p>
