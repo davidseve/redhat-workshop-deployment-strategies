@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Blue/Green deployment strategy :: Red Hat Workshop - Deployment Strategies with Argo CD and Argo Rollouts</title>
     <link rel="canonical" href="https://github.com/davidseve/redhat-workshop-deployment-strategies/redhat-workshop-deployment-strategies/05-blue-green-deployment.html">
-    <link rel="prev" href="04-access-the-tools.html">
+    <link rel="prev" href="03-deployment-strategies.html">
     <link rel="next" href="06-canary-deployment.html">
     <meta name="generator" content="Antora 3.0.0">
     <link rel="stylesheet" href="../_/css/site.css">
@@ -88,24 +88,30 @@
   <li class="nav-item" data-depth="3">
     <a class="nav-link" href="01-setup.html#01-accessconsole">1.2.2 Access - OCP Console</a>
   </li>
-</ul>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="01-setup.html#01-accesscli">1.2.3 Access - OCP CLI</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="01-setup.html#01-accessArgoCD">1.2.4 Access - ArgoCD dashboard</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="01-setup.html#01-cloneGit">1.2.5 Clone the GitOps repository</a>
   </li>
 </ul>
   </li>
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="02-cluster-setup.html">2. Cluster Setup</a>
+</ul>
   </li>
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="03-deployment-strategies.html">3. Deployment Strategies with Argo CD and Argo Rollouts</a>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="04-access-the-tools.html">4. Access the tools</a>
   </li>
   <li class="nav-item is-current-page" data-depth="1">
     <a class="nav-link" href="05-blue-green-deployment.html">5. Blue/Green deployment strategy</a>
   </li>
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="06-canary-deployment.html">6. Canary deployment strategy</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="Annex-1-cluster-setup.html">Annex 1 - Cluster Setup</a>
   </li>
 </ul>
   </li>
@@ -468,7 +474,7 @@ git push</code></pre>
 <div class="paragraph">
 <p><strong>Argo Rollouts</strong> will automatically deploy the new products version and execute the <code>prePromotionAnalysis</code>.</p>
 </div>
-<div class="listingblock console-input">
+<div class="listingblock console-output">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">NAME                                  KIND         STATUS        AGE  INFO
 ⟳ products                            Rollout      ॥ Paused      27m
@@ -535,7 +541,7 @@ If this dependency is for example a production DB we will create the things that
 <div class="paragraph">
 <p>First <strong>Argo Rollouts</strong> will just change the service to use the new release (ReplicaSet). We <code>minimize downtime</code> because it just changes the service label.</p>
 </div>
-<div class="listingblock console-input">
+<div class="listingblock console-output">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">NAME                                  KIND         STATUS        AGE  INFO
 ⟳ products                            Rollout      ✔ Healthy     88m
@@ -561,7 +567,7 @@ If this dependency is for example a production DB we will create the things that
 <div class="paragraph">
 <p>And after <code>scaleDownDelaySeconds</code> <strong>Argo Rollouts</strong> will scale down the first replicaSet (v1.0.1).</p>
 </div>
-<div class="listingblock console-input">
+<div class="listingblock console-output">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input"> NAME                                 KIND         STATUS        AGE  INFO
 ⟳ products                           Rollout      ✔ Healthy     89m
@@ -667,7 +673,7 @@ git push</code></pre>
 </div>
 </div>
 <nav class="pagination">
-  <span class="prev"><a href="04-access-the-tools.html" class="query-params-link">4. Access the tools</a></span>
+  <span class="prev"><a href="03-deployment-strategies.html" class="query-params-link">3. Deployment Strategies with Argo CD and Argo Rollouts</a></span>
   <span class="next"><a href="06-canary-deployment.html" class="query-params-link">6. Canary deployment strategy</a></span>
 </nav>
 </article>

@@ -6,7 +6,7 @@
     <title>Environment Setup :: Red Hat Workshop - Deployment Strategies with Argo CD and Argo Rollouts</title>
     <link rel="canonical" href="https://github.com/davidseve/redhat-workshop-deployment-strategies/redhat-workshop-deployment-strategies/01-setup.html">
     <link rel="prev" href="index.html">
-    <link rel="next" href="02-cluster-setup.html">
+    <link rel="next" href="03-deployment-strategies.html">
     <meta name="generator" content="Antora 3.0.0">
     <link rel="stylesheet" href="../_/css/site.css">
 <link rel="icon" href="../_/img/favicon.ico" type="image/x-icon">
@@ -88,24 +88,30 @@
   <li class="nav-item" data-depth="3">
     <a class="nav-link" href="#01-accessconsole">1.2.2 Access - OCP Console</a>
   </li>
-</ul>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#01-accesscli">1.2.3 Access - OCP CLI</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#01-accessArgoCD">1.2.4 Access - ArgoCD dashboard</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#01-cloneGit">1.2.5 Clone the GitOps repository</a>
   </li>
 </ul>
   </li>
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="02-cluster-setup.html">2. Cluster Setup</a>
+</ul>
   </li>
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="03-deployment-strategies.html">3. Deployment Strategies with Argo CD and Argo Rollouts</a>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="04-access-the-tools.html">4. Access the tools</a>
   </li>
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="05-blue-green-deployment.html">5. Blue/Green deployment strategy</a>
   </li>
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="06-canary-deployment.html">6. Canary deployment strategy</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="Annex-1-cluster-setup.html">Annex 1 - Cluster Setup</a>
   </li>
 </ul>
   </li>
@@ -334,11 +340,96 @@ Please review the official documentation to install the latest versions of these
 <div class="title">Figure 1. Openshift Console</div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="01-accesscli"><a class="anchor" href="#01-accesscli"></a>Access - OC Client</h3>
+<div class="paragraph">
+<p>The OpenShift Container Platform CLI (which needs to be installed first) exposes the commands for managing your applications as well as the lower-level tools to interact with each component of your system. With the <code>oc</code> command, you can create applications and manage OpenShift Container Platform projects from a terminal.</p>
+</div>
+<div class="paragraph">
+<p>Please check that you have followed the pre-requisites with your instructor and connect to the cluster executing the next command from your terminal:</p>
+</div>
+<div class="listingblock lines_space console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc login -u %USER% -p openshift https://api.%CLUSTER%:6443</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If the login is successful, it should show an output similar to the following screenshot:</p>
+</div>
+<div class="paragraph">
+<div class="title">OC CLI Login Output</div>
+<p>TODO change this image
+image::oc_login_output.png["OC CLI Login Output"]</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Please pay special attention to <em>oc CLI</em>  because you will need to use this tool several times during this tutorial.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>As shown in the output, the user will have access to the following namespaces:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>%USER%-gitops-argocd</strong>: It will contain all the GitOps objects.</p>
+</li>
+<li>
+<p><strong>%USER%-blue-green</strong>: Will contain the application using Blue/Green deployment.</p>
+</li>
+<li>
+<p><strong>%USER%-canary</strong>: Will contain the application using Canary deployment.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Each user will have its own three namespaces.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="01-accessArgoCD"><a class="anchor" href="#01-accessArgoCD"></a>Access - ArgoCD dashboard</h3>
+<div class="paragraph">
+<p>The ArgoCD web console will give you access to control how the git repo is synced with Openshift, as well as check the real status of the synchronization. In order to log in to the web console, access the Openshift web console and click on the following icon: You will get the link to the ArgoCD web console:</p>
+</div>
+<div class="paragraph">
+<p>TODO</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="01-cloneGit"><a class="anchor" href="#01-cloneGit"></a>Clone the GitOps repository</h3>
+<div class="paragraph">
+<p>Following the GitOps practices, all the deployment configuration is stored in the git repo. We have created an initial repository that you will change to configure your deployment. As part of the demo, you will have to do some changes and commits. Fork the repository and clone it in your local machine, as you don&#8217;t have write permissions on the initial git repo.</p>
+</div>
+<div class="paragraph">
+<p>Access the <a href="https://github.com/rhte2023-argo-rollouts/shop-application-helm-chart">Shop application Helm chart</a> repository and fork it on your GitHub account. If prompted, choose to fork the <code>main</code> branch.</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">git clone <a href="https://github.com/chamge_me/shop-application-helm-chart" class="bare">https://github.com/chamge_me/shop-application-helm-chart</a>
+cd shop-application-helm-chart</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="01-clusterSetup"><a class="anchor" href="#01-clusterSetup"></a>Cluster Setup</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you want to know better the required information and procedures to set up an Openshift cluster to run this workshop, please check <a href="Annex-1-cluster-setup.html" class="xref page">Annex 1</a></p>
+</div>
 </div>
 </div>
 <nav class="pagination">
   <span class="prev"><a href="index.html" class="query-params-link">Workshop</a></span>
-  <span class="next"><a href="02-cluster-setup.html" class="query-params-link">2. Cluster Setup</a></span>
+  <span class="next"><a href="03-deployment-strategies.html" class="query-params-link">3. Deployment Strategies with Argo CD and Argo Rollouts</a></span>
 </nav>
 </article>
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
