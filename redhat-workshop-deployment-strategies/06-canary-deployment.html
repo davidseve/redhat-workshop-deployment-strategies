@@ -174,11 +174,11 @@
 kind: Application
 metadata:
   name: dstrategies-canary
-  namespace: {user}-gitops-argocd
+  namespace: %USER%-gitops-argocd
 spec:
   destination:
     name: ''
-    namespace: {user}-canary
+    namespace: %USER%-canary
     server: 'https://kubernetes.default.svc'
   source:
     path: helm/helm-umbrella-dstrategies/chart
@@ -187,7 +187,7 @@ spec:
     helm:
       parameters:
       - name: "global.namespace"
-        value: {user}-canary
+        value: %USER%-canary
       valueFiles:
         - values/canary/values.yaml
         - values/canary/values-image-tag.yaml
@@ -247,7 +247,7 @@ spec:
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout dstrategies-back --watch -n {user}-canary</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout dstrategies-back --watch -n %USER%-canary</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
@@ -301,7 +301,7 @@ We have to get the Online route</pre>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">curl "$(oc get routes dstrategies-back-online -n {user}-canary --template='https://{{.spec.host}}')/dstrategies-back"</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">curl "$(oc get routes dstrategies-back-online -n %USER%-canary --template='https://{{.spec.host}}')/dstrategies-back"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -377,7 +377,7 @@ git push</code></pre>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout dstrategies-back --watch -n {user}-canary</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout dstrategies-back --watch -n %USER%-canary</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
@@ -418,7 +418,7 @@ This is our current status:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout dstrategies-back --watch -n {user}-canary</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout dstrategies-back --watch -n %USER%-canary</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
@@ -451,7 +451,7 @@ This is our current status:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout dstrategies-back --watch -n {user}-canary</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout dstrategies-back --watch -n %USER%-canary</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
