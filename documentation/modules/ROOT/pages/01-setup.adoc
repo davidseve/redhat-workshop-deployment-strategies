@@ -115,9 +115,12 @@ The ArgoCD web console will give you access to control how the git repo is synce
 
 Argo CD upon installation generates an initial admin password which is stored in a Kubernetes secret. In order to retrieve this password, run the following command to decrypt the admin password:
  
-```
+[.lines_space]
+[.console-input]
+[source,bash, subs="+macros,+attributes"]
+----
 oc extract secret/argocd-cluster -n {user}-gitops-argocd --to=-
-```
+----
  
 Log into Argo CD with `admin` username and the password retrieved from the previous step.
 
