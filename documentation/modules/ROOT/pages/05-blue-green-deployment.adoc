@@ -33,7 +33,7 @@ As with great power comes great responsibility, you have to take the following i
 
 
 
-## Deploy Shop Application
+## Deploy Dstrategies Application
 
 We are going to create the application `dstrategies`, that we will use to test Blue/Green deployment. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just forked. Please edit the following yaml and set your own GitHub repository in the `reportURL`. Create a file called `application-dstrategies-blue-green.yaml`
 
@@ -76,7 +76,8 @@ oc apply -f application-dstrategies-blue-green.yaml
 
 Looking at the Argo CD dashboard, you would notice that we have a new `dstrategies` application.
 
-TODO add image
+TODO
+image::argocd_dstrategies-blue-green.png["ArgoCD Dstrategies"]
 
 ## Application architecture
 
@@ -84,7 +85,7 @@ To achieve Blue/Green deployment with `Cloud Native` applications using **Argo R
 
 This is our current status:
 
-image::rollout-blue-green-step-0.png["Shop initial status"]
+image::rollout-blue-green-step-0.png["Dstrategies initial status"]
 
 OpenShift Components - Online
 
@@ -114,7 +115,7 @@ We have created an AnalysisTemplate 'dstrategies-back-analysis-template' that ju
           - templateName: dstrategies-back-analysis-template
 ----
 
-## Test Shop application
+## Test Dstrategies application
  
 We have deployed the `dstrategies` with ArgoCD. We can test that it is up and running.
 
@@ -192,7 +193,8 @@ git push
 
 ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI.
 
-image::ArgoCD-Shop-Refresh.png["Refresh Shop"]
+TODO
+image::ArgoCD-Dstrategies-Refresh.png["Refresh Dstrategies"]
  
 **Argo Rollouts** will automatically deploy the new dstrategies-back version and execute the `prePromotionAnalysis`. 
 
@@ -216,7 +218,7 @@ If the `prePromotionAnalysis` goes well, we can see that offline applications ha
 
 This is our current status:
 
-image::rollout-blue-green-step-1.png["Shop Step 1]"]
+image::rollout-blue-green-step-1.png["Dstrategies Step 1]"]
 
  TODO add fornt image
 
@@ -256,7 +258,7 @@ NAME                                  KIND         STATUS        AGE  INFO
 ----
 This is our current status:
 
-image::rollout-blue-green-step-2-initial.png["Shop Step 2 initial"]
+image::rollout-blue-green-step-2-initial.png["Dstrategies Step 2 initial"]
 
 And after `scaleDownDelaySeconds` **Argo Rollouts** will scale down the first replicaSet (V1.0.0).
  
@@ -276,7 +278,7 @@ And after `scaleDownDelaySeconds` **Argo Rollouts** will scale down the first re
 
 This is our final status:
 
-image::rollout-blue-green-step-2.png["Shop Step 2"]
+image::rollout-blue-green-step-2.png["Dstrategies Step 2"]
 
 TODO add front image
 
@@ -299,7 +301,7 @@ git push
 ----
 **ArgoCD** will get the changes and apply them. **Argo Rollouts** will create a new revision with the previous version.
 
-image::rollout-blue-green-step-rollback-initial.png["Shop Step Rollback initial"]
+image::rollout-blue-green-step-rollback-initial.png["Dstrategies Step Rollback initial"]
 
 Execute this command to promote dstrategies-back to version `V1.0.0`:
 [.console-input]
@@ -309,7 +311,7 @@ kubectl argo rollouts promote dstrategies-back -n {user}-blue-green
 ----
 The rollback is done!
 
-image::rollout-blue-green-step-rollback.png["Shop Step Rollback"]
+image::rollout-blue-green-step-rollback.png["Dstrategies Step Rollback"]
 
 TODO add front image
 

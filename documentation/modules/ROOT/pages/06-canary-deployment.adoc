@@ -5,7 +5,7 @@ A canary deployment is a strategy where the operator releases a new version of t
 
 TODO explain more
 
-## Deploy Shop Application
+## Deploy Dstrategies Application
 
 We are going to create the application `dstrategies`, that we will use to test canary deployment. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just forked. Please edit the following yaml and set your own GitHub repository in the `reportURL`. Create a file called `application-dstrategies-canary.yaml`
 
@@ -50,14 +50,14 @@ oc apply -f application-dstrategies-canary.yaml
 
 Looking at the Argo CD dashboard, you would notice that we have a new `dstrategies` application.
 
-TODO add image
+image::argocd_dstrategies-canary.png["ArgoCD Dstrategies"]
 
 
 ## Application architecture
 
 To achieve canary deployment with `Cloud Native` applications using **Argo Rollouts**, we have designed this architecture.
 
-image::canary-rollout-step-0.png["Shop initial status"]
+image::canary-rollout-step-0.png["Dstrategies initial status"]
 
 OpenShift Components - Online
 
@@ -108,7 +108,7 @@ dstrategies-back:
 ----
 TODO (improvement) uses Prometheus metrics
 
-## Test Shop application
+## Test Dstrategies application
  
 We have deployed the `dstrategies` with ArgoCD. We can test that it is up and running.
  
@@ -159,12 +159,12 @@ git push
 
 ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI.
 
-
-image::ArgoCD-Shop-Refresh.png["Refresh Shop"]
+TODO
+image::ArgoCD-Dstrategies-Refresh.png["Refresh Dstrategies"]
 
 This is our current status:
 
-image::canary-rollout-step-1..png["Shop Step 1]"]
+image::canary-rollout-step-1.png["Dstrategies Step 1]
 
 [.console-input]
 [source,input,subs="+macros,+attributes"]
@@ -199,7 +199,7 @@ Old revision:
 After 30 seconds **Argo Rollouts** automatically will increase the number of replicas in the new release to 2. Instead of increasing automatically after 30 seconds, we can configure **Argo Rollouts** to wait indefinitely until that `Pause` condition is removed. But this is not part of this demo.
 This is our current status:
 
-image::canary-rollout-step-2.png["Shop Step 2"]
+image::canary-rollout-step-2.png["Dstrategies Step 2"]
 
 [.console-input]
 [source,input,subs="+macros,+attributes"]
@@ -226,7 +226,7 @@ After another 30 seconds, **Argo Rollouts** will increase the number of replicas
 
 This is our current status:
 
-image::canary-rollout-step-3.png["Shop Step 3"]
+image::canary-rollout-step-3.png["Dstrategies Step 3"]
 
 [.console-input]
 [source,input,subs="+macros,+attributes"]
@@ -299,7 +299,7 @@ git push
 
 The rollback is done!
 
-image::canary-rollout-step-Rollback.png["Shop Step Rollback"]
+image::canary-rollout-step-Rollback.png["Dstrategies Step Rollback"]
 
 TODO chang to front image
 
