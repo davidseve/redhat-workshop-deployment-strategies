@@ -84,7 +84,6 @@ To achieve Blue/Green deployment with `Cloud Native` applications using **Argo R
 
 This is our current status:
 
-TODO
 image::rollout-blue-green-step-0.png["Shop initial status"]
 
 OpenShift Components - Online
