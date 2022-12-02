@@ -37,7 +37,8 @@ As with great power comes great responsibility, you have to take the following i
 
 We are going to create the application `dstrategies`, that we will use to test Blue/Green deployment. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just forked. Please edit the following yaml and set your own GitHub repository in the `reportURL`. Create a file called `application-dstrategies-blue-green.yaml`
 
-[source,yaml,subs="+macros,+attributes"]
+[.console-input]
+[source,input,yaml,subs="+macros,+attributes"]
 ----
 apiVersion: argoproj.io/v1alpha1
 kind: Application
