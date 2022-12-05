@@ -73,9 +73,11 @@ We have split a `Cloud Native` Canary deployment into three automatic step:
 
 This is just an example. The key point here is that very easily we can have the canary deployment that better fits our needs. To make this demo faster we have not set a pause without duration in any step, so  **Argo Rollouts** will go throw each step automatically.
 
+To test canary deployment we are going to do changes in the backend application dstrategies-back.
+
 ### Step 1 - Deploy the canary version for 10%
  
-We will deploy a new version V2.0.0. To do it, we have to edit the file `helm/helm-umbrella-dstrategies/chart/values/{namespace}/values-image-tag.yaml` under `dstrategies-back` set `tag` value to `v.1.1.1`
+We will deploy a new version V2.0.0. To do it, we have to edit the file `helm/helm-umbrella-dstrategies/chart/values/{namespace}/values-image-tag.yaml` under `dstrategies-back` set `tag` value to `V2.0.0`
 
 [.console-input]
 [source,input,yaml,subs="+macros,+attributes"]
@@ -136,6 +138,7 @@ kubectl argo rollouts get rollout dstrategies-back --watch -n {user}-{namespace}
 
 include::partial$rollout-step2-{namespace}.adoc[]
 
+You can see in the TODOaddfrontURL[Front] how the version and the color are changing.
 
 ### Step 3 - Scale the canary version to 100%
 After another 30 seconds, **Argo Rollouts** will increase the number of replicas in the new release to 4 and scale down the old revision.

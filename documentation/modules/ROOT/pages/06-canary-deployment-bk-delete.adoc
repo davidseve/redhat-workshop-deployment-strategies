@@ -136,7 +136,7 @@ This is just an example. The key point here is that very easily we can have the 
 
 ### Step 1 - Deploy the canary version for 10%
  
-We will deploy a new version V2.0.0. To do it, we have to edit the file `helm/helm-umbrella-dstrategies/chart/values/canary/values-image-tag.yaml` under `dstrategies-back` set `tag` value to `v.1.1.1`
+We will deploy a new version V2.0.0. To do it, we have to edit the file `helm/helm-umbrella-dstrategies/chart/values/canary/values-image-tag.yaml` under `dstrategies-back` set `tag` value to `V2.0.0`
 
 [.console-input]
 [source,input,yaml,subs="+macros,+attributes"]
