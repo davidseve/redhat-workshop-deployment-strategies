@@ -202,9 +202,10 @@ spec:
 <div class="paragraph">
 <p>Looking at the Argo CD dashboard, you would notice that we have a new <code>dstrategies</code> application.</p>
 </div>
-<div class="paragraph">
-<p>TODO mesh
-image::argocd_dstrategies-canary-service-mesh.png["ArgoCD Dstrategies"]</p>
+<div class="imageblock unresolved">
+<div class="content">
+<img src="argocd_dstrategies-canary-service-mesh.png" alt="ArgoCD Dstrategies">
+</div>
 </div>
 </div>
 </div>
@@ -289,16 +290,18 @@ git push</code></pre>
 <div class="paragraph">
 <p>ArgoCD will refresh the status after some minutes. If you don&#8217;t want to wait you can refresh it manually from ArgoCD UI.</p>
 </div>
-<div class="paragraph">
-<p>TODO mesh
-image::argocd-Dstrategies-canary-service-mesh-Refresh.png["Refresh Dstrategies"]</p>
+<div class="imageblock unresolved">
+<div class="content">
+<img src="argocd-Dstrategies-canary-service-mesh-Refresh.png" alt="Refresh Dstrategies">
+</div>
 </div>
 <div class="paragraph">
 <p>This is our current status:</p>
 </div>
-<div class="paragraph">
-<p>TODO mesh
-image::canary-service-mesh-rollout-step-1.png["Dstrategies Step 1]</p>
+<div class="imageblock unresolved">
+<div class="content">
+<img src="canary-service-mesh-rollout-step-1.png" alt="&quot;Dstrategies Step 1">
+</div>
 </div>
 <div class="listingblock console-input">
 <div class="content">
@@ -325,9 +328,10 @@ In the dstrategies-back URL response, you will have the new version in 25% of th
 <p>After 30 seconds <strong>Argo Rollouts</strong> automatically will increase the number of replicas in the new release to 2. Instead of increasing automatically after 30 seconds, we can configure <strong>Argo Rollouts</strong> to wait indefinitely until that <code>Pause</code> condition is removed. But this is not part of this demo.
 This is our current status:</p>
 </div>
-<div class="paragraph">
-<p>TODO mesh
-image::canary-service-mesh-rollout-step-2.png["Dstrategies Step 2"]</p>
+<div class="imageblock unresolved">
+<div class="content">
+<img src="canary-service-mesh-rollout-step-2.png" alt="Dstrategies Step 2">
+</div>
 </div>
 <div class="listingblock console-input">
 <div class="content">
@@ -346,9 +350,10 @@ image::canary-service-mesh-rollout-step-2.png["Dstrategies Step 2"]</p>
 <div class="paragraph">
 <p>This is our current status:</p>
 </div>
-<div class="paragraph">
-<p>TODO mesh
-image::canary-service-mesh-rollout-step-3.png["Dstrategies Step 3"]</p>
+<div class="imageblock unresolved">
+<div class="content">
+<img src="canary-service-mesh-rollout-step-3.png" alt="Dstrategies Step 3">
+</div>
 </div>
 <div class="listingblock console-input">
 <div class="content">
