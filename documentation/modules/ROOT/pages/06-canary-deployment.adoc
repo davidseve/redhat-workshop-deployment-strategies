@@ -4,6 +4,7 @@ include::_attributes-canary.adoc[]
 
 A canary deployment is a strategy where the operator releases a new version of their application to a small percentage of the production traffic. This small percentage may test the new version and provide feedback. If the new version is working well the operator may increase the percentage, till all the traffic is using the new version. Unlike Blue/Green, canary deployments are smoother, and failures have limited impact. 
 
-TODO explain more
+image::canary-1.png
+image::canary-2.png
 
 include::partial$partial-canary-deployment.adoc[]
