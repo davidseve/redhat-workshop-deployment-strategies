@@ -262,10 +262,13 @@ We can see that the current version is <code>V1.0.0</code>:</p>
 <div class="paragraph">
 <p>This is just an example. The key point here is that very easily we can have the canary deployment that better fits our needs. To make this demo faster we have not set a pause without duration in any step, so  <strong>Argo Rollouts</strong> will go throw each step automatically.</p>
 </div>
+<div class="paragraph">
+<p>To test canary deployment we are going to do changes in the backend application dstrategies-back.</p>
+</div>
 <div class="sect2">
 <h3 id="_step_1_deploy_the_canary_version_for_10"><a class="anchor" href="#_step_1_deploy_the_canary_version_for_10"></a>Step 1 - Deploy the canary version for 10%</h3>
 <div class="paragraph">
-<p>We will deploy a new version V2.0.0. To do it, we have to edit the file <code>helm/helm-umbrella-dstrategies/chart/values/canary-service-mesh/values-image-tag.yaml</code> under <code>dstrategies-back</code> set <code>tag</code> value to <code>v.1.1.1</code></p>
+<p>We will deploy a new version V2.0.0. To do it, we have to edit the file <code>helm/helm-umbrella-dstrategies/chart/values/canary-service-mesh/values-image-tag.yaml</code> under <code>dstrategies-back</code> set <code>tag</code> value to <code>V2.0.0</code></p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
@@ -340,6 +343,9 @@ This is our current status:</p>
 </div>
 <div class="paragraph">
 <p>TODO</p>
+</div>
+<div class="paragraph">
+<p>You can see in the TODOaddfrontURL[Front] how the version and the color are changing.</p>
 </div>
 </div>
 <div class="sect2">
