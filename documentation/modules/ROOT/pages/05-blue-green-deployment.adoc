@@ -76,7 +76,6 @@ oc apply -f application-dstrategies-blue-green.yaml
 
 Looking at the Argo CD dashboard, you would notice that we have a new `dstrategies` application.
 
-TODO
 image::argocd_dstrategies-blue-green.png["ArgoCD Dstrategies"]
 
 ## Application architecture
@@ -193,8 +192,7 @@ git push
 
 ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI.
 
-TODO
-image::ArgoCD-Dstrategies-Refresh.png["Refresh Dstrategies"]
+image::argocd-Dstrategies-blue-green-Refresh.png["Refresh Dstrategies"]
  
 **Argo Rollouts** will automatically deploy the new dstrategies-back version and execute the `prePromotionAnalysis`. 
 
@@ -218,7 +216,7 @@ If the `prePromotionAnalysis` goes well, we can see that offline applications ha
 
 This is our current status:
 
-image::rollout-blue-green-step-1.png["Dstrategies Step 1]"]
+image::rollout-blue-green-step-1.png["Dstrategies Step 1]
 
  TODO add fornt image
 
