@@ -4,9 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Canary deployment strategy :: Red Hat Workshop - Deployment Strategies with Argo CD and Argo Rollouts</title>
-    <link rel="canonical" href="https://github.com/davidseve/redhat-workshop-deployment-strategies/redhat-workshop-deployment-strategies/06-canary-deployment.html">
-    <link rel="prev" href="05-blue-green-deployment.html">
-    <link rel="next" href="Annex-1-cluster-setup.html">
+    <link rel="canonical" href="https://github.com/davidseve/redhat-workshop-deployment-strategies/redhat-workshop-deployment-strategies/06-canary-deployment-bk-delete.html">
     <meta name="generator" content="Antora 3.0.0">
     <link rel="stylesheet" href="../_/css/site.css">
 <link rel="icon" href="../_/img/favicon.ico" type="image/x-icon">
@@ -107,7 +105,7 @@
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="05-blue-green-deployment.html">3. Blue/Green deployment strategy</a>
   </li>
-  <li class="nav-item is-current-page" data-depth="1">
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="06-canary-deployment.html">4. Canary deployment strategy</a>
   </li>
   <li class="nav-item" data-depth="1">
@@ -144,10 +142,10 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">Workshop</a></li>
-    <li><a href="06-canary-deployment.html">4. Canary deployment strategy</a></li>
+    <li><a href="06-canary-deployment-bk-delete.html">Canary deployment strategy</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/davidseve/redhat-workshop-deployment-strategies/edit/master/documentation/modules/ROOT/pages/06-canary-deployment.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="https://github.com/davidseve/redhat-workshop-deployment-strategies/edit/master/documentation/modules/ROOT/pages/06-canary-deployment-bk-delete.adoc">Edit this Page</a></div>
   </div>
   <div class="content">
 <article class="doc">
@@ -166,19 +164,19 @@
 <h2 id="_deploy_dstrategies_application"><a class="anchor" href="#_deploy_dstrategies_application"></a>Deploy Dstrategies Application</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>We are going to create the application <code>dstrategies</code>, that we will use to test canary deployment {service-mesh}. Because we will make changes in the application&#8217;s GitHub repository, we have to use the repository that you have just forked. Please edit the following yaml and set your own GitHub repository in the <code>reportURL</code>. Create a file called {file}</p>
+<p>We are going to create the application <code>dstrategies</code>, that we will use to test canary deployment. Because we will make changes in the application&#8217;s GitHub repository, we have to use the repository that you have just forked. Please edit the following yaml and set your own GitHub repository in the <code>reportURL</code>. Create a file called <code>application-dstrategies-canary.yaml</code></p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: dstrategies-{namespace}
+  name: dstrategies-canary
   namespace: %USER%-gitops-argocd
 spec:
   destination:
     name: ''
-    namespace: %USER%-{namespace}
+    namespace: %USER%-canary
     server: 'https://kubernetes.default.svc'
   source:
     path: helm/helm-umbrella-dstrategies/chart
@@ -187,11 +185,11 @@ spec:
     helm:
       parameters:
       - name: "global.namespace"
-        value: %USER%-{namespace}
+        value: %USER%-canary
       valueFiles:
-        - values/{namespace}/values.yaml
-        - values/{namespace}/values-image-tag.yaml
-        - values/{namespace}/values-rollouts-strategy.yaml
+        - values/canary/values.yaml
+        - values/canary/values-image-tag.yaml
+        - values/canary/values-rollouts-strategy.yaml
   project: default
   syncPolicy:
     automated:
@@ -201,18 +199,91 @@ spec:
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc apply -f {file}</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc apply -f application-dstrategies-canary.yaml</code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p>Looking at the Argo CD dashboard, you would notice that we have a new <code>dstrategies</code> application.</p>
 </div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/argocd_dstrategies-canary.png" alt="ArgoCD Dstrategies">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_application_architecture"><a class="anchor" href="#_application_architecture"></a>Application architecture</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>TODO mesh
-image::argocd_dstrategies-{namespace}.png["ArgoCD Dstrategies"]</p>
+<p>To achieve canary deployment with <code>Cloud Native</code> applications using <strong>Argo Rollouts</strong>, we have designed this architecture.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/canary-rollout-step-0.png" alt="Dstrategies initial status">
+</div>
 </div>
 <div class="paragraph">
-<p>Unresolved directive in partial-canary-deployment.adoc - include::partial$application-architecture-{namespace}.adoc[]</p>
+<p>OpenShift Components - Online</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Routes and Services declared with the suffix -online</p>
+</li>
+<li>
+<p>Routes mapped only to the online services</p>
+</li>
+<li>
+<p>Services mapped to the rollout.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In Blue/Green deployment we always have an offline service to test the version that is not in production. In the case of canary deployment we do not need it because progressively we will have the new version in production.</p>
+</div>
+<div class="paragraph">
+<p>We can also see the rollout`s status.</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout dstrategies-back --watch -n %USER%-canary</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">NAME                                  KIND        STATUS     AGE  INFO
+⟳ dstrategies-back                            Rollout     ✔ Healthy  38s
+└──# revision:1
+   └──⧉ dstrategies-back-67fc9fb79b           ReplicaSet  ✔ Healthy  38s  stable
+      ├──□ dstrategies-back-67fc9fb79b-4ql4z  Pod         ✔ Running  38s  ready:1/1
+      ├──□ dstrategies-back-67fc9fb79b-7c4jw  Pod         ✔ Running  38s  ready:1/1
+      ├──□ dstrategies-back-67fc9fb79b-lz86j  Pod         ✔ Running  38s  ready:1/1
+      └──□ dstrategies-back-67fc9fb79b-xlkhp  Pod         ✔ Running  38s  ready:1/1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We have defined an active or online service 'dstrategies-back-online'. Final user will always use 'dstrategies-back-online'. When a new version is deployed <strong>Argo Rollouts</strong> create a new revision (ReplicaSet). The number of replicas in the new release increases based on the information in the steps, and the number of replicas in the old release decreases by the same number. We have configured a pause duration between each step. To learn more about <strong>Argo Rollouts</strong>, please read [this](<a href="https://argoproj.github.io/argo-rollouts/features/canary/" class="bare">https://argoproj.github.io/argo-rollouts/features/canary/</a>).</p>
+</div>
+<div class="paragraph">
+<p>This is how we have configured <strong>Argo Rollouts</strong> strategy for this demo, you can check it here <code>helm/helm-umbrella-dstrategies/chart/values/canary/values-rollouts-strategy.yaml</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">dstrategies-back:
+   rollouts:
+   canary:
+      steps:
+         - setWeight: 25
+         - pause:
+            duration: 30s
+         - setWeight: 50
+         - pause:
+            duration: 30s</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>TODO (improvement) uses Prometheus metrics</p>
 </div>
 </div>
 </div>
@@ -230,7 +301,7 @@ We have to get the Online route</pre>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">curl "$(oc get routes dstrategies-back-online -n %USER%-{namespace} --template='https://{{.spec.host}}')/dstrategies-back"</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">curl "$(oc get routes dstrategies-back-online -n %USER%-canary --template='https://{{.spec.host}}')/dstrategies-back"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -240,7 +311,7 @@ We can see that the current version is <code>V1.0.0</code>:</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_dstrategies_back_canary_deployment_service_mesh"><a class="anchor" href="#_dstrategies_back_canary_deployment_service_mesh"></a>Dstrategies-back canary deployment {service-mesh}</h2>
+<h2 id="_dstrategies_back_canary_deployment"><a class="anchor" href="#_dstrategies_back_canary_deployment"></a>Dstrategies-back canary deployment</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>We have split a <code>Cloud Native</code> Canary deployment into three automatic step:</p>
@@ -264,7 +335,7 @@ We can see that the current version is <code>V1.0.0</code>:</p>
 <div class="sect2">
 <h3 id="_step_1_deploy_the_canary_version_for_10"><a class="anchor" href="#_step_1_deploy_the_canary_version_for_10"></a>Step 1 - Deploy the canary version for 10%</h3>
 <div class="paragraph">
-<p>We will deploy a new version V2.0.0. To do it, we have to edit the file <code>helm/helm-umbrella-dstrategies/chart/values/{namespace}/values-image-tag.yaml</code> under <code>dstrategies-back</code> set <code>tag</code> value to <code>v.1.1.1</code></p>
+<p>We will deploy a new version V2.0.0. To do it, we have to edit the file <code>helm/helm-umbrella-dstrategies/chart/values/canary/values-image-tag.yaml</code> under <code>dstrategies-back</code> set <code>tag</code> value to <code>v.1.1.1</code></p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
@@ -274,7 +345,7 @@ We can see that the current version is <code>V1.0.0</code>:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Unresolved directive in partial-canary-deployment.adoc - include::partial$traffic-management-{namespace}.adoc[]</p>
+<p><strong>Argo Rollouts</strong> will automatically deploy a new dstrategies-back revision. The canary version will be 10% of the replicas. In this demo we are no using [traffic management](<a href="https://argoproj.github.io/argo-rollouts/features/traffic-management/" class="bare">https://argoproj.github.io/argo-rollouts/features/traffic-management/</a>). <strong>Argo Rollouts</strong> makes a best-effort attempt to achieve the percentage listed in the last setWeight step between the new and old version. This means that it will create only one replica in the new revision because it is rounded up. All the requests are load balanced between the old and the new replicas.</p>
 </div>
 <div class="paragraph">
 <p>Push the changes to start the deployment.</p>
@@ -289,24 +360,37 @@ git push</code></pre>
 <div class="paragraph">
 <p>ArgoCD will refresh the status after some minutes. If you don&#8217;t want to wait you can refresh it manually from ArgoCD UI.</p>
 </div>
-<div class="paragraph">
-<p>TODO mesh
-image::argocd-Dstrategies-{namespace}-Refresh.png["Refresh Dstrategies"]</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/argocd-Dstrategies-canary-Refresh.png" alt="Refresh Dstrategies">
+</div>
 </div>
 <div class="paragraph">
 <p>This is our current status:</p>
 </div>
-<div class="paragraph">
-<p>TODO mesh
-image::{namespace}-rollout-step-1.png["Dstrategies Step 1]</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/canary-rollout-step-1.png" alt="&quot;Dstrategies Step 1">
+</div>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout dstrategies-back --watch -n %USER%-{namespace}</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout dstrategies-back --watch -n %USER%-canary</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>Unresolved directive in partial-canary-deployment.adoc - include::partial$rollout-step1-{namespace}.adoc[]</p>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">NAME                                  KIND        STATUS     AGE    INFO
+⟳ dstrategies-back                            Rollout     ॥ Paused   3m13s
+├──# revision:2
+│  └──⧉ dstrategies-back-9dc6f576f            ReplicaSet  ✔ Healthy  8s     canary
+│     └──□ dstrategies-back-9dc6f576f-fwq8m   Pod         ✔ Running  8s     ready:1/1
+└──# revision:1
+   └──⧉ dstrategies-back-67fc9fb79b           ReplicaSet  ✔ Healthy  3m13s  stable
+      ├──□ dstrategies-back-67fc9fb79b-4ql4z  Pod         ✔ Running  3m13s  ready:1/1
+      ├──□ dstrategies-back-67fc9fb79b-lz86j  Pod         ✔ Running  3m13s  ready:1/1
+      └──□ dstrategies-back-67fc9fb79b-xlkhp  Pod         ✔ Running  3m13s  ready:1/1</code></pre>
+</div>
 </div>
 <div class="paragraph">
 <p>TODO chang to front image
@@ -325,17 +409,29 @@ In the dstrategies-back URL response, you will have the new version in 25% of th
 <p>After 30 seconds <strong>Argo Rollouts</strong> automatically will increase the number of replicas in the new release to 2. Instead of increasing automatically after 30 seconds, we can configure <strong>Argo Rollouts</strong> to wait indefinitely until that <code>Pause</code> condition is removed. But this is not part of this demo.
 This is our current status:</p>
 </div>
-<div class="paragraph">
-<p>TODO mesh
-image::{namespace}-rollout-step-2.png["Dstrategies Step 2"]</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/canary-rollout-step-2.png" alt="Dstrategies Step 2">
+</div>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout dstrategies-back --watch -n %USER%-{namespace}</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout dstrategies-back --watch -n %USER%-canary</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>Unresolved directive in partial-canary-deployment.adoc - include::partial$rollout-step2-{namespace}.adoc[]</p>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">NAME                                  KIND        STATUS     AGE    INFO
+⟳ dstrategies-back                            Rollout     ॥ Paused   3m47s
+├──# revision:2
+│  └──⧉ dstrategies-back-9dc6f576f            ReplicaSet  ✔ Healthy  42s    canary
+│     ├──□ dstrategies-back-9dc6f576f-fwq8m   Pod         ✔ Running  42s    ready:1/1
+│     └──□ dstrategies-back-9dc6f576f-8qppq   Pod         ✔ Running  6s     ready:1/1
+└──# revision:1
+   └──⧉ dstrategies-back-67fc9fb79b           ReplicaSet  ✔ Healthy  3m47s  stable
+      ├──□ dstrategies-back-67fc9fb79b-lz86j  Pod         ✔ Running  3m47s  ready:1/1
+      └──□ dstrategies-back-67fc9fb79b-xlkhp  Pod         ✔ Running  3m47s  ready:1/1</code></pre>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -346,17 +442,29 @@ image::{namespace}-rollout-step-2.png["Dstrategies Step 2"]</p>
 <div class="paragraph">
 <p>This is our current status:</p>
 </div>
-<div class="paragraph">
-<p>TODO mesh
-image::{namespace}-rollout-step-3.png["Dstrategies Step 3"]</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/canary-rollout-step-3.png" alt="Dstrategies Step 3">
+</div>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout dstrategies-back --watch -n %USER%-{namespace}</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">kubectl argo rollouts get rollout dstrategies-back --watch -n %USER%-canary</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>Unresolved directive in partial-canary-deployment.adoc - include::partial$rollout-step3-{namespace}.adoc[]</p>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">NAME                                 KIND        STATUS        AGE    INFO
+⟳ dstrategies-back                           Rollout     ✔ Healthy     4m32s
+├──# revision:2
+│  └──⧉ dstrategies-back-9dc6f576f           ReplicaSet  ✔ Healthy     87s    stable
+│     ├──□ dstrategies-back-9dc6f576f-fwq8m  Pod         ✔ Running     87s    ready:1/1
+│     ├──□ dstrategies-back-9dc6f576f-8qppq  Pod         ✔ Running     51s    ready:1/1
+│     ├──□ dstrategies-back-9dc6f576f-5ch92  Pod         ✔ Running     17s    ready:1/1
+│     └──□ dstrategies-back-9dc6f576f-kmvdh  Pod         ✔ Running     17s    ready:1/1
+└──# revision:1
+   └──⧉ dstrategies-back-67fc9fb79b          ReplicaSet  • ScaledDown  4m32s</code></pre>
+</div>
 </div>
 <div class="paragraph">
 <p><strong>We have in the online environment the new version V2.0.0!!!</strong></p>
@@ -389,13 +497,19 @@ In our case the commit that we have done not only changes the ReplicaSet but als
 <p>Because we have our <strong>Argo Rollouts</strong> configuration as values in our Helm Chart, we have just to edit the values.yaml that we are using.</p>
 </div>
 <div class="paragraph">
-<p>In the file <code>helm/helm-umbrella-dstrategies/chart/values/{namespace}/values-rollouts-strategy.yaml</code> under <code>dstrategies-back</code> under the <code>steps</code> delete all the steps and only set one step <code>- setWeight: 100</code></p>
+<p>In the file <code>helm/helm-umbrella-dstrategies/chart/values/canary/values-rollouts-strategy.yaml</code> under <code>dstrategies-back</code> under the <code>steps</code> delete all the steps and only set one step <code>- setWeight: 100</code></p>
 </div>
 <div class="paragraph">
-<p><code>helm/helm-umbrella-dstrategies/chart/values/{namespace}/values-rollouts-strategy.yaml</code> should looks like:</p>
+<p><code>helm/helm-umbrella-dstrategies/chart/values/canary/values-rollouts-strategy.yaml</code> should looks like:</p>
 </div>
-<div class="paragraph">
-<p>Unresolved directive in partial-canary-deployment.adoc - include::partial$values-rollouts-strategy-{namespace}.adoc[]</p>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">dstrategies-back:
+   rollouts:
+      canary:
+         steps:
+            - setWeight: 100</code></pre>
+</div>
 </div>
 <div class="paragraph">
 <p>Execute those commands to push the changes:</p>
@@ -413,9 +527,9 @@ git push</code></pre>
 <div class="paragraph">
 <p>The rollback is done!</p>
 </div>
-<div class="imageblock unresolved">
+<div class="imageblock">
 <div class="content">
-<img src="{namespace}-rollout-step-Rollback.png" alt="Dstrategies Step Rollback">
+<img src="_images/canary-rollout-step-Rollback.png" alt="Dstrategies Step Rollback">
 </div>
 </div>
 <div class="paragraph">
@@ -427,10 +541,6 @@ git push</code></pre>
 </div>
 </div>
 </div>
-<nav class="pagination">
-  <span class="prev"><a href="05-blue-green-deployment.html" class="query-params-link">3. Blue/Green deployment strategy</a></span>
-  <span class="next"><a href="Annex-1-cluster-setup.html" class="query-params-link">Annex 1 - Cluster Setup</a></span>
-</nav>
 </article>
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
   <div class="toc-menu"></div>
