@@ -1,0 +1,54 @@
+## Application architecture
+
+To achieve canary deployment with `Cloud Native` applications using **Argo Rollouts**, we have designed this architecture.
+
+image::canary-rollout-step-0.png["Dstrategies initial status"]
+
+OpenShift Components - Online
+
+- Routes and Services declared with the suffix -online
+- Routes mapped only to the online services
+- Services mapped to the rollout.
+
+In Blue/Green deployment we always have an offline service to test the version that is not in production. In the case of canary deployment we do not need it because progressively we will have the new version in production. 
+
+
+We can also see the rollout`s status.
+
+
+[.console-input]
+[source,input,subs="+macros,+attributes"]
+----
+kubectl argo rollouts get rollout dstrategies-back --watch -n {user}-canary
+----
+
+[.console-output]
+[source,input,subs="+macros,+attributes"]
+----
+NAME                                  KIND        STATUS     AGE  INFO
+⟳ dstrategies-back                            Rollout     ✔ Healthy  38s  
+└──# revision:1                                                   
+   └──⧉ dstrategies-back-67fc9fb79b           ReplicaSet  ✔ Healthy  38s  stable
+      ├──□ dstrategies-back-67fc9fb79b-4ql4z  Pod         ✔ Running  38s  ready:1/1
+      ├──□ dstrategies-back-67fc9fb79b-7c4jw  Pod         ✔ Running  38s  ready:1/1
+      ├──□ dstrategies-back-67fc9fb79b-lz86j  Pod         ✔ Running  38s  ready:1/1
+      └──□ dstrategies-back-67fc9fb79b-xlkhp  Pod         ✔ Running  38s  ready:1/1
+----
+
+We have defined an active or online service 'dstrategies-back-online'. Final user will always use 'dstrategies-back-online'. When a new version is deployed **Argo Rollouts** create a new revision (ReplicaSet). The number of replicas in the new release increases based on the information in the steps, and the number of replicas in the old release decreases by the same number. We have configured a pause duration between each step. To learn more about **Argo Rollouts**, please read [this](https://argoproj.github.io/argo-rollouts/features/canary/).
+
+This is how we have configured **Argo Rollouts** strategy for this demo, you can check it here `helm/helm-umbrella-dstrategies/chart/values/canary/values-rollouts-strategy.yaml`
+[source,yaml,subs="+macros,+attributes"]
+----
+dstrategies-back:
+   rollouts:
+   canary:
+      steps:
+         - setWeight: 25
+         - pause:
+            duration: 30s
+         - setWeight: 50
+         - pause:
+            duration: 30s
+----
+TODO (improvement) uses Prometheus metrics

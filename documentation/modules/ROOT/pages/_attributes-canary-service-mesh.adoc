@@ -1,0 +1,3 @@
+:service-mesh: with service mesh
+:file: `application-dstrategies-canary-service-mesh.yaml`
+:namespace: canary-service-mesh
