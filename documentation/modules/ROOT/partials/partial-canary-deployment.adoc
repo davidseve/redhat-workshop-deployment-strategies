@@ -43,7 +43,6 @@ oc apply -f {file}
 
 Looking at the Argo CD dashboard, you would notice that we have a new `dstrategies` application.
 
-TODO mesh
 image::argocd_dstrategies-{namespace}.png["ArgoCD Dstrategies"]
 
 include::partial$application-architecture-{namespace}.adoc[]
@@ -99,12 +98,10 @@ git push
 
 ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI.
 
-TODO mesh
 image::argocd-Dstrategies-{namespace}-Refresh.png["Refresh Dstrategies"]
 
 This is our current status:
 
-TODO mesh
 image::{namespace}-rollout-step-1.png["Dstrategies Step 1]
 
 [.console-input]
@@ -129,7 +126,6 @@ Old revision:
 After 30 seconds **Argo Rollouts** automatically will increase the number of replicas in the new release to 2. Instead of increasing automatically after 30 seconds, we can configure **Argo Rollouts** to wait indefinitely until that `Pause` condition is removed. But this is not part of this demo.
 This is our current status:
 
-TODO mesh
 image::{namespace}-rollout-step-2.png["Dstrategies Step 2"]
 
 [.console-input]
@@ -146,7 +142,6 @@ After another 30 seconds, **Argo Rollouts** will increase the number of replicas
 
 This is our current status:
 
-TODO mesh
 image::{namespace}-rollout-step-3.png["Dstrategies Step 3"]
 
 [.console-input]
