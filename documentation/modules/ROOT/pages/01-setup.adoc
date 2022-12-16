@@ -109,7 +109,7 @@ Each user will have its own four namespaces.
 [#01-accessArgoCD]
 === Access - ArgoCD dashboard
  
-The ArgoCD web console will give you access to control how the git repo is synced with Openshift, as well as check the real status of the synchronization. In order to log in to the web console, access to _https://argocd-server-user01-gitops-argocd.apps.%CLUSTER%/_
+The ArgoCD web console will give you access to control how the git repo is synced with Openshift, as well as check the real status of the synchronization. In order to log in to the web console, access to _https://argocd-server-{user}-gitops-argocd.apps.%CLUSTER%/_
 
 
 

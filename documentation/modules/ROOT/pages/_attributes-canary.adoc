@@ -1,3 +1,4 @@
 :service-mesh: 
 :file: `application-dstrategies-canary.yaml`
 :namespace: canary
+:route: oc get routes dstrategies-back-online -n %USER%-canary  --template='https://{{.spec.host}}')/dstrategies-back

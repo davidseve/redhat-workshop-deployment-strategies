@@ -80,6 +80,8 @@ image::argocd_dstrategies-blue-green.png["ArgoCD Dstrategies"]
 
 ## Application architecture
 
+We have a very simple application that has two services. One frontal React app call `dstrategies-front` and one backend Quarkus app call `dstrategies-back`. We will use the front app to call several times the back app and see how the back version change during the deployment.
+
 To achieve Blue/Green deployment with `Cloud Native` applications using **Argo Rollouts**, we have designed this architecture.
 
 This is our current status:
@@ -165,7 +167,7 @@ We have split a `Cloud Native` Blue/Green deployment into two steps:
 1. Deploy a new version.
 2. Promote a new version
  
-
+To test Blue/Green deployment we are going to do changes in the backend application dstrategies-back.
  
 We have already deployed the dstrategies-back version V1.0.0, and we are ready to use a new dstrategies-back version V2.0.0 that has a new `description` attribute.
 
