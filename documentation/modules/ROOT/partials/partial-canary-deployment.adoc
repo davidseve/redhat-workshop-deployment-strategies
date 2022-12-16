@@ -51,7 +51,6 @@ include::partial$application-architecture-{namespace}.adoc[]
  
 We have deployed the `dstrategies` with ArgoCD. We can test that it is up and running.
  
- TODO change to front image
 We have to get the Online route
 [.console-input]
 [source,input,subs="+macros,+attributes"]
