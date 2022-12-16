@@ -1,6 +1,8 @@
 = Deployment Strategies with Argo CD and Argo Rollouts
 include::_attributes.adoc[]
 
+TODO 
+
 ## Introduction
 ### Microservices architecture
 
@@ -21,8 +23,15 @@ Progressive delivery is often described as an evolution of continuous delivery, 
 
 ### Argo Rollouts
 https://argoproj.github.io/argo-rollouts/[Argo Rollouts] is a Kubernetes controller and set of CRDs which provide advanced deployment capabilities such as blue-green, canary, canary analysis, experimentation, and progressive delivery features to Kubernetes.
+TODO improve this
 
+## Deployment Strategies
 
-
+TODO Briefly explain the 3 scenarios
+Blue/Green Deployment
+Canary Deployment
+(optional)Canary Deployment with Service Mesh
+## Explain the application that we are going to use for the 3 scenarios
+TODO with helm umbrella is already done
 
 
