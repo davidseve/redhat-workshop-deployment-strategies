@@ -285,6 +285,9 @@ spec:
 <h2 id="_application_architecture"><a class="anchor" href="#_application_architecture"></a>Application architecture</h2>
 <div class="sectionbody">
 <div class="paragraph">
+<p>We have a very simple application that has two services. One frontal React app call <code>dstrategies-front</code> and one backend Quarkus app call <code>dstrategies-back</code>. We will use the front app to call several times the back app and see how the back version change during the deployment.</p>
+</div>
+<div class="paragraph">
 <p>To achieve Blue/Green deployment with <code>Cloud Native</code> applications using <strong>Argo Rollouts</strong>, we have designed this architecture.</p>
 </div>
 <div class="paragraph">
@@ -423,6 +426,9 @@ Argo Rollouts offers a Kubectl plugin to enrich the experience with Rollouts <a 
 <p>Promote a new version</p>
 </li>
 </ol>
+</div>
+<div class="paragraph">
+<p>To test Blue/Green deployment we are going to do changes in the backend application dstrategies-back.</p>
 </div>
 <div class="paragraph">
 <p>We have already deployed the dstrategies-back version V1.0.0, and we are ready to use a new dstrategies-back version V2.0.0 that has a new <code>description</code> attribute.</p>
