@@ -7,11 +7,8 @@
 *** xref:01-setup.adoc#01-accessArgoCD[1.2.4 Access - ArgoCD dashboard]
 *** xref:01-setup.adoc#01-cloneGit[1.2.5 Clone the GitOps repository]
 
-* xref:03-deployment-strategies.adoc[2. Deployment Strategies with Argo CD and Argo Rollouts]
+* xref:02-deployment-strategies.adoc[2. Deployment Strategies with Argo CD and Argo Rollouts]
 
-* xref:05-blue-green-deployment.adoc[3. Blue/Green deployment strategy]
+* xref:03-blue-green-deployment.adoc[3. Blue/Green deployment strategy]
 
-* xref:06-canary-deployment.adoc[4. Canary deployment strategy]
-
-* xref:Annex-1-cluster-setup.adoc[Annex 1 - Cluster Setup]
-
+* xref:04-canary-deployment.adoc[4. Canary deployment strategy]

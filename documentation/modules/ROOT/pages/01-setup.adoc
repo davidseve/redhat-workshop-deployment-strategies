@@ -5,7 +5,7 @@ include::_attributes.adoc[]
 [#01-prerequisites]
 == Prerequisites
 
-During this tutorial, will be required to work with different tools for running the exercises included. Please install the following software:
+During this tutorial, it will be required to work with different tools for running the exercises included. Please install the following software:
 
 include::partial$requirements.adoc[]
 
@@ -99,10 +99,10 @@ TIP: Please pay special attention to _oc CLI_  because you will need to use this
 
 As shown in the output, the user will have access to the following namespaces:
 
-* *{user}-gitops-argocd*: It will contain all the GitOps objects.
-* *{user}-blue-green*: Will contain the application using Blue/Green deployment.
-* *{user}-canary*: Will contain the application using Canary deployment.
-* *{user}-canary-service-mesh*: Will contain the application using Canary deployment with Service Mesh.
+* *{user}-gitops-argocd*: It contains Argo CD installation and all the GitOps objects.
+* *{user}-blue-green*: It will contain the application using Blue/Green deployment.
+* *{user}-canary*: It will contain the application using Canary deployment.
+* *{user}-canary-service-mesh*: It will contain the application using Canary deployment with Service Mesh.
 
 Each user will have its own four namespaces.
 
@@ -110,8 +110,6 @@ Each user will have its own four namespaces.
 === Access - ArgoCD dashboard
  
 The ArgoCD web console will give you access to control how the git repo is synced with Openshift, as well as check the real status of the synchronization. In order to log in to the web console, access to _https://argocd-server-{user}-gitops-argocd.apps.%CLUSTER%/_
-
-
 
 Argo CD upon installation generates an initial admin password which is stored in a Kubernetes secret. In order to retrieve this password, run the following command to decrypt the admin password:
  
@@ -146,8 +144,7 @@ git clone https://github.com/chamge_me/shop-application-helm-chart
 cd shop-application-helm-chart
 ----
 
-
 [#01-clusterSetup]
 == Cluster Setup
 
-If you want to know better the required information and procedures to set up an Openshift cluster to run this workshop, please check xref:Annex-1-cluster-setup.adoc[Annex 1] 
+Please visit https://github.com/rhte2023-argo-rollouts/ocp-cluster-setup.git[Openshift Cluster Setup] for more information about setting up an Openshift cluster in order to run this workshop.
