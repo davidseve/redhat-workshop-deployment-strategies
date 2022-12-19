@@ -2,7 +2,7 @@ runtime:
   cache_dir: ./.cache/antora
 
 site:
-  title: "Red Hat Workshop - Deployment Strategies with Argo CD and Argo Rollouts"
+  title: "RHTE Workshop - Deployment Strategies with Argo CD and Argo Rollouts"
   url: https://github.com/rhte2023-argo-rollouts/redhat-workshop-deployment-strategies
   start_page: redhat-workshop-deployment-strategies::index.adoc
 
