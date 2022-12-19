@@ -120,6 +120,7 @@ We have created an AnalysisTemplate 'dstrategies-back-analysis-template' that ju
  
 We have deployed the `dstrategies` with ArgoCD. We can test that it is up and running.
 
+TODO change to front
  
 We have to get the Online route
 [.console-input]
@@ -219,6 +220,7 @@ This is our current status:
 
 image::rollout-blue-green-step-1.png["Dstrategies Step 1]
 
+ TODO add fornt image
 
 
 Functional testing users can execute `Smoke tests` to validate this new V2.0.0 version.
@@ -278,6 +280,7 @@ This is our final status:
 
 image::rollout-blue-green-step-2.png["Dstrategies Step 2"]
 
+TODO add front image
 
 **We have in the online environment the new version V2.0.0!!!**
 
@@ -309,5 +312,7 @@ kubectl argo rollouts promote dstrategies-back -n {user}-blue-green
 The rollback is done!
 
 image::rollout-blue-green-step-rollback.png["Dstrategies Step Rollback"]
+
+TODO add front image
 
 

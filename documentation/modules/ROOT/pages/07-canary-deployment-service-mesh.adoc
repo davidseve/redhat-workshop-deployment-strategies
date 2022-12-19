@@ -1,7 +1,7 @@
 # Canary deployment strategy with service mesh
 include::_attributes.adoc[]
-include::_attributes-canary-service-mesh.adoc[]
 
-In the previous section, we have executed a canary deployment with out traffic management. When we set 10% weight it does not mean that 10% of the traffic goes to the new version. To achieve this we are going to have traffic management using **Openshift Service Mesh** 
 
-include::partial$partial-canary-deployment.adoc[]
+In the previous section, we executed a canary deployment without traffic management. When we set 10% weight it does not mean that 10% of the traffic goes to the new version. To achieve this we are going to have traffic management using **Openshift Service Mesh** 
+
+TODO
