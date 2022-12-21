@@ -1,11 +1,11 @@
 = Deployment Strategies with Argo CD and Argo Rollouts
 include::_attributes.adoc[]
 
-The following sections try to provide an overall vision about the application that will be used during this laboratory and the respective deployment strategies that will be study cases during the workshop.
+The following sections provide an overall vision about the application that will be used during this laboratory and the respective deployment strategies that will be study cases during the workshop.
 
 == DStrategies App
 
-DStrategies App is a microservice based application that is composed by a backend and a frontend microservice. The idea of this application is to be able to display the backend microservice caracteristics based on a request performed by the frontend.
+DStrategies App is a microservice based application that is composed by a backend microservice based on https://quarkus.io/[Quarkus] and a frontend microservice based on https://reactjs.org/[React]. The idea of this application is to be able to display the backend microservice caracteristics based on a HTTP request performed by the frontend.
 
 During this workshop, you will be able to deploy this application using different deployment strategies in order to gain knowledge and skills in managing microservice releases. 
 

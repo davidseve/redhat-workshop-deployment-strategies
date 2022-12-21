@@ -1,7 +1,71 @@
 = Blue/Green deployment strategy
 include::_attributes.adoc[]
 
-We are going to create the application `dstrategies`, that we will use to test Blue/Green deployment. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just forked. Please edit the following yaml and set your own GitHub repository in the `reportURL`. Create a file called `application-dstrategies-blue-green.yaml`
+== Application architecture
+
+As mentioned before, we have a very simple application that has two services. One frontal React app call `DStrategies-front` and one backend Quarkus app call `dstrategies-back`. We will use the front app to call several times the back app and see how the back version change during the deployment.
+
+To achieve Blue/Green deployment with `Cloud Native` applications using **Argo Rollouts**, we have designed this architecture.
+
+This is the initial situation after deploying the application:
+
+image::rollout-blue-green-step-0.png["DStrategies initial status"]
+
+OpenShift Components - Online
+
+- Routes and Services declared with the suffix -online
+- Routes mapped only to the online services
+- Services mapped to the rollout.
+ 
+OpenShift Components - Offline
+
+- Routes and Services declared with the suffix -offline
+- Routes mapped only to the offline services
+- Services mapped to the rollout
+
+We will define an active or online service 'dstrategies-back-online' and a preview or offline service 'dstrategies-back-offline'. The idea is the frontend will always use 'dstrategies-back-online' and 'dstrategies-back-offline' will only be used to test our service before trigerring the rollout.
+
+== Generate DStrategies APP GitOps Deployment Model
+
+First of all, it is required to review a set of objects in a our forked git repository in order to configure the deployment correctly for deploying our application following a GitOps model.
+
+Please follow the next section to understand the required objects and configurations.
+
+=== Review Services
+
+As the previous picture showns, it is required to generate a couple of services that will be used to redirect the traffic to the correct DStrategies App version. 
+
+Please take a look at the files *./blue-green/dstrategies-back-service-online.yaml* and *./blue-green/dstrategies-back-service-offline.yaml* in order to understand the objects and get the names of these elements.
+
+=== Modify Rollout strategy
+
+The Rollout object controls the application deployment. If you look closely, it is possible to find many similarities between an Argo Rollout objects and a Kubernetes Deployment. The main different btween the previous objects referenced is the rollout strategy field. 
+
+Please edit a file named *./blue-green/dstrategies-back-rollout.yaml* in oder to add the required **<SERVICE_OFFLINE>** and **<SERVICE_ONLINE>** service names:
+
+[source,yaml,subs="+macros,+attributes"]
+----
+  strategy:
+    blueGreen:
+      activeService: dstrategies-back-online
+      autoPromotionEnabled: false
+      prePromotionAnalysis:
+        templates:
+          - templateName: dstrategies-back-analysis-template
+      previewService: dstrategies-back-offline
+----
+
+=== Modify Analysis Template 
+
+We have created an AnalysisTemplate 'dstrategies-back-analysis-template' that just validates the health of the application, for production environments a better analysis should be done. **Argo Rollouts** use this AnalysisTemplate to validate a new version and set whether it is ready to be promoted or not. To learn more, please read https://argoproj.github.io/argo-rollouts/features/bluegreen/[this].
+
+CONTINUE
+
+=== Modify back service URL
+
+== Argo CD Application
+
+We are going to create the application `DStrategies`, that we will use to test Blue/Green deployment. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just forked. Please edit the following yaml and set your own GitHub repository in the `reportURL`. Create a file called `application-dstrategies-blue-green.yaml`
 
 [.console-input]
 [source,input,yaml,subs="+macros,+attributes"]
@@ -40,47 +104,11 @@ spec:
 oc apply -f application-dstrategies-blue-green.yaml
 ----
 
-Looking at the Argo CD dashboard, you would notice that we have a new `dstrategies` application.
+Looking at the Argo CD dashboard, you would notice that we have a new `DStrategies` application.
 
-image::argocd_dstrategies-blue-green.png["ArgoCD Dstrategies"]
+image::argocd_dstrategies-blue-green.png["ArgoCD DStrategies"]
 
-== Application architecture
-
-We have a very simple application that has two services. One frontal React app call `dstrategies-front` and one backend Quarkus app call `dstrategies-back`. We will use the front app to call several times the back app and see how the back version change during the deployment.
-
-To achieve Blue/Green deployment with `Cloud Native` applications using **Argo Rollouts**, we have designed this architecture.
-
-This is our current status:
-
-image::rollout-blue-green-step-0.png["Dstrategies initial status"]
-
-OpenShift Components - Online
-
-- Routes and Services declared with the suffix -online
-- Routes mapped only to the online services
-- Services mapped to the rollout.
- 
-OpenShift Components - Offline
-
-- Routes and Services declared with the suffix -offline
-- Routes mapped only to the offline services
-- Services mapped to the rollout
-
-We have defined an active or online service 'dstrategies-back-online' and a preview or offline service 'dstrategies-back-offline'. Final user will always use 'dstrategies-back-online'. 
-
-We have created an AnalysisTemplate 'dstrategies-back-analysis-template' that just validates the health of the application, for production environments a better analysis should be done. **Argo Rollouts** use this AnalysisTemplate to validate a new version and set whether it is ready to be promoted or not. To learn more, please read https://argoproj.github.io/argo-rollouts/features/bluegreen/[this].
-
-[source,yaml,subs="+macros,+attributes"]
-----
-  strategy:
-    blueGreen:
-      activeService: dstrategies-back-online
-      previewService: dstrategies-back-offline      
-      autoPromotionEnabled: false
-      prePromotionAnalysis:
-        templates:
-          - templateName: dstrategies-back-analysis-template
-----
+NOTE: It is important to wait for *Healthy* and *Synced* status in the Argo CD Application
 
 == Test Dstrategies application
  

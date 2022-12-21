@@ -135,13 +135,13 @@ image::argocd_applications.png["ArgoCD applications"]
 
 Following the GitOps practices, all the deployment configuration is stored in the git repo. We have created an initial repository that you will change to configure your deployment. As part of the demo, you will have to do some changes and commits. Fork the repository and clone it in your local machine, as you don't have write permissions on the initial git repo.
 
-Access the https://github.com/rhte2023-argo-rollouts/shop-application-helm-chart[Shop application Helm chart] repository and fork it on your GitHub account. If prompted, choose to fork the `main` branch.
+Access the https://github.com/rhte2023-argo-rollouts/dstrategies-app-deployment[DStrategy App Deployment] repository and fork it on your GitHub account. If prompted, choose to fork the `main` branch.
 
 [.console-input]
 [source,input,subs="+macros,+attributes"]
 ----
-git clone https://github.com/chamge_me/shop-application-helm-chart
-cd shop-application-helm-chart
+git clone https://github.com/chamge_me/dstrategies-app-deployment
+cd dstrategies-app-deployment
 ----
 
 [#01-clusterSetup]

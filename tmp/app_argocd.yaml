@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dstrategies-blue-green
+  namespace: user01-gitops-argocd
+spec:
+  destination:
+    name: ''
+    namespace: user01-blue-green
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: helm/helm-umbrella-dstrategies/chart
+    repoURL: https://github.com/autstudent/dstrategies-helm-chart.git
+    targetRevision: HEAD
+    helm:
+      parameters:
+      - name: "global.namespace"
+        value: user01-blue-green
+      valueFiles:
+        - values/blue-green/values.yaml
+        - values/blue-green/values-image-tag.yaml
+  project: default
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
