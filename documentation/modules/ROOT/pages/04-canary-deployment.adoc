@@ -199,7 +199,7 @@ This is just an example. The key point here is that very easily we can have the 
 
 To test canary deployment we are going to do changes in the backend application dstrategies-back.
 
-### Step 1 - Deploy the canary version for 10%
+### Step 1 - Deploy the canary version for 25%
  
 We will deploy a new version *V2.0.0*. To do it, we have to edit the files *./canary/dstrategies-back-rollout.yaml* and *./canary/dstrategies-back-configmap.yaml* in order to modify the value *v1.0.0* to *V2.0.0*:
 
