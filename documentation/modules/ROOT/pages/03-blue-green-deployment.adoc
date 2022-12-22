@@ -3,9 +3,9 @@ include::_attributes.adoc[]
 
 == Application architecture
 
-As mentioned before, we have a very simple application that has two services. One frontal React app call `DStrategies-front` and one backend Quarkus app call `dstrategies-back`. We will use the front app to call several times the back app and see how the back version change during the deployment.
+As mentioned before, we have a very simple application that has two services. One frontal React app call *DStrategies-front* and one backend Quarkus app call *dstrategies-back*. We will use the front app to call several times the back app and see how the back version change during the deployment.
 
-To achieve Blue/Green deployment with `Cloud Native` applications using **Argo Rollouts**, we have designed this architecture.
+To achieve Blue/Green deployment with *Cloud Native* applications using **Argo Rollouts**, we have designed this architecture.
 
 This is the initial situation after deploying the application:
 
@@ -59,7 +59,7 @@ Please edit a file named *./blue-green/dstrategies-back-rollout.yaml* in oder to
 
 We have created an AnalysisTemplate 'dstrategies-back-analysis-template' that just validates the health of the application, for production environments a better analysis should be done. **Argo Rollouts** use this AnalysisTemplate to validate a new version and set whether it is ready to be promoted or not.
 
-Please edit a file named *./blue-green/dstrategies-back-analysis-template.yaml* in oder to add the required **<USERNAME>** that references the user namespace in the healthcheck url.
+Please edit a file named *./blue-green/dstrategies-back-analysis-template.yaml* in oder to add the required **<USERNAME>** that helps to reference the user namespace in the healthcheck url.
 
 [source,yaml,subs="+macros,+attributes"]
 ----
@@ -79,13 +79,13 @@ NOTE: For more information about AnalysisTemplate, please visit the following ht
 
 Finally, it is required to create a **Deployment** object in order to deploy the frontend application. This application helps us to test the blue-green rollout strategy from a web interface and see backend information.
 
-In order to allow communication between the frontend and the backend, it is required to edit the file named *./blue-green/dstrategies-frontend-deployment.yaml* in oder to add the required **<USERNAME>** and **<OCP_DOMAIN>**.
+In order to allow communication between the frontend and the backend, it is required to edit the file named *./blue-green/dstrategies-frontend-deployment.yaml* in oder to add the required **<USERNAME>** and **<OCP_APPS_DOMAIN>**.
 
 [source,yaml,subs="+macros,+attributes"]
 ----
         env:  
           - name: REACT_APP_BACK
-            value: http://dstrategies-back-online-<USERNAME>-blue-green.<OCP_DOMAIN>/dstrategies-back
+            value: http://dstrategies-back-online-<USERNAME>-blue-green.<OCP_APPS_DOMAIN>/dstrategies-back
           - name: REACT_APP_CATEGORY
             value: BLUE-GREEN
 ----
@@ -104,7 +104,7 @@ git push
 
 == Argo CD Application
 
-We are going to create the application `DStrategies` in order to apply the files modified previously, that we will use to test Blue/Green deployment. Please edit the following yaml and set your own GitHub repository in the `reportURL`. Create a file called `application-dstrategies-blue-green.yaml`
+We are going to create the application *DStrategies* in order to apply the files modified previously, that we will use to test Blue/Green deployment. Please edit the following yaml and set your own GitHub repository in the *reportURL*. Create a file called *application-dstrategies-blue-green.yaml*
 
 [.console-input]
 [source,input,yaml,subs="+macros,+attributes"]
@@ -121,7 +121,7 @@ spec:
     server: 'https://kubernetes.default.svc'
   source:
     path: blue-green
-    repoURL: https://github.com/change_me/dstrategies-helm-chart
+    repoURL: https://github.com/change_me/dstrategies-app-deployment
     targetRevision: HEAD
   project: default
   syncPolicy:
@@ -136,7 +136,7 @@ spec:
 oc apply -f application-dstrategies-blue-green.yaml
 ----
 
-Looking at the Argo CD dashboard, you would notice that we have a new `DStrategies` application.
+Looking at the Argo CD dashboard, you would notice that we have a new *DStrategies* application.
 
 image::argocd_dstrategies-blue-green.png["ArgoCD DStrategies"]
 
@@ -144,7 +144,7 @@ NOTE: It is important to wait for *Healthy* and *Synced* status in the Argo CD A
 
 == Test Dstrategies application
  
-We have deployed the `dstrategies` with ArgoCD. We can test the online and offline services in order to ensure that they are up and running.
+We have deployed the *dstrategies* with ArgoCD. We can test the online and offline services in order to ensure that they are up and running.
 
 In order to test the online service, it is required to extract the frontend url:
 
@@ -169,10 +169,10 @@ curl "$(oc get routes dstrategies-back-offline -n {user}-blue-green --template='
 {"metadata":{"version":"V1.0.0","colour":"Blue"}}
 ----
 
-Notice that in each microservice response we have added metadata information to see better the `version` of each application. This will help us to see the changes while we do the Blue/Green deployment.
-Because right now we have both routers against the same rollout revision we will have the same response with version `V1.0.0`:
+Notice that in each microservice response we have added metadata information to see better the *version* of each application. This will help us to see the changes while we do the Blue/Green deployment.
+Because right now we have both routers against the same rollout revision we will have the same response with version *V1.0.0*:
 
-We can also see the rollout`s status.
+We can also see the rollout*s status.
 
 TIP: Argo Rollouts offers a Kubectl plugin to enrich the experience with Rollouts https://argoproj.github.io/argo-rollouts/installation/#kubectl-plugin-installation 
 
@@ -195,28 +195,29 @@ NAME                                  KIND        STATUS     AGE INFO
 
 == DStrategies-back Blue/Green deployment
 
-We have split a `Cloud Native` Blue/Green deployment into two steps:
+We have split a *Cloud Native* Blue/Green deployment into two steps:
 
 1. Deploy a new version.
 2. Promote a new version
  
 To test Blue/Green deployment we are going to do changes in the backend application dstrategies-back.
  
-We have already deployed the dstrategies-back version V1.0.0, and we are ready to use a new dstrategies-back version V2.0.0 that has a new `description` attribute.
+We have already deployed the dstrategies-back version V1.0.0, and we are ready to use a new dstrategies-back version V2.0.0 that has a new *description* attribute.
 
 === Step 1 - Deploy a new version
  
-We will deploy a new version `V2.0.0`. To do it, we have to edit the file *./blue-green/dstrategies-back-rollout.yaml* and *./blue-green/dstrategies-back-configmap.yaml* in order to modify the value *v1.0.0* to *V2.0.0*:
+We will deploy a new version *V2.0.0*. To do it, we have to edit the files *./blue-green/dstrategies-back-rollout.yaml* and *./blue-green/dstrategies-back-configmap.yaml* in order to modify the value *v1.0.0* to *V2.0.0*:
 
 [.console-input]
 [source,input,yaml,subs="+macros,+attributes"]
 ----
-          image: 'quay.io/dseveria/dstrategies-back:V1.0.0'
+          image: 'quay.io/dseveria/dstrategies-back:V1.0.0' <---
 ----
+
 [.console-input]
 [source,input,yaml,subs="+macros,+attributes"]
 ----
-  application.version: V1.0.0
+  application.version: V1.0.0 <---
 ----
 
 And push the changes
@@ -233,7 +234,7 @@ ArgoCD will refresh the status after some minutes. If you don't want to wait you
 
 image::argocd-Dstrategies-blue-green-Refresh.png["Refresh DStrategies"]
  
-**Argo Rollouts** will automatically deploy the new dstrategies-back version and execute the `prePromotionAnalysis`. 
+**Argo Rollouts** will automatically deploy the new dstrategies-back version and execute the *prePromotionAnalysis*. 
 
 [.console-output]
 [source,input,subs="+macros,+attributes"]
@@ -252,7 +253,7 @@ NAME                                  KIND         STATUS        AGE  INFO
       └──□ dstrategies-back-67fc9fb79b-p7jk9  Pod          ✔ Running     27m  ready:1/1
 ----
   
-If the `prePromotionAnalysis` goes well, we can see that offline applications have version V2.0.0 and the new attribute description, but the online version has not changed.
+If the *prePromotionAnalysis* goes well, we can see that offline applications have version V2.0.0 and the new attribute description, but the online version has not changed.
 
 This is our current status:
 
@@ -281,10 +282,10 @@ curl "$(oc get routes dstrategies-back-offline -n {user}-blue-green --template='
 {"metadata":{"version":"V2.0.0","colour":"Blue"}}
 ----
 
-Functional testing users can execute `Smoke tests` to validate this new V2.0.0 version.
+Functional testing users can execute *Smoke tests* to validate this new V2.0.0 version.
 
 We have to be careful with those tests in a production environment because the product microservice will call the online dependencies.
-If this dependency is for example a production DB we will create the things that our `Smoke tests` do.
+If this dependency is for example a production DB we will create the things that our *Smoke tests* do.
  
 === Step 2 - Promote a new version
  
@@ -297,7 +298,7 @@ Execute this command to promote dstrategies-back:
 oc argo rollouts promote dstrategies-back -n {user}-blue-green
 ----
 
-First **Argo Rollouts** will just change the service to use the new release (ReplicaSet). We `minimize downtime` because it just changes the service label. 
+First **Argo Rollouts** will just change the service to use the new release (ReplicaSet). We *minimize downtime* because it just changes the service label. 
 
 [.console-output]
 [source,input,subs="+macros,+attributes"]
@@ -319,7 +320,7 @@ This is our current status:
 
 image::rollout-blue-green-step-2-initial.png["Dstrategies Step 2 initial"]
 
-And after `scaleDownDelaySeconds` **Argo Rollouts** will scale down the first replicaSet (V1.0.0).
+And after *scaleDownDelaySeconds* **Argo Rollouts** will scale down the first replicaSet (V1.0.0).
  
 [.console-output]
 [source,input,subs="+macros,+attributes"]
@@ -358,10 +359,10 @@ image::frontend-blue-green-v2.png["Frontend Interface V2.0.0"]
 
 === Rollback
 
-Imagine that something goes wrong, we know that this never happens but just in case. We can do a very `quick rollback` just by undoing the change in the `dstrategies-back` online service.
+Imagine that something goes wrong, we know that this never happens but just in case. We can do a very *quick rollback* just by undoing the change in the *dstrategies-back* online service.
 
 **Argo Rollouts** has an https://argoproj.github.io/argo-rollouts/generated/kubectl-argo-rollouts/kubectl-argo-rollouts_undo/[undo] command to do the rollback. In our opinion, we don't like this procedure because it is not aligned with GitOps. The changes that **Argo Rollouts** do does not come from git, so git is OutOfSync with what we have in Openshift.
-In our case the commit that we have done not only changes the ReplicaSet but also the ConfigMap. The `undo` command only changes the ReplicaSet, so it does not work for us.
+In our case the commit that we have done not only changes the ReplicaSet but also the ConfigMap. The *undo* command only changes the ReplicaSet, so it does not work for us.
 
 I recommend doing the changes in git. We will revert the last commit
 [.console-input]
@@ -390,7 +391,7 @@ NAME                                          KIND         STATUS        AGE   I
    └──α dstrategies-back-7fcdfb7748-2-pre     AnalysisRun  ✔ Successful  11m   ✔ 1 
 ----
 
-Execute this command to promote dstrategies-back to version `V1.0.0`:
+Execute this command to promote dstrategies-back to version *V1.0.0*:
 [.console-input]
 [source,input,subs="+macros,+attributes"]
 ----

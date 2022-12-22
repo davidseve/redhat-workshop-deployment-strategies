@@ -50,6 +50,10 @@ The following table includes the parameters that the instructor should provide y
 | _https://api.%CLUSTER%:6443_
 | Openshift Cluster Console
 | _https://console-openshift-console.apps.%CLUSTER%_
+| Openshift Domain
+| _%CLUSTER%_
+| Openshift Apps Domain
+| _apps.%CLUSTER%_
 | Username
 | {user}
 | Password
