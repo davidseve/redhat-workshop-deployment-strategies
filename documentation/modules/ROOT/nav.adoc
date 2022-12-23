@@ -8,6 +8,14 @@
 *** xref:01-setup.adoc#01-cloneGit[1.2.5 Clone the GitOps repository]
 
 * xref:02-deployment-strategies.adoc[2. Deployment Strategies with Argo CD and Argo Rollouts]
+** xref:02-deployment-strategies.adoc#02-dstrategies-app[2.1 DStrategies App]
+** xref:02-deployment-strategies.adoc#02-deployment-strategies[2.2 Deployment Strategies]
+*** xref:02-deployment-strategies.adoc#02-micro-arch[2.2.1 Microservices Architecture]
+*** xref:02-deployment-strategies.adoc#02-cd[2.2.2 Continuous Delivery]
+*** xref:02-deployment-strategies.adoc#02-pd[2.2.3 Progressive Delivery]
+*** xref:02-deployment-strategies.adoc#02-argo-rollouts[2.2.4 Argo Rollouts]
+**** xref:02-deployment-strategies.adoc#02-bg[2.2.4.1 Blue/Green Deployment]
+**** xref:02-deployment-strategies.adoc#02-canary[2.2.4.2 Canary Deployment]
 
 * xref:03-blue-green-deployment.adoc[3. Blue/Green deployment strategy]
 

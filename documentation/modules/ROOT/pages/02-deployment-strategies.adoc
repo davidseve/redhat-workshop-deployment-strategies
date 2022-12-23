@@ -1,32 +1,44 @@
 = Deployment Strategies with Argo CD and Argo Rollouts
 include::_attributes.adoc[]
 
-The following sections provide an overall vision about the application that will be used during this laboratory and the respective deployment strategies that will be study cases during the workshop.
+The following sections provide an overall vision about the application that will be used during this laboratory and the respective deployment strategies that will be reviewed during the workshop.
 
+[#02-dstrategies-app]
 == DStrategies App
 
 DStrategies App is a microservice based application that is composed by a backend microservice based on https://quarkus.io/[Quarkus] and a frontend microservice based on https://reactjs.org/[React]. The idea of this application is to be able to display the backend microservice caracteristics based on a HTTP request performed by the frontend.
 
+image::app_arch.png[]
+
 During this workshop, you will be able to deploy this application using different deployment strategies in order to gain knowledge and skills in managing microservice releases. 
 
+[#02-deployment-strategies]
 == Deployment Strategies Overview
 
-=== Microservices architecture
+[#02-micro-arch]
+=== Microservices Architecture
 
-The traditional approach to building applications has been focused on the monolith - having all deployable parts of the app contained within that single app. *Microservice Architectures* help solve these issues and boost development and response. It's one of the main factors of a *Cloud Native development*. Now, we have several applications that have dependencies on each other and also have other dependencies like brokers or databases.
+The traditional approach to building applications has been focused on the monolith that is built as a single unit. To make any changes to the system, a developer must build and deploy an updated version of the whole application.
+
+*Microservice Architectures* help solve these issues and boost development and response. It's one of the main factors of a *Cloud Native development*. Now, we have several applications that have dependencies on each others and also have other dependencies like brokers or databases.
 
 Applications have their own life cycle, so we should be able to execute independent deployments. All the applications and dependencies will not change their version at the same time. Therefore, microservices enable your development team to roll out software solutions more quickly and better react to customer needs.
 
-=== Continuous delivery
+[#02-cd]
+=== Continuous Delivery
 
-Another important topic in Cloud Native practices is *Continuous Delivery*. Continuous delivery, often abbreviated as CD, is a set of practices in which *code changes are automatically deployed into an acceptance environment*. CD crucially includes procedures to ensure that software is adequately tested before deployment and provides a way to roll back changes if deemed necessary.
+Continuous delivery is another important topic in Cloud Native practices. Often abbreviated as CD, is a set of practices in which *code changes are automatically deployed into an acceptance environment*. CD crucially includes procedures to ensure that software is adequately tested before deployment and provides a way to roll back changes if deemed necessary.
 
+As an evolution of continuous develivery, there is another practice named *Continuous Deployment*. In this practice, the pipeline automatically and frequently pushes changes to production without waiting for a human to approve each deployment.
+
+[#02-pd]
 === Progressive Delivery
 
-Progressive delivery is the process of releasing updates of a product in a controlled and gradual manner, thereby reducing the risk of the release, typically coupling automation and metric analysis to drive the automated promotion or rollback of the update.
+Progressive delivery is the process of releasing updates of a product in a controlled and gradual manner, thereby reducing the risk of the release, typically *coupling automation and metric analysis* to drive the automated promotion or rollback of the update.
 
-Progressive delivery is often described as an evolution of continuous delivery, extending the speed benefits made in CI/CD to the deployment process. This is accomplished by limiting the exposure of the new version to a subset of users, observing and analyzing for correct behavior, then progressively increasing the exposure to a broader and wider audience while continuously verifying correctness.
+It is often described as an evolution of continuous delivery, extending the speed benefits made in CI/CD to the deployment process. This is accomplished by limiting the exposure of the new version to a subset of users, observing and analyzing for correct behavior, then progressively increasing the exposure to a broader and wider audience while continuously verifying correctness.
 
+[#02-argo-rollouts]
 === Argo Rollouts
 
 https://argoproj.github.io/argo-rollouts/[Argo Rollouts] is a Kubernetes controller and set of CRDs which provide advanced deployment capabilities such as blue-green, canary, canary analysis, experimentation, and progressive delivery features to Kubernetes.
@@ -46,28 +58,31 @@ For this reason, Argo Rollouts tries to implement the following controller featu
 * Simultaneous usage of multiple providers: SMI + NGINX, Istio + ALB, etc.
 * Metric provider integration: Prometheus, Wavefront, Kayenta, Web, Kubernetes Jobs, Datadog, New Relic, Graphite, InfluxDB
 
+[#02-bg]
 ==== Blue/Green Deployment
 
-A Blue-Green deployment has both the new and old version of the application deployed at the same time. During this time, only the old version of the application will receive production traffic. This allows the developers to run tests against the new version before switching the live traffic to the new version.*Blue-green deployment* is a strategy for updating running computer systems with *minimal downtime*. The operator maintains two environments, dubbed blue and green. One serves production traffic (the version all users use), while the other is updated.
+A *Blue-green deployment* is a strategy for updating running computer systems with *minimal downtime*. The operator maintains two environments, dubbed blue and green. One serves production traffic (the version all users use), while the other is updated.
+
+Only the old version of the application will receive production traffic. This allows the developers to run tests against the new version before switching the live traffic to the new version.
 
 For instance, the old version is the blue environment, while the new version is the green environment. Once all the *production traffic is fully transferred from blue to green*, blue can be kept as-is for a possible rollback or be updated to become the template upon which the next update is made.
 
 *Advantages*
 
-** Minimize downtime.
-** A quick way to roll back.
-** Smoke testing.
+* Minimize downtime.
+* A quick way to roll back.
+* Smoke testing.
 
 *Disadvantages*
 
-** Doubling of total resources.
-** Backward compatibility.
+* Doubling of total resources.
+* Backward compatibility.
 
-In this example, we have two versions up and running in production: online and offline. We also have routers and services for offline and online pointing to the corresponding microservice. As explained above, we can deploy a new version of the microservice in the green service ("offline") and perform *smoke tests* against it to ensure that the new version will perform correctly when real traffic begins to arrive to Green.
+In the following example, we have two versions up and running, online and offline. As explained above, we can deploy a new version of the microservice in the green service ("offline") and perform *smoke tests* against it to ensure that the new version will perform correctly when real traffic begins to arrive to Green.
 
 image::blue-green.png["Blue/Green"]
 
-When a new version is ready for real users, we only have to modify the k8s service to point to the new deployment (Green) as in the following image. There is minimal downtime and we can do a rapid rollback just by undoing the changes in the service.
+When a new version is ready for real users, we only have to modify the traffic flow to point to the new deployment (Green) as in the following image. There is minimal downtime and we can do a rapid rollback just by undoing the changes.
 
 image::blue-green-switch.png["Blue/Green switch"]
 
@@ -77,9 +92,10 @@ As with great power comes great responsibility, you have to take the following i
 * We have to be *ready for a rapid rollback*. In case of seeing any issue in the monitorization, we should be able to modify the service to point back to the first deployment.
 * We need to keep *backward compatibility*. If not, we would not be able to perform rollbacks.
 
+[#02-canary]
 ==== Canary Deployment
 
-A Canary deployment exposes a subset of users to the new version of the application while serving the rest of the traffic to the old version. Once the new version is verified to be correct, the new version can gradually replace the old version using Ingress controllers and service meshes such as NGINX and Istio (e.g. achieving very fine-grained traffic splitting, or splitting based on HTTP headers).
+A *Canary deployment* exposes a subset of users to the new version of the application while serving the rest of the traffic to the old version. Once the new version is verified to be correct based on metrics or some healthchecks, the new version can gradually replace the old version using Ingress controllers and service meshes such as NGINX and Istio (e.g. achieving very fine-grained traffic splitting, or splitting based on HTTP headers).
 
 image::canary1.png[]
 
