@@ -23,18 +23,18 @@ The technical exercises included in this tutorial are based on cloud native solu
 - https://argoproj.github.io/argo-cd/[ArgoCD] is a declarative, GitOps continuous delivery tool for Kubernetes following the GitOps pattern of using Git repositories as the source of truth for defining the desired application state. Argo CD automates the deployment of the desired application states in the specified target environments. Application deployments can track updates to branches, tags, or pinned to a specific version of manifests at a Git commit.
 - https://argoproj.github.io/argo-rollouts/[Argo Rollouts] provides advanced deployment capabilities such as blue-green, canary, canary analysis, experimentation, and progressive delivery features to Kubernetes.
 - https://helm.sh/[Helm] is a tool to find, share, and use software built for Kubernetes. Helm helps users manage Kubernetes applications in terms of definition, installing, and upgrading even the most complex Kubernetes applications.
+- https://quarkus.io/[Quarkus] is a Kubernetes-native Java framework tailored for GraalVM and HotSpot, crafted from best-of-breed Java libraries and standards. The goal is to make Java the leading platform in Kubernetes and serverless environments while offering developers a framework to address a wider range of distributed application architectures.
 
 
 During this tutorial, a set of resources are provided by the instructor in order to be able to complete the exercises described in the following sections. The main objective of these resources is to provide a platform, multiple templates and other resources which are required to create different objects in Openshift.
 
 Please review the following list to have an overall understanding of the resources provided for completing this tutorial:
 
-- An Openshift cluster that will host and make available a set of applications deployed
+- An Openshift cluster that will host and make available a set of applications
+- A set of dedicated namespaces per user in the Openshift Cluster
 - An ArgoCD installation that allows attendees to deploy applications in a GitOps fashion
 - An Argo Rollouts installation that allows attendees to deploy applications using deployment strategies such as Blue/Green and Canary 
 - A set of GitHub repositories that include the templates and automatisms required to deploy a group of applications
-- https://github.com/davidseve/cloud-native-deployment-strategies[GitHub - Cloud Native Deployment Strategies Repository] 
-
 
 [#01-parameters]
 === Parameters
@@ -73,17 +73,19 @@ The following table includes the parameters that the instructor should provide y
 [#01-accessconsole]
 === Access - OCP Console
 
-In addition, access Openshift Console using your credentials via browser to check connectivity and accessibility to the console:
+In order to check the laboratory environment, please access to the Openshift Console via browser using your credentials:
 
 - _https://console-openshift-console.apps.%CLUSTER%_
 
 .Openshift Console
 image::ocp_console.png[]
 
+NOTE: Use *lab-users* section to login with your credentials.
+
 [#01-accesscli]
 === Access - OC Client
 
-The OpenShift Container Platform CLI (which needs to be installed first) exposes the commands for managing your applications as well as the lower-level tools to interact with each component of your system. With the `oc` command, you can create applications and manage OpenShift Container Platform projects from a terminal.
+The OpenShift Container Platform CLI (which needs to be installed first) exposes the commands for managing your applications as well as the lower-level tools to interact with each component of your system. With the *oc* command, you can create applications and manage OpenShift Container Platform projects from a terminal.
 
 Please check that you have followed the pre-requisites with your instructor and connect to the cluster executing the next command from your terminal:
 
@@ -99,7 +101,7 @@ If the login is successful, it should show an output similar to the following sc
 .OC CLI Login Output 
 image::oc_login_output.png["OC CLI Login Output"]
 
-TIP: Please pay special attention to _oc CLI_  because you will need to use this tool several times during this tutorial.
+TIP: Please pay special attention to *oc CLI* because you will need to use this tool several times during this tutorial.
 
 As shown in the output, the user will have access to the following namespaces:
 
@@ -111,11 +113,11 @@ As shown in the output, the user will have access to the following namespaces:
 Each user will have its own four namespaces.
 
 [#01-accessArgoCD]
-=== Access - ArgoCD dashboard
+=== Access - Argo CD dashboard
  
-The ArgoCD web console will give you access to control how the git repo is synced with Openshift, as well as check the real status of the synchronization. In order to log in to the web console, access to _https://argocd-server-{user}-gitops-argocd.apps.%CLUSTER%/_
+The Argo CD web console will give you access to control how the git repo is synced with Openshift, as well as check the real status of the synchronization. In order to log in to the web console, access to _https://argocd-server-{user}-gitops-argocd.apps.%CLUSTER%/_
 
-Argo CD upon installation generates an initial admin password which is stored in a Kubernetes secret. In order to retrieve this password, run the following command to decrypt the admin password:
+It is important to bear in mind that Argo CD upon installation generates an initial admin password which is stored in a Kubernetes secret. In order to retrieve this password, run the following command to decrypt the admin password:
  
 [.lines_space]
 [.console-input]
@@ -123,7 +125,7 @@ Argo CD upon installation generates an initial admin password which is stored in
 ----
 oc extract secret/argocd-cluster -n {user}-gitops-argocd --to=-
 ----
- 
+
 Log into Argo CD with `admin` username and the password retrieved from the previous step.
 
 .ArgoCD login screen
@@ -137,9 +139,15 @@ image::argocd_applications.png["ArgoCD applications"]
 [#01-cloneGit]
 === Clone the GitOps repository
 
-Following the GitOps practices, all the deployment configuration is stored in the git repo. We have created an initial repository that you will change to configure your deployment. As part of the demo, you will have to do some changes and commits. Fork the repository and clone it in your local machine, as you don't have write permissions on the initial git repo.
+Following the GitOps practices, all the deployment configuration is stored in the git repo. We have created an initial repository that you will change to configure your deployment. As part of the demo, you will have to do some changes and commits. 
 
-Access the https://github.com/rhte2023-argo-rollouts/dstrategies-app-deployment[DStrategy App Deployment] repository and fork it on your GitHub account. If prompted, choose to fork the `main` branch.
+Please fork the repository and clone it in your local machine in order to have fully autonomy to make changes and deploy applications. In order to complete this task, follow the next steps:
+
+* Access the https://github.com/rhte2023-argo-rollouts/dstrategies-app-deployment[DStrategy App Deployment] repository 
+
+* Fork it on your GitHub account. If prompted, choose to fork the `main` branch.
+
+* Download the repository to your local machine
 
 [.console-input]
 [source,input,subs="+macros,+attributes"]
