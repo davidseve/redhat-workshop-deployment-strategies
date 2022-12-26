@@ -11,9 +11,9 @@ Please follow the next section to understand the required objects and configurat
 
 === Review and Modify Rollout strategy
 
-As you know so well, the Rollout object controls the application deployment. If you look closely, it is possible to find many similarities between an Argo Rollout objects and a Kubernetes Deployment. The main different btween the previous objects referenced is the rollout strategy field. 
+As you know so well, the Rollout object controls the application deployment. If you look closely, it is possible to find many similarities between an Argo Rollout objects and a Kubernetes Deployment. The main different between the previous objects referenced is the rollout strategy field. 
 
-Please edit a file named *./canary/dstrategies-back-rollout.yaml* in oder to define **<TIME>** as *30s* and understand the canary deployment strategy:
+Please edit a file named *./canary/dstrategies-back-rollout.yaml* in order to define **<TIME>** as *30s* and understand the canary deployment strategy:
 
 [source,yaml,subs="+macros,+attributes"]
 ----
@@ -34,7 +34,7 @@ Please edit a file named *./canary/dstrategies-back-rollout.yaml* in oder to def
 
 === Modify Analysis Template 
 
-Please edit a file named *./canary/dstrategies-back-analysis-template.yaml* in oder to add the required **<USERNAME>** that helps to reference the user namespace in the healthcheck url.
+Please edit a file named *./canary/dstrategies-back-analysis-template.yaml* in order to add the required **<USERNAME>** that helps to reference the user namespace in the healthcheck url.
 
 [source,yaml,subs="+macros,+attributes"]
 ----
@@ -48,13 +48,13 @@ Please edit a file named *./canary/dstrategies-back-analysis-template.yaml* in o
       successCondition: result == 'UP'
 ----
 
-NOTE: For more information about AnalysisTemplate, please visit the following https://argoproj.github.io/argo-rollouts/features/bluegreen/[link].
+NOTE: For more information about AnalysisTemplate, please visit the following https://github.com/acidonper/redhat-workshop-deployment-strategies/[link].
 
 === Modify back service URL
 
 Finally, it is required to create a **Deployment** object in order to deploy the frontend application. This application helps us to test the canary rollout strategy from a web interface and see backend information.
 
-In order to allow communication between the frontend and the backend, it is required to edit the file named *./canary/dstrategies-frontend-deployment.yaml* in oder to add the required **<USERNAME>** and **<OCP_APPS_DOMAIN>**.
+In order to allow communication between the frontend and the backend, it is required to edit the file named *./canary/dstrategies-frontend-deployment.yaml* in order to add the required **<USERNAME>** and **<OCP_APPS_DOMAIN>**.
 
 [source,yaml,subs="+macros,+attributes"]
 ----
@@ -150,7 +150,7 @@ NAME                                  KIND        STATUS     AGE  INFO
       └──□ dstrategies-back-67fc9fb79b-xlkhp  Pod         ✔ Running  38s  ready:1/1
 ----
 
-We have defined an active or online service 'dstrategies-back-online'. Final user will always use 'dstrategies-back-online'. When a new version is deployed **Argo Rollouts** create a new revision (ReplicaSet). The number of replicas in the new release increases based on the information in the steps, and the number of replicas in the old release decreases by the same number. We have configured a pause duration between each step. To learn more about **Argo Rollouts**, please read [this](https://argoproj.github.io/argo-rollouts/features/canary/).
+We have defined an active or online service 'dstrategies-back-online'. Final user will always use 'dstrategies-back-online'. When a new version is deployed **Argo Rollouts** create a new revision (ReplicaSet). The number of replicas in the new release increases based on the information in the steps, and the number of replicas in the old release decreases by the same number. We have configured a pause duration between each step. To learn more about **Argo Rollouts**, please read https://argoproj.github.io/argo-rollouts/features/canary/[this].
 
 This is how we have configured **Argo Rollouts** strategy for this demo, you can check it here *helm/helm-umbrella-dstrategies/chart/values/canary/values-rollouts-strategy.yaml*
 [source,yaml,subs="+macros,+attributes"]
@@ -199,20 +199,20 @@ This is just an example. The key point here is that very easily we can have the 
 
 To test canary deployment we are going to do changes in the backend application dstrategies-back.
 
-### Step 1 - Deploy the canary version for 25%
+### Step 1 - Deploy the canary version for 10%
  
 We will deploy a new version *V2.0.0*. To do it, we have to edit the files *./canary/dstrategies-back-rollout.yaml* and *./canary/dstrategies-back-configmap.yaml* in order to modify the value *v1.0.0* to *V2.0.0*:
 
 [.console-input]
 [source,input,yaml,subs="+macros,+attributes"]
 ----
-          image: 'quay.io/dseveria/dstrategies-back:V1.0.0' <---
+          image: 'quay.io/dseveria/dstrategies-back:V2.0.0' <---
 ----
 [.console-input]
 
 [source,input,yaml,subs="+macros,+attributes"]
 ----
-  application.version: V1.0.0 <---
+  application.version: V2.0.0 <---
 ----
 
 Before appliying these changes, it is important to monitor the current version via the frontend. In order to track all canary process, it is required to prepare the frontend to generate multiples requests.
@@ -231,7 +231,7 @@ Visit the frontend route via your web browser, edit the number of *Calls Retries
 .Frontend Interface
 image::frontend-canary-v1.png["Frontend Interface"]
 
-**Argo Rollouts** will automatically deploy a new dstrategies-back revision. The canary version will be 25% of the replicas. In this demo we are not using [traffic management](https://argoproj.github.io/argo-rollouts/features/traffic-management/). **Argo Rollouts** makes a best-effort attempt to achieve the percentage listed in the last setWeight step between the new and old version. This means that it will create only one replica in the new revision because it is rounded up. All the requests are load balanced between the old and the new replicas.
+**Argo Rollouts** will automatically deploy a new dstrategies-back revision. The canary version will be 25% of the replicas. In this demo we are not using https://argoproj.github.io/argo-rollouts/features/traffic-management/[traffic management]. **Argo Rollouts** makes a best-effort attempt to achieve the percentage listed in the last setWeight step between the new and old version. This means that it will create only one replica in the new revision because it is rounded up. All the requests are load balanced between the old and the new replicas.
 
 Push the changes to start the deployment.
 [.console-input]
