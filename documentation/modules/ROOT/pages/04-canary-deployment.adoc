@@ -48,7 +48,7 @@ Please edit a file named *./canary/dstrategies-back-analysis-template.yaml* in o
       successCondition: result == 'UP'
 ----
 
-NOTE: For more information about AnalysisTemplate, please visit the following https://github.com/acidonper/redhat-workshop-deployment-strategies/[link].
+NOTE: For more information about AnalysisTemplate, please visit the following https://argoproj.github.io/argo-rollouts/features/analysis/[link].
 
 === Modify back service URL
 
