@@ -200,10 +200,10 @@
 <div class="sect2">
 <h3 id="_review_and_modify_rollout_strategy"><a class="anchor" href="#_review_and_modify_rollout_strategy"></a>Review and Modify Rollout strategy</h3>
 <div class="paragraph">
-<p>As you know so well, the Rollout object controls the application deployment. If you look closely, it is possible to find many similarities between an Argo Rollout objects and a Kubernetes Deployment. The main different btween the previous objects referenced is the rollout strategy field.</p>
+<p>As you know so well, the Rollout object controls the application deployment. If you look closely, it is possible to find many similarities between an Argo Rollout objects and a Kubernetes Deployment. The main different between the previous objects referenced is the rollout strategy field.</p>
 </div>
 <div class="paragraph">
-<p>Please edit a file named <strong>./canary/dstrategies-back-rollout.yaml</strong> in oder to define <strong>&lt;TIME&gt;</strong> as <strong>30s</strong> and understand the canary deployment strategy:</p>
+<p>Please edit a file named <strong>./canary/dstrategies-back-rollout.yaml</strong> in order to define <strong>&lt;TIME&gt;</strong> as <strong>30s</strong> and understand the canary deployment strategy:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -226,7 +226,7 @@
 <div class="sect2">
 <h3 id="_modify_analysis_template"><a class="anchor" href="#_modify_analysis_template"></a>Modify Analysis Template</h3>
 <div class="paragraph">
-<p>Please edit a file named <strong>./canary/dstrategies-back-analysis-template.yaml</strong> in oder to add the required <strong>&lt;USERNAME&gt;</strong> that helps to reference the user namespace in the healthcheck url.</p>
+<p>Please edit a file named <strong>./canary/dstrategies-back-analysis-template.yaml</strong> in order to add the required <strong>&lt;USERNAME&gt;</strong> that helps to reference the user namespace in the healthcheck url.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -247,7 +247,7 @@
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For more information about AnalysisTemplate, please visit the following <a href="https://argoproj.github.io/argo-rollouts/features/bluegreen/">link</a>.
+For more information about AnalysisTemplate, please visit the following <a href="https://argoproj.github.io/argo-rollouts/features/analysis/">link</a>.
 </td>
 </tr>
 </table>
@@ -259,7 +259,7 @@ For more information about AnalysisTemplate, please visit the following <a href=
 <p>Finally, it is required to create a <strong>Deployment</strong> object in order to deploy the frontend application. This application helps us to test the canary rollout strategy from a web interface and see backend information.</p>
 </div>
 <div class="paragraph">
-<p>In order to allow communication between the frontend and the backend, it is required to edit the file named <strong>./canary/dstrategies-frontend-deployment.yaml</strong> in oder to add the required <strong>&lt;USERNAME&gt;</strong> and <strong>&lt;OCP_APPS_DOMAIN&gt;</strong>.</p>
+<p>In order to allow communication between the frontend and the backend, it is required to edit the file named <strong>./canary/dstrategies-frontend-deployment.yaml</strong> in order to add the required <strong>&lt;USERNAME&gt;</strong> and <strong>&lt;OCP_APPS_DOMAIN&gt;</strong>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -381,7 +381,7 @@ spec:
 </div>
 </div>
 <div class="paragraph">
-<p>We have defined an active or online service 'dstrategies-back-online'. Final user will always use 'dstrategies-back-online'. When a new version is deployed <strong>Argo Rollouts</strong> create a new revision (ReplicaSet). The number of replicas in the new release increases based on the information in the steps, and the number of replicas in the old release decreases by the same number. We have configured a pause duration between each step. To learn more about <strong>Argo Rollouts</strong>, please read [this](<a href="https://argoproj.github.io/argo-rollouts/features/canary/" class="bare">https://argoproj.github.io/argo-rollouts/features/canary/</a>).</p>
+<p>We have defined an active or online service 'dstrategies-back-online'. Final user will always use 'dstrategies-back-online'. When a new version is deployed <strong>Argo Rollouts</strong> create a new revision (ReplicaSet). The number of replicas in the new release increases based on the information in the steps, and the number of replicas in the old release decreases by the same number. We have configured a pause duration between each step. To learn more about <strong>Argo Rollouts</strong>, please read <a href="https://argoproj.github.io/argo-rollouts/features/canary/">this</a>.</p>
 </div>
 <div class="paragraph">
 <p>This is how we have configured <strong>Argo Rollouts</strong> strategy for this demo, you can check it here <strong>helm/helm-umbrella-dstrategies/chart/values/canary/values-rollouts-strategy.yaml</strong></p>
@@ -456,18 +456,18 @@ spec:
 <p>To test canary deployment we are going to do changes in the backend application dstrategies-back.</p>
 </div>
 <div class="sect2">
-<h3 id="_step_1_deploy_the_canary_version_for_25"><a class="anchor" href="#_step_1_deploy_the_canary_version_for_25"></a>Step 1 - Deploy the canary version for 25%</h3>
+<h3 id="_step_1_deploy_the_canary_version_for_10"><a class="anchor" href="#_step_1_deploy_the_canary_version_for_10"></a>Step 1 - Deploy the canary version for 10%</h3>
 <div class="paragraph">
 <p>We will deploy a new version <strong>V2.0.0</strong>. To do it, we have to edit the files <strong>./canary/dstrategies-back-rollout.yaml</strong> and <strong>./canary/dstrategies-back-configmap.yaml</strong> in order to modify the value <strong>v1.0.0</strong> to <strong>V2.0.0</strong>:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">          image: 'quay.io/dseveria/dstrategies-back:V1.0.0' &lt;---</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">          image: 'quay.io/dseveria/dstrategies-back:V2.0.0' &lt;---</code></pre>
 </div>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">  application.version: V1.0.0 &lt;---</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">  application.version: V2.0.0 &lt;---</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -491,7 +491,7 @@ spec:
 <div class="title">Figure 2. Frontend Interface</div>
 </div>
 <div class="paragraph">
-<p><strong>Argo Rollouts</strong> will automatically deploy a new dstrategies-back revision. The canary version will be 25% of the replicas. In this demo we are not using [traffic management](<a href="https://argoproj.github.io/argo-rollouts/features/traffic-management/" class="bare">https://argoproj.github.io/argo-rollouts/features/traffic-management/</a>). <strong>Argo Rollouts</strong> makes a best-effort attempt to achieve the percentage listed in the last setWeight step between the new and old version. This means that it will create only one replica in the new revision because it is rounded up. All the requests are load balanced between the old and the new replicas.</p>
+<p><strong>Argo Rollouts</strong> will automatically deploy a new dstrategies-back revision. The canary version will be 25% of the replicas. In this demo we are not using <a href="https://argoproj.github.io/argo-rollouts/features/traffic-management/">traffic management</a>. <strong>Argo Rollouts</strong> makes a best-effort attempt to achieve the percentage listed in the last setWeight step between the new and old version. This means that it will create only one replica in the new revision because it is rounded up. All the requests are load balanced between the old and the new replicas.</p>
 </div>
 <div class="paragraph">
 <p>Push the changes to start the deployment.</p>
