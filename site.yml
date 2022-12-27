@@ -2,8 +2,8 @@ runtime:
   cache_dir: ./.cache/antora
 
 site:
-  title: "Red Hat Workshop - Deployment Strategies with Argo CD and Argo Rollouts"
-  url: https://github.com/davidseve/redhat-workshop-deployment-strategies
+  title: "RHTE Workshop - Deployment Strategies with Argo CD and Argo Rollouts"
+  url: https://github.com/rhte2023-argo-rollouts/redhat-workshop-deployment-strategies
   start_page: redhat-workshop-deployment-strategies::index.adoc
 
 
@@ -12,7 +12,7 @@ content:
     # - url: ./
     #   start_path: documentation
     #Change to make url parameters work EX: USER
-    - url: git@github.com:davidseve/redhat-workshop-deployment-strategies.git
+    - url: git@github.com:rhte2023-argo-rollouts/redhat-workshop-deployment-strategies.git
       tags: []
       branches: [master]
       start_path: documentation
