@@ -3,9 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Welcome to Red Hat Workshop - Deployment Strategies with Argo CD and Argo Rollouts :: RHTE Workshop - Deployment Strategies with Argo CD and Argo Rollouts</title>
-    <link rel="canonical" href="https://github.com/rhte2023-argo-rollouts/redhat-workshop-deployment-strategies/redhat-workshop-deployment-strategies/index.html">
-    <link rel="next" href="01-setup.html">
+    <title>Canary deployment strategy with service mesh :: RHTE Workshop - Deployment Strategies with Argo CD and Argo Rollouts</title>
+    <link rel="canonical" href="https://github.com/rhte2023-argo-rollouts/redhat-workshop-deployment-strategies/redhat-workshop-deployment-strategies/05-canary-deployment-service-mesh.html">
     <meta name="generator" content="Antora 3.0.0">
     <link rel="stylesheet" href="../_/css/site.css">
 <link rel="icon" href="../_/img/favicon.ico" type="image/x-icon">
@@ -169,59 +168,24 @@
 <main class="article">
 <div class="toolbar" role="navigation">
 <button class="nav-toggle"></button>
-  <a href="index.html" class="home-link is-current"></a>
+  <a href="index.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">Workshop</a></li>
-    <li><a href="index.html">Welcome to Red Hat Workshop - Deployment Strategies with Argo CD and Argo Rollouts</a></li>
+    <li><a href="05-canary-deployment-service-mesh.html">Canary deployment strategy with service mesh</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/rhte2023-argo-rollouts/redhat-workshop-deployment-strategies/edit/master/documentation/modules/ROOT/pages/index.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="https://github.com/rhte2023-argo-rollouts/redhat-workshop-deployment-strategies/edit/master/documentation/modules/ROOT/pages/05-canary-deployment-service-mesh.adoc">Edit this Page</a></div>
   </div>
   <div class="content">
 <article class="doc">
-<h1 class="page">Welcome to Red Hat Workshop - Deployment Strategies with Argo CD and Argo Rollouts</h1>
-<div class="sect1 text-center strong">
-<h2>Introduction</h2>
-<div class="sectionbody">
+<h1 class="page">Canary deployment strategy with service mesh</h1>
 <div class="paragraph">
-<p><em>Red Hat Workshop - Deployment Strategies with Argo CD and Argo Rollouts</em> is a repository which includes a tutorial with a set of practices for the purpose of practicing with Kubernetes Native GitOps model, <strong>Blue/Green</strong> deployment and <strong>Canary</strong> deployment using <strong>Argo Rollouts</strong></p>
+<p>In the previous section, we executed a canary deployment without traffic management. When we set 10% weight it does not mean that 10% of the traffic goes to the new version. To achieve this we are going to have traffic management using <strong>Openshift Service Mesh</strong></p>
 </div>
 <div class="paragraph">
-<p>The general idea behind this workshop is to get an initial understanding of the following points:</p>
+<p>TODO</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>Deploy microservice-based applications in Kubernetes using ArgoCD and Helm.</p>
-</li>
-<li>
-<p>Operate applications in Kubernetes using ArgoCD in a GitOps model.</p>
-</li>
-<li>
-<p>Blue/Green deployment for Cloud Native applications using Argo Rollouts.</p>
-</li>
-<li>
-<p>Canary deployment for Cloud Native applications using Argo Rollouts.</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1 text-center strong">
-<h2>Getting Started</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>First of all, it is required to review your local machine prerequisites and laboratory environment access to be able to start working on this tutorial.</p>
-</div>
-<div class="paragraph">
-<p>Please follow <a href="01-setup.html" class="xref page">Environment Setup</a> for more information.</p>
-</div>
-</div>
-</div>
-<nav class="pagination">
-  <span class="next"><a href="01-setup.html" class="query-params-link">1. Environment Setup</a></span>
-</nav>
 </article>
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
   <div class="toc-menu"></div>
