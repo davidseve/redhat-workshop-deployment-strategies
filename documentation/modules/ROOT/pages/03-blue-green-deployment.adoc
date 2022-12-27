@@ -3,7 +3,7 @@ include::_attributes.adoc[]
 
 == Application architecture
 
-As mentioned before, we have a very simple application that has two services. One frontal React app call *DStrategies-front* and one backend Quarkus app call *dstrategies-back*. We will use the front app to call several times the back app and see how the back version change during the deployment.
+As mentioned before, we have a very simple application that has two services. One frontal React app call *dstrategies-front* and one backend Quarkus app call *dstrategies-back*. We will use the front app to call several times the back app and see how the back version change during the deployment.
 
 To achieve Blue/Green deployment with *Cloud Native* applications using **Argo Rollouts**, we have designed this architecture.
 
@@ -39,7 +39,7 @@ Please take a look at the files *./blue-green/dstrategies-back-service-online.ya
 
 === Modify Rollout strategy
 
-The Rollout object controls the application deployment. If you look closely, it is possible to find many similarities between an Argo Rollout objects and a Kubernetes Deployment. The main different btween the previous objects referenced is the rollout strategy field. 
+The Rollout object controls the application deployment. If you look closely, it is possible to find many similarities between an Argo Rollout objects and a Kubernetes Deployment. The main different between the previous objects referenced is the rollout strategy field. 
 
 Please edit a file named *./blue-green/dstrategies-back-rollout.yaml* in oder to add the required **<SERVICE_OFFLINE>** and **<SERVICE_ONLINE>** service names:
 
@@ -172,7 +172,7 @@ curl "$(oc get routes dstrategies-back-offline -n {user}-blue-green --template='
 Notice that in each microservice response we have added metadata information to see better the *version* of each application. This will help us to see the changes while we do the Blue/Green deployment.
 Because right now we have both routers against the same rollout revision we will have the same response with version *V1.0.0*:
 
-We can also see the rollout*s status.
+We can also see the rollout's status.
 
 TIP: Argo Rollouts offers a Kubectl plugin to enrich the experience with Rollouts https://argoproj.github.io/argo-rollouts/installation/#kubectl-plugin-installation 
 
@@ -211,13 +211,13 @@ We will deploy a new version *V2.0.0*. To do it, we have to edit the files *./bl
 [.console-input]
 [source,input,yaml,subs="+macros,+attributes"]
 ----
-          image: 'quay.io/dseveria/dstrategies-back:V1.0.0' <---
+          image: 'quay.io/dseveria/dstrategies-back:V2.0.0' <---
 ----
 
 [.console-input]
 [source,input,yaml,subs="+macros,+attributes"]
 ----
-  application.version: V1.0.0 <---
+  application.version: V2.0.0 <---
 ----
 
 And push the changes
