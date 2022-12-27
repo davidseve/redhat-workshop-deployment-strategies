@@ -68,7 +68,7 @@ Please edit a file named *./blue-green/dstrategies-back-analysis-template.yaml* 
       provider:
         web:
           jsonPath: '{$.status}'
-          URL: >-
+          url: >-
             http://dstrategies-back-offline.<USERNAME>-blue-green.svc.cluster.local:8080/q/health/ready
       successCondition: result == 'UP'
 ----

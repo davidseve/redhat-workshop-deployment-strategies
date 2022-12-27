@@ -43,7 +43,7 @@ Please edit a file named *./canary/dstrategies-back-analysis-template.yaml* to a
       provider:
         web:
           jsonPath: '{$.status}'
-          URL: >-
+          url: >-
             http://dstrategies-back-online.<USERNAME>-canary.svc.cluster.local:8080/q/health/ready
       successCondition: result == 'UP'
 ----
