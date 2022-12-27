@@ -67,7 +67,7 @@ The following table includes the parameters that the instructor should provide y
 | App Namespace for Canary deployment with Service Mesh
 | {user}-canary-service-mesh
 | ArgoCD console
-| _https://argocd-server-user01-gitops-argocd.apps.%CLUSTER%/_
+| _https://argocd-server-{user}-gitops-argocd.apps.%CLUSTER%/_
 |===
 
 [#01-accessconsole]
