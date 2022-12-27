@@ -3,7 +3,7 @@ include::_attributes.adoc[]
 
 == Application architecture
 
-As mentioned before, we have a very simple application that has two services. One frontal React app call *dstrategies-front* and one backend Quarkus app call *dstrategies-back*. We will use the front app to call several times the back app and see how the back version change during the deployment.
+As mentioned before, we have a very simple application that has two services. One frontal React app called *dstrategies-front* and one backend Quarkus app called *dstrategies-back*. We will use the front app to call several times the back app and see how the back version change during the deployment.
 
 To achieve Blue/Green deployment with *Cloud Native* applications using **Argo Rollouts**, we have designed this architecture.
 
@@ -23,23 +23,23 @@ OpenShift Components - Offline
 - Routes mapped only to the offline services
 - Services mapped to the rollout
 
-We will define an active or online service 'dstrategies-back-online' and a preview or offline service 'dstrategies-back-offline'. The idea is the frontend will always use 'dstrategies-back-online' and 'dstrategies-back-offline' will only be used to test our service before trigerring the rollout.
+We will define an active or online service 'dstrategies-back-online' and a preview or offline service 'dstrategies-back-offline'. The idea is the frontend will always use 'dstrategies-back-online' and 'dstrategies-back-offline' will only be used to test our service before triggering the rollout.
 
 == Generate DStrategies APP GitOps Deployment Model
 
-First of all, it is required to review a set of objects in a our forked git repository in order to configure the deployment correctly for deploying our application following a GitOps model.
+First of all, it is required to review a set of objects in our forked git repository to configure the deployment correctly for deploying our application following a GitOps model.
 
 Please follow the next section to understand the required objects and configurations.
 
 === Review Services
 
-As the previous picture showns, it is required to generate a couple of services that will be used to redirect the traffic to the correct DStrategies App version. 
+As the previous picture shows, it is required to generate a couple of services that will be used to redirect the traffic to the correct DStrategies App version. 
 
-Please take a look at the files *./blue-green/dstrategies-back-service-online.yaml* and *./blue-green/dstrategies-back-service-offline.yaml* in order to understand the objects and get the names of these elements.
+Please take a look at the files *./blue-green/dstrategies-back-service-online.yaml* and *./blue-green/dstrategies-back-service-offline.yaml* to understand the objects and get the names of these elements.
 
 === Modify Rollout strategy
 
-The Rollout object controls the application deployment. If you look closely, it is possible to find many similarities between an Argo Rollout objects and a Kubernetes Deployment. The main different between the previous objects referenced is the rollout strategy field. 
+The Rollout object controls the application deployment. If you look closely, it is possible to find many similarities between an Argo Rollout object and a Kubernetes Deployment. The main difference between the previous objects referenced is the rollout strategy field. 
 
 Please edit a file named *./blue-green/dstrategies-back-rollout.yaml* in oder to add the required **<SERVICE_OFFLINE>** and **<SERVICE_ONLINE>** service names:
 
@@ -59,7 +59,7 @@ Please edit a file named *./blue-green/dstrategies-back-rollout.yaml* in oder to
 
 We have created an AnalysisTemplate 'dstrategies-back-analysis-template' that just validates the health of the application, for production environments a better analysis should be done. **Argo Rollouts** use this AnalysisTemplate to validate a new version and set whether it is ready to be promoted or not.
 
-Please edit a file named *./blue-green/dstrategies-back-analysis-template.yaml* in oder to add the required **<USERNAME>** that helps to reference the user namespace in the healthcheck url.
+Please edit a file named *./blue-green/dstrategies-back-analysis-template.yaml* to add the required **<USERNAME>** that helps to reference the user namespace in the healthcheck URL.
 
 [source,yaml,subs="+macros,+attributes"]
 ----
@@ -68,7 +68,7 @@ Please edit a file named *./blue-green/dstrategies-back-analysis-template.yaml* 
       provider:
         web:
           jsonPath: '{$.status}'
-          url: >-
+          URL: >-
             http://dstrategies-back-offline.<USERNAME>-blue-green.svc.cluster.local:8080/q/health/ready
       successCondition: result == 'UP'
 ----
@@ -77,9 +77,9 @@ NOTE: For more information about AnalysisTemplate, please visit the following ht
 
 === Modify back service URL
 
-Finally, it is required to create a **Deployment** object in order to deploy the frontend application. This application helps us to test the blue-green rollout strategy from a web interface and see backend information.
+Finally, it is required to create a **Deployment** object to deploy the frontend application. This application helps us to test the blue-green rollout strategy from a web interface and see backend information.
 
-In order to allow communication between the frontend and the backend, it is required to edit the file named *./blue-green/dstrategies-frontend-deployment.yaml* in oder to add the required **<USERNAME>** and **<OCP_APPS_DOMAIN>**.
+To allow communication between the frontend and the backend, it is required to edit the file named *./blue-green/dstrategies-frontend-deployment.yaml* to add the required **<USERNAME>** and **<OCP_APPS_DOMAIN>**.
 
 [source,yaml,subs="+macros,+attributes"]
 ----
@@ -104,7 +104,7 @@ git push
 
 == Argo CD Application
 
-We are going to create the application *DStrategies* in order to apply the files modified previously, that we will use to test Blue/Green deployment. Please edit the following yaml and set your own GitHub repository in the *reportURL*. Create a file called *application-dstrategies-blue-green.yaml*
+We are going to create the application *DStrategies* to apply the files modified previously, that we will use to test Blue/Green deployment. Please edit the following yaml and set your own GitHub repository in the *reportURL*. Create a file called *application-dstrategies-blue-green.yaml*
 
 [.console-input]
 [source,input,yaml,subs="+macros,+attributes"]
@@ -144,9 +144,9 @@ NOTE: It is important to wait for *Healthy* and *Synced* status in the Argo CD A
 
 == Test Dstrategies application
  
-We have deployed the *dstrategies* with ArgoCD. We can test the online and offline services in order to ensure that they are up and running.
+We have deployed the *dstrategies* with ArgoCD. We can test the online and offline services to ensure that they are up and running.
 
-In order to test the online service, it is required to extract the frontend url:
+To test the online service, it is required to extract the frontend URL:
 
 [.lines_space]
 [.console-input]
@@ -155,9 +155,9 @@ In order to test the online service, it is required to extract the frontend url:
 oc get route dstrategies-frontend -n {user}-blue-green -o jsonpath='{.spec.host}'
 ----
 
-Or you can use this http://dstrategies-frontend-{user}-blue-green.apps.%CLUSTER%/[url]
+Or you can use this http://dstrategies-frontend-{user}-blue-green.apps.%CLUSTER%/[URL]
 
-Visit the frontend via your web browser, push - JUMP- button and ensure the following message is displaying in your screen:
+Visit the frontend via your web browser, push - JUMP- button and ensure the following message is displaying on your screen:
 
 .Frontend Interface
 image::frontend-blue-green.png["Frontend Interface"]
@@ -212,7 +212,7 @@ We have already deployed the *dstrategies-back* version V1.0.0, and we have a ne
 
 === Step 1 - Deploy a new version
  
-We will deploy a new version *V2.0.0*. To do it, we have to edit the files *./blue-green/dstrategies-back-rollout.yaml* and *./blue-green/dstrategies-back-configmap.yaml* in order to modify the value *v1.0.0* to *V2.0.0*:
+We will deploy a new version *V2.0.0*. To do it, we have to edit the files *./blue-green/dstrategies-back-rollout.yaml* and *./blue-green/dstrategies-back-configmap.yaml* to modify the value *v1.0.0* to *V2.0.0*:
 
 [.console-input]
 [source,input,yaml,subs="+macros,+attributes"]
@@ -263,9 +263,9 @@ This is our current status:
 
 image::rollout-blue-green-step-1.png["Dstrategies Step 1]
 
-In order to test the online service, you can use the frontend http://dstrategies-frontend-{user}-blue-green.apps.%CLUSTER%/[url]
+To test the online service, you can use the frontend http://dstrategies-frontend-{user}-blue-green.apps.%CLUSTER%/[URL]
 
-Visit the frontend route via your web browser, push - JUMP- button and ensure the following message is displaying in your screen:
+Visit the frontend route via your web browser, push - JUMP- button and ensure the following message is displaying on your screen:
 
 .Frontend Interface
 image::frontend-blue-green.png["Frontend Interface"]
@@ -342,9 +342,9 @@ This is our final status:
 
 image::rollout-blue-green-step-2.png["Dstrategies Step 2"]
 
-In order to test the new online service, you can use the frontend http://dstrategies-frontend-{user}-blue-green.apps.%CLUSTER%/[url]
+To test the new online service, you can use the frontend http://dstrategies-frontend-{user}-blue-green.apps.%CLUSTER%/[URL]
 
-Visit the frontend route via your web browser, push - JUMP- button and ensure the following message is displaying in your screen:
+Visit the frontend route via your web browser, push - JUMP- button and ensure the following message is displaying on your screen:
 
 .Frontend Interface
 image::frontend-blue-green-v2.png["Frontend Interface V2.0.0"]
@@ -394,9 +394,9 @@ oc argo rollouts promote dstrategies-back -n {user}-blue-green
 
 image::rollout-blue-green-step-rollback.png["DStrategies Step Rollback"]
 
-In order to test the online service, you can use the frontend http://dstrategies-frontend-{user}-blue-green.apps.%CLUSTER%/[url]
+To test the online service, you can use the frontend http://dstrategies-frontend-{user}-blue-green.apps.%CLUSTER%/[URL]
 
-Visit the frontend route via your web browser, push - JUMP- button and ensure the following message is displaying in your screen:
+Visit the frontend route via your web browser, push - JUMP- button and ensure the following message is displaying on your screen:
 
 .Frontend Interface
 image::frontend-blue-green-v1.png["Frontend Interface V1.0.0"]
