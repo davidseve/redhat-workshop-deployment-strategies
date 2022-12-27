@@ -155,7 +155,9 @@ In order to test the online service, it is required to extract the frontend url:
 oc get route dstrategies-frontend -n {user}-blue-green -o jsonpath='{.spec.host}'
 ----
 
-Visit the frontend route via your web browser, push - JUMP- button and ensure the following message is displaying in your screen:
+Or you can go user this url: http://dstrategies-frontend-{user}-blue-green.apps.%CLUSTER%/
+
+Visit the frontend via your web browser, push - JUMP- button and ensure the following message is displaying in your screen:
 
 .Frontend Interface
 image::frontend-blue-green.png["Frontend Interface"]
@@ -166,7 +168,12 @@ In addition, regarding testing the offline service, it is required to get the Of
 [source,input,subs="+macros,+attributes"]
 ----
 curl "$(oc get routes dstrategies-back-offline -n {user}-blue-green --template='http://{{.spec.host}}')/dstrategies-back"
-{"metadata":{"version":"V1.0.0","colour":"Blue"}}
+----
+
+[.console-output]
+[source,input,subs="+macros,+attributes"]
+----
+{"metadata":{"version":"V1.0.0","colour":"Green"}}
 ----
 
 Notice that in each microservice response we have added metadata information to see better the *version* of each application. This will help us to see the changes while we do the Blue/Green deployment.
@@ -190,7 +197,6 @@ NAME                                  KIND        STATUS     AGE INFO
 └──# revision:1                                                   
    └──⧉ dstrategies-back-67fc9fb79b           ReplicaSet  ✔ Healthy  12m  stable,active
       ├──□ dstrategies-back-67fc9fb79b-49k25  Pod         ✔ Running  12m  ready:1/1
-      └──□ dstrategies-back-67fc9fb79b-p7jk9  Pod         ✔ Running  12m  ready:1/1
 ----
 
 == DStrategies-back Blue/Green deployment
@@ -200,9 +206,9 @@ We have split a *Cloud Native* Blue/Green deployment into two steps:
 1. Deploy a new version.
 2. Promote a new version
  
-To test Blue/Green deployment we are going to do changes in the backend application dstrategies-back.
+To test Blue/Green deployment we are going to do changes in the backend application *dstrategies-back*.
  
-We have already deployed the dstrategies-back version V1.0.0, and we are ready to use a new dstrategies-back version V2.0.0 that has a new *description* attribute.
+We have already deployed the *dstrategies-back* version V1.0.0, and we have a new dstrategies-back version V2.0.0 ready to be deployed. 
 
 === Step 1 - Deploy a new version
  
