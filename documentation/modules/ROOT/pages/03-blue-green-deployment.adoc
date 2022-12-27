@@ -263,7 +263,7 @@ This is our current status:
 
 image::rollout-blue-green-step-1.png["Dstrategies Step 1]
 
-In order to test the online service, it is required to extract the frontend http://dstrategies-frontend-{user}-blue-green.apps.%CLUSTER%/[url]
+In order to test the online service, you can use the frontend http://dstrategies-frontend-{user}-blue-green.apps.%CLUSTER%/[url]
 
 Visit the frontend route via your web browser, push - JUMP- button and ensure the following message is displaying in your screen:
 
@@ -342,7 +342,7 @@ This is our final status:
 
 image::rollout-blue-green-step-2.png["Dstrategies Step 2"]
 
-In order to test the new online service, it is required to extract the frontend http://dstrategies-frontend-{user}-blue-green.apps.%CLUSTER%/[url]
+In order to test the new online service, you can use the frontend http://dstrategies-frontend-{user}-blue-green.apps.%CLUSTER%/[url]
 
 Visit the frontend route via your web browser, push - JUMP- button and ensure the following message is displaying in your screen:
 
@@ -394,14 +394,7 @@ oc argo rollouts promote dstrategies-back -n {user}-blue-green
 
 image::rollout-blue-green-step-rollback.png["DStrategies Step Rollback"]
 
-In order to test the online service, it is required to extract the frontend url:
-
-[.lines_space]
-[.console-input]
-[source,bash, subs="+macros,+attributes"]
-----
-oc get route dstrategies-frontend -n {user}-blue-green -o jsonpath='{.spec.host}'
-----
+In order to test the online service, you can use the frontend http://dstrategies-frontend-{user}-blue-green.apps.%CLUSTER%/[url]
 
 Visit the frontend route via your web browser, push - JUMP- button and ensure the following message is displaying in your screen:
 
