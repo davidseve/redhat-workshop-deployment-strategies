@@ -155,7 +155,7 @@ In order to test the online service, it is required to extract the frontend url:
 oc get route dstrategies-frontend -n {user}-blue-green -o jsonpath='{.spec.host}'
 ----
 
-Or you can go user this http://dstrategies-frontend-{user}-blue-green.apps.%CLUSTER%/[url]
+Or you can use this http://dstrategies-frontend-{user}-blue-green.apps.%CLUSTER%/[url]
 
 Visit the frontend via your web browser, push - JUMP- button and ensure the following message is displaying in your screen:
 
