@@ -1,6 +1,6 @@
 # Red Hat Workshop - Deployment Strategies with Argo CD and Argo Rollouts
 
-## Introduction
+## Introduction 
 
 _Red Hat Workshop - Deployment Strategies with Argo CD and Argo Rollouts_ is a repository which includes a tutorial with a set of practices for the purpose of practicing with Kubernetes Native GitOps model, *Blue/Green* deployment and *Canary* deployment using *Argo Rollouts*
 
