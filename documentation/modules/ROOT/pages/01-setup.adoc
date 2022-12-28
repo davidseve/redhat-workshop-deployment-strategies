@@ -73,14 +73,14 @@ The following table includes the parameters that the instructor should provide y
 [#01-accessconsole]
 === Access - OCP Console
 
-In order to check the laboratory environment, please access to the Openshift Console via browser using your credentials:
+In order to check the laboratory environment, please access the Openshift Console via browser using your credentials:
 
 - _https://console-openshift-console.apps.%CLUSTER%_
 
 .Openshift Console
 image::ocp_console.png[]
 
-NOTE: Use *lab-users* section to login with your credentials.
+NOTE: Use *lab-users* section to log in with your credentials.
 
 [#01-accesscli]
 === Access - OC Client
@@ -115,7 +115,7 @@ Each user will have its own four namespaces.
 [#01-accessArgoCD]
 === Access - Argo CD dashboard
  
-The Argo CD web console will give you access to control how the git repo is synced with Openshift, as well as check the real status of the synchronization. In order to log in to the web console, access to _https://argocd-server-{user}-gitops-argocd.apps.%CLUSTER%/_
+The Argo CD web console will give you access to control how the git repo is synced with Openshift, as well as check the real status of the synchronization. To log in to the web console, access to _https://argocd-server-{user}-gitops-argocd.apps.%CLUSTER%/_
 
 It is important to bear in mind that Argo CD upon installation generates an initial admin password which is stored in a Kubernetes secret. In order to retrieve this password, run the following command to decrypt the admin password:
  
@@ -141,11 +141,11 @@ image::argocd_applications.png["ArgoCD applications"]
 
 Following the GitOps practices, all the deployment configuration is stored in the git repo. We have created an initial repository that you will change to configure your deployment. As part of the demo, you will have to do some changes and commits. 
 
-Please fork the repository and clone it in your local machine in order to have fully autonomy to make changes and deploy applications. In order to complete this task, follow the next steps:
+Please fork the repository and clone it in your local machine in order to have full autonomy to make changes and deploy applications. In order to complete this task, follow the next steps:
 
 * Access the https://github.com/rhte2023-argo-rollouts/dstrategies-app-deployment[DStrategy App Deployment] repository 
 
-* Fork it on your GitHub account. If prompted, choose to fork the `main` branch.
+* Fork it on your GitHub account. If prompted, choose to fork only the `main` branch.
 
 * Download the repository to your local machine
 

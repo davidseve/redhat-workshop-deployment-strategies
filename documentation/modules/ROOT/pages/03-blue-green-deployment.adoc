@@ -3,7 +3,7 @@ include::_attributes.adoc[]
 
 == Application architecture
 
-As mentioned before, we have a very simple application that has two services. One frontal React app called *dstrategies-front* and one backend Quarkus app called *dstrategies-back*. We will use the front app to call several times the back app and see how the back version change during the deployment.
+As mentioned before, we have a very simple application with two services. One frontal React app called *dstrategies-front* and one backend Quarkus app called *dstrategies-back*. We will use the front app to call several times the back app and see how the back version change during the deployment.
 
 To achieve Blue/Green deployment with *Cloud Native* applications using **Argo Rollouts**, we have designed this architecture.
 
@@ -23,7 +23,7 @@ OpenShift Components - Offline
 - Routes mapped only to the offline services
 - Services mapped to the rollout
 
-We will define an active or online service 'dstrategies-back-online' and a preview or offline service 'dstrategies-back-offline'. The idea is the frontend will always use 'dstrategies-back-online' and 'dstrategies-back-offline' will only be used to test our service before triggering the rollout.
+We will define an active or online service 'dstrategies-back-online' and a preview or offline service 'dstrategies-back-offline'. The idea is that the frontend will always use 'dstrategies-back-online' and 'dstrategies-back-offline' will only be used to test our service before triggering the rollout.
 
 == Generate DStrategies APP GitOps Deployment Model
 
@@ -59,7 +59,7 @@ Please edit a file named *./blue-green/dstrategies-back-rollout.yaml* in oder to
 
 We have created an AnalysisTemplate 'dstrategies-back-analysis-template' that just validates the health of the application, for production environments a better analysis should be done. **Argo Rollouts** use this AnalysisTemplate to validate a new version and set whether it is ready to be promoted or not.
 
-Please edit a file named *./blue-green/dstrategies-back-analysis-template.yaml* to add the required **<USERNAME>** that helps to reference the user namespace in the healthcheck URL.
+Please edit the file named *./blue-green/dstrategies-back-analysis-template.yaml* to add the required **<USERNAME>** that helps to reference the user namespace in the healthcheck URL.
 
 [source,yaml,subs="+macros,+attributes"]
 ----
@@ -104,7 +104,7 @@ git push
 
 == Argo CD Application
 
-We are going to create the application *DStrategies* to apply the files modified previously, that we will use to test Blue/Green deployment. Please edit the following yaml and set your own GitHub repository in the *reportURL*. Create a file called *application-dstrategies-blue-green.yaml*
+We are going to create the application *DStrategies* to apply the files modified previously to test Blue/Green deployment. Please edit the following yaml and set your own GitHub repository in the *reportURL*. Create a file called *application-dstrategies-blue-green.yaml*
 
 [.console-input]
 [source,input,yaml,subs="+macros,+attributes"]
@@ -144,7 +144,7 @@ NOTE: It is important to wait for *Healthy* and *Synced* status in the Argo CD A
 
 == Test Dstrategies application
  
-We have deployed the *dstrategies* with ArgoCD. We can test the online and offline services to ensure that they are up and running.
+We have deployed the *DStrategies* with ArgoCD. We can test the online and offline services to ensure that they are up and running.
 
 To test the online service, it is required to extract the frontend URL:
 
@@ -157,7 +157,7 @@ oc get route dstrategies-frontend -n {user}-blue-green -o jsonpath='{.spec.host}
 
 Or you can use this http://dstrategies-frontend-{user}-blue-green.apps.%CLUSTER%/[URL]
 
-Visit the frontend via your web browser, push - JUMP- button and ensure the following message is displaying on your screen:
+Visit the frontend via your web browser, push - JUMP - button and ensure the following message is displaying on your screen:
 
 .Frontend Interface
 image::frontend-blue-green.png["Frontend Interface"]
