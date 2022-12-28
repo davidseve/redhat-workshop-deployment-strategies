@@ -243,7 +243,7 @@ NAME                                  KIND        STATUS     AGE    INFO
       └──□ dstrategies-back-67fc9fb79b-xlkhp  Pod         ✔ Running  3m13s  ready:1/1
 ----
 
-In the dstrategies-back URL response, you will have the new version in 25% of the requests.
+On the front web page you will have the new version in *25%* of the requests.
 
 New revision:
 
