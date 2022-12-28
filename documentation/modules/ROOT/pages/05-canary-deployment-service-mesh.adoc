@@ -1,2 +1,326 @@
 # Canary deployment strategy with service mesh
 include::_attributes.adoc[]
+
+In the previous section, we executed a canary deployment using *Argo Rollouts* without https://argoproj.github.io/argo-rollouts/features/traffic-management/[traffic management]. When we set 10% weight it does not mean that 10% of the traffic goes to the new version. Because, as we explanted before, *Argo Rollouts* makes a best-effort attempt to achieve the percentage listed in the weight between the new and old versions.
+
+To achieve the right percentage in each version, we are going to use traffic management with **Openshift Service Mesh** 
+
+We also have a huge improvement. The back application is sending metrics to Prometheus. We will use those metrics to decide if *Argo Rollouts* keep increasing the amount of traffic, that goes to the new version, or cancel the rollout.
+
+To get progressive delivery based on the Prometheus metrics. We have an AnalisisTemplate that fetches the metrics and decide if go on or cancel the rollout.
+
+TODO show AnalisisTemplate content
+
+== Generate DStrategies APP GitOps Deployment Model
+
+First of all, it is required to review a set of objects in our forked git repository to configure the deployment correctly for deploying our application following a GitOps model.
+
+For this exercise, we are going to use Helm to render the different Kubernetes objects. Please follow the next section to understand the required objects and configurations.
+
+=== Review and Modify Rollout strategy
+
+We want that you define the steps to perform the canary deployment. You can choose the number of the steps and the percentage of traffic. To learn more about **Argo Rollouts**, please read https://argoproj.github.io/argo-rollouts/features/canary/[this].
+
+Please edit a file named *./rhsm-canary/template/dstrategies-back-rollout.yaml* to define **<SET-STEPS>** as you want and understand the canary deployment strategy:
+
+[source,yaml,subs="+macros,+attributes"]
+----
+  strategy:
+    canary:
+      trafficRouting:
+        istio:
+          virtualService:
+            routes:
+            - primary
+            name: {{ include "service.name" . }}
+          destinationRule:
+            name: {{ include "service.name" . }}
+            canarySubsetName: canary
+            stableSubsetName: stable
+      steps:
+        <SET-STEPS>
+----
+
+=== Modify back service URL
+TODO is it neccesary or with helm we can get the REACT_APP_BACK
+Finally, it is required to create a **Deployment** object to deploy the frontend application. This application helps us to test the canary rollout strategy from a web interface and see backend information.
+
+To allow communication between the frontend and the backend, it is required to edit the file named *./rhsm-canary/dstrategies-frontend-deployment.yaml* to add the required **<USERNAME>** and **<OCP_APPS_DOMAIN>**.
+
+[source,yaml,subs="+macros,+attributes"]
+----
+        env:  
+          - name: REACT_APP_BACK
+            value: http://dstrategies-back-online-<USERNAME>-canary.<OCP_APPS_DOMAIN>/dstrategies-back
+          - name: REACT_APP_CATEGORY
+            value: CANARY
+----
+
+=== Commit and Push the Changes
+
+Once all the files are configured correctly, it is time to commit and push all changes to the repository that you have just forked.
+
+[.console-input]
+[source,input,subs="+macros,+attributes"]
+----
+git add .
+git commit -m "Configured DStrategies App deployment files for canary strategy"
+git push
+----
+
+== Deploy Dstrategies Application
+
+We are going to create the application *dstrategies*, which we will use to test canary deployment with Service Mesh. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just forked. Please edit the following yaml and set your own GitHub repository in the *reportURL*. Create a file called *application-dstrategies-canary-rhsm.yaml*
+
+[.console-input]
+[source,input,yaml,subs="+macros,+attributes"]
+----
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dstrategies-canary-rhsm
+  namespace: {user}-gitops-argocd
+spec:
+  destination:
+    name: ''
+    namespace: {user}-canary-service-mesh
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: rhsm-canary
+    repoURL: https://github.com/change_me/dstrategies-app-deployment
+    targetRevision: HEAD    
+    helm:
+      valueFiles:
+        - test.values.yaml
+  project: default
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+----
+
+[.console-input]
+[source,input,subs="+macros,+attributes"]
+----
+oc apply -f application-dstrategies-canary-rhsm.yaml
+----
+
+Looking at the Argo CD dashboard, you would notice that we have a new *dstrategies* application.
+
+TODO
+image::argocd_dstrategies-canary.png["ArgoCD Dstrategies"]
+
+== Application architecture
+
+To achieve canary deployment with *Cloud Native* applications using **Argo Rollouts**, we have designed this architecture.
+
+TODO
+image::canary-rollout-step-0.png["Dstrategies initial status"]
+
+OpenShift Components - Online
+TODO
+- Routes and Services declared with the suffix -online
+- Routes mapped only to the online services
+- Services mapped to the rollout.
+
+In Blue/Green deployment we always have an offline service to test the version that is not in production. In the case of canary deployment, we do not need it because progressively we will have the new version in production. 
+
+We can also see the rollout´s status.
+
+[.console-input]
+[source,input,subs="+macros,+attributes"]
+----
+oc argo rollouts get rollout dstrategies-back --watch -n {user}-canary-service-mesh
+----
+
+[.console-output]
+[source,input,subs="+macros,+attributes"]
+----
+NAME                                  KIND        STATUS     AGE  INFO
+⟳ dstrategies-back                            Rollout     ✔ Healthy  38s  
+└──# revision:1                                                   
+   └──⧉ dstrategies-back-67fc9fb79b           ReplicaSet  ✔ Healthy  38s  stable
+      ├──□ dstrategies-back-67fc9fb79b-4ql4z  Pod         ✔ Running  38s  ready:2/2
+      ├──□ dstrategies-back-67fc9fb79b-7c4jw  Pod         ✔ Running  38s  ready:2/2
+      ├──□ dstrategies-back-67fc9fb79b-lz86j  Pod         ✔ Running  38s  ready:2/2
+      └──□ dstrategies-back-67fc9fb79b-xlkhp  Pod         ✔ Running  38s  ready:2/2
+----
+
+We have defined an active or online service 'dstrategies-back-online'. Final user will always use 'dstrategies-back-online'. When a new version is deployed **Argo Rollouts** create a new revision (ReplicaSet). The number of replicas in the new release increases based on the information in the steps, and the number of replicas in the old release decreases by the same number.
+
+
+== Test Dstrategies application
+ 
+We have deployed the *dstrategies* with ArgoCD. We can test that it is up and running.
+ 
+TODO
+To test the online service, you can use the frontend http://dstrategies-frontend-{user}-canary-service-mesh.apps.%CLUSTER%/[URL]
+
+Visit the frontend route via your web browser, push - JUMP- button and ensure the following message is displaying on your screen:
+
+TODO
+.Frontend Interface
+image::frontend-canary.png["Frontend Interface"]
+
+Notice that in each microservice response we have added metadata information to see better the *version* of each application. This will help us to see the changes while we do the canary deployment.  We can see that the current version is *V1.0.0*.
+
+== Dstrategies-back canary deployment
+
+To test canary deployment we are going to do changes in the backend application dstrategies-back.
+
+### Deploy dstrategies-back new version
+ 
+We will deploy a new version *V2.0.0*. To do it, we have to edit the files *./rhsm-canary/test.values.yaml* to modify the value *v1.0.0* to *V2.0.0*:
+
+[.console-input]
+[source,input,yaml,subs="+macros,+attributes"]
+----
+    version: V2.0.0' <---
+----
+[.console-input]
+
+Before applying these changes, it is important to monitor the current version via the frontend. To track all canary processes, it is required to prepare the frontend to generate multiple requests. *If do not have multiple requests the back application will not generate traffic and the rollout will fail*.
+
+TODO
+To test the online service, you can use the frontend http://dstrategies-frontend-{user}-canary-service-mesh.apps.%CLUSTER%/[URL]
+
+Visit the frontend route via your web browser, edit the number of *Calls Retries* to 10000 and push - JUMP- button and ensure the following message is displaying on your screen:
+
+TODO
+.Frontend Interface
+image::frontend-canary-v1.png["Frontend Interface"]
+
+**Argo Rollouts** will automatically deploy a new dstrategies-back revision. Based on the steps that you have defined we will see how the traffic will go to the different versions.
+
+We also encourage you to use https://kiali-istio-system.apps.%CLUSTER%/[Kiali] graph to see the percentages of the traffic that goes to each version.
+
+When you are ready to see all the changes on the fly. Push the changes to start the deployment.
+[.console-input]
+[source,input,subs="+macros,+attributes"]
+----
+git add .
+git commit -m "Change dstrategies-back version to V2.0.0"
+git push
+----
+
+ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI.
+
+TODO
+image::argocd-Dstrategies-canary-Refresh.png["Refresh Dstrategies"]
+
+This is our current status:
+
+TODO
+image::canary-rollout-step-1.png["Dstrategies Step 1]
+
+[.console-input]
+[source,input,subs="+macros,+attributes"]
+----
+oc argo rollouts get rollout dstrategies-back --watch -n {user}-canary-service-mesh
+----
+
+[.console-output]
+[source,input,subs="+macros,+attributes"]
+----
+NAME                                  KIND        STATUS     AGE    INFO
+⟳ dstrategies-back                            Rollout     ॥ Paused   3m13s  
+├──# revision:2                                                     
+│  └──⧉ dstrategies-back-9dc6f576f            ReplicaSet  ✔ Healthy  8s     canary
+│     └──□ dstrategies-back-9dc6f576f-fwq8m   Pod         ✔ Running  8s     ready:2/2
+└──# revision:1                                                     
+   └──⧉ dstrategies-back-67fc9fb79b           ReplicaSet  ✔ Healthy  3m13s  stable
+      ├──□ dstrategies-back-67fc9fb79b-4ql4z  Pod         ✔ Running  3m13s  ready:2/2
+      ├──□ dstrategies-back-67fc9fb79b-lz86j  Pod         ✔ Running  3m13s  ready:2/2
+      └──□ dstrategies-back-67fc9fb79b-xlkhp  Pod         ✔ Running  3m13s  ready:2/2
+----
+
+On the front web page you will see how the versions change.
+
+New revision:
+
+TODO
+.Frontend Interface
+image::frontend-canary-v2.png["Frontend Interface"]
+
+Old revision:
+
+TODO
+.Frontend Interface
+image::frontend-canary-v1.png["Frontend Interface"]
+
+
+### Deploy dstrategies-back new version rollout finished
+
+When all the rollout steps have finished. **We have in the online environment the new version V2.0.0!!!**
+
+New revision:
+
+TODO
+.Frontend Interface
+image::frontend-canary-v2.png["Frontend Interface"]
+
+### Rollback
+
+Imagine that something goes wrong, we know that this never happens but just in case. We can do a very *quick rollback* just by undoing the change.
+
+**Argo Rollouts** has an https://argoproj.github.io/argo-rollouts/generated/kubectl-argo-rollouts/kubectl-argo-rollouts_undo/[undo] command to do the rollback. In our opinion, we don't like this procedure because it is not aligned with GitOps. The changes that **Argo Rollouts** do does not come from git, so git is OutOfSync with what we have in Openshift.
+In our case the commit that we have done not only changes the ReplicaSet but also the ConfigMap. The *undo* command only changes the ReplicaSet, so it does not work for us.
+
+I recommend doing the changes in git. We will revert the last commit
+[.console-input]
+[source,input,subs="+macros,+attributes"]
+----
+git revert HEAD --no-edit
+----
+
+If we just revert the changes in git we will go back to the previous version. But **Argo Rollouts** will take this revert as a new release so it will do it throw the steps that we have configured. We want a *quick rollback* we don't want a step-by-step revert. To achieve the *quick rollback* we will configure **Argo Rollouts** without steps for the rollback.
+
+In the file *./rhsm-canary/template/dstrategies-back-rollout.yaml*  under the *steps* delete all the steps and only set one step *- setWeight: 100*:
+
+[source,yaml,subs="+macros,+attributes"]
+----
+  strategy:
+    canary:
+      trafficRouting:
+        istio:
+          virtualService:
+            routes:
+            - primary
+            name: {{ include "service.name" . }}
+          destinationRule:
+            name: {{ include "service.name" . }}
+            canarySubsetName: canary
+            stableSubsetName: stable
+      steps:
+        - setWeight: 100
+----
+
+Execute those commands to push the changes:
+
+[.console-input]
+[source,input,subs="+macros,+attributes"]
+----
+git add .
+git commit -m "delete steps for rollback"
+git push
+----
+
+**ArgoCD** will get the changes and apply them. **Argo Rollouts** will create a new revision with the previous version.
+
+The rollback is done!
+
+TODO
+image::canary-rollout-step-Rollback.png["Dstrategies Step Rollback"]
+
+TODO
+To test the online service, you can use the frontend http://dstrategies-frontend-{user}-canary-service-mesh.apps.%CLUSTER%/[URL]
+
+Visit the frontend route via your web browser, push - JUMP- button and ensure the following message is displaying on your screen:
+
+TODO
+.Frontend Interface
+image::frontend-canary.png["Frontend Interface"]
+
+
+To get the application ready for a new release we should configure again the  **Argo Rollouts** with the steps.
+
