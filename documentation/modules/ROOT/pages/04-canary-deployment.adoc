@@ -3,12 +3,14 @@ include::_attributes.adoc[]
 
 As mentioned before, a canary deployment is a strategy where the operator releases a new version of their application to a small percentage of the production traffic. This small percentage may test the new version and provide feedback. If the new version is working well the operator may increase the percentage, till all the traffic is using the new version.
 
+[#04-arch]
 == Generate DStrategies APP GitOps Deployment Model
 
 First of all, it is required to review a set of objects in our forked git repository to configure the deployment correctly for deploying our application following a GitOps model.
 
 Please follow the next section to understand the required objects and configurations.
 
+[#04-review]
 === Review and Modify Rollout strategy
 
 As you know so well, the Rollout object controls the application deployment. If you look closely, it is possible to find many similarities between an Argo Rollout object and a Kubernetes Deployment. The main difference between the previous objects referenced is the rollout strategy field. 
@@ -32,6 +34,7 @@ Please edit the file named *./canary/dstrategies-back-rollout.yaml* to define **
           duration: <TIME>
 ----
 
+[#04-mod]
 === Modify Analysis Template 
 
 Please edit the file named *./canary/dstrategies-back-analysis-template.yaml* to add the required **<USERNAME>** that helps to reference the user namespace in the healthcheck URL.
@@ -50,6 +53,7 @@ Please edit the file named *./canary/dstrategies-back-analysis-template.yaml* to
 
 NOTE: For more information about AnalysisTemplate, please visit the following https://argoproj.github.io/argo-rollouts/features/analysis/[link].
 
+[#04-url]
 === Modify back service URL
 
 Finally, it is required to create a **Deployment** object to deploy the frontend application. This application helps us to test the canary rollout strategy from a web interface and see backend information.
@@ -65,6 +69,7 @@ To allow communication between the frontend and the backend, it is required to e
             value: CANARY
 ----
 
+[#04-git]
 === Commit and Push the Changes
 
 Once all the files are configured correctly, it is time to commit and push all changes to the repository that you have just forked.
@@ -77,6 +82,7 @@ git commit -m "Configured DStrategies App deployment files for canary strategy"
 git push
 ----
 
+[#04-deloy]
 == Deploy Dstrategies Application
 
 We are going to create the application *dstrategies*, which we will use to test canary deployment. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just forked. Please edit the following yaml and set your own GitHub repository in the *reportURL*. Create a file called *application-dstrategies-canary.yaml*
@@ -115,6 +121,7 @@ Looking at the Argo CD dashboard, you would notice that we have a new *dstrategi
 
 image::argocd_dstrategies-canary.png["ArgoCD Dstrategies"]
 
+[#04-app]
 == Application architecture
 
 To achieve canary deployment with *Cloud Native* applications using **Argo Rollouts**, we have designed this architecture.
@@ -152,7 +159,7 @@ NAME                                  KIND        STATUS     AGE  INFO
 
 We have defined an active or online service 'dstrategies-back-online'. Final user will always use 'dstrategies-back-online'. When a new version is deployed **Argo Rollouts** create a new revision (ReplicaSet). The number of replicas in the new release increases based on the information in the steps, and the number of replicas in the old release decreases by the same number. We have configured a pause duration between each step. To learn more about **Argo Rollouts**, please read https://argoproj.github.io/argo-rollouts/features/canary/[this].
 
-
+[#04-test]
 == Test Dstrategies application
  
 We have deployed the *dstrategies* with ArgoCD. We can test that it is up and running.
@@ -166,6 +173,7 @@ image::frontend-canary.png["Frontend Interface"]
 
 Notice that in each microservice response we have added metadata information to see better the *version* of each application. This will help us to see the changes while we do the canary deployment.  We can see that the current version is *V1.0.0*.
 
+[#04-canary]
 == Dstrategies-back canary deployment
 
 We have split a *Cloud Native* Canary deployment into three automatic steps:
@@ -178,6 +186,7 @@ This is just an example. The key point here is that very easily we can have the 
 
 To test canary deployment we are going to do changes in the backend application dstrategies-back.
 
+[#04-step1]
 ### Step 1 - Deploy the canary version for 10%
  
 We will deploy a new version *V2.0.0*. To do it, we have to edit the files *./canary/dstrategies-back-rollout.yaml* and *./canary/dstrategies-back-configmap.yaml* to modify the value *v1.0.0* to *V2.0.0*:
@@ -255,6 +264,7 @@ Old revision:
 .Frontend Interface
 image::frontend-canary-v1.png["Frontend Interface"]
 
+[#04-step2]
 ### Step 2 - Scale the canary version to 50%
 
 After 30 seconds **Argo Rollouts** automatically will increase the number of replicas in the new release to 2. Instead of increasing automatically after 30 seconds, we can configure **Argo Rollouts** to wait indefinitely until that *Pause* condition is removed. But this is not part of this demo.
@@ -293,6 +303,7 @@ Old revision:
 .Frontend Interface
 image::frontend-canary-v1.png["Frontend Interface"]
 
+[#04-step3]
 ### Step 3 - Scale the canary version to 100%
 
 After another 30 seconds, **Argo Rollouts** will increase the number of replicas in the new release to 4 and scale down the old revision.
@@ -328,6 +339,7 @@ New revision:
 .Frontend Interface
 image::frontend-canary-v2.png["Frontend Interface"]
 
+[#04-rollback]
 ### Rollback
 
 Imagine that something goes wrong, we know that this never happens but just in case. We can do a very *quick rollback* just by undoing the change.

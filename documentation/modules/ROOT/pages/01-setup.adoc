@@ -51,9 +51,9 @@ The following table includes the parameters that the instructor should provide y
 | Openshift Cluster Console
 | _https://console-openshift-console.apps.%CLUSTER%_
 | Openshift Domain
-| _%CLUSTER%_
+| %CLUSTER%
 | Openshift Apps Domain
-| _apps.%CLUSTER%_
+| apps.%CLUSTER%
 | Username
 | {user}
 | Password
@@ -68,6 +68,8 @@ The following table includes the parameters that the instructor should provide y
 | {user}-canary-service-mesh
 | ArgoCD console
 | _https://argocd-server-{user}-gitops-argocd.apps.%CLUSTER%/_
+| Service Mesh Prometheus Password
+| _*Review parameters table provided by the instructor_
 |===
 
 [#01-accessconsole]

@@ -1,6 +1,7 @@
 = Blue/Green deployment strategy
 include::_attributes.adoc[]
 
+[#03-arch]
 == Application architecture
 
 As mentioned before, we have a very simple application with two services. One frontal React app called *dstrategies-front* and one backend Quarkus app called *dstrategies-back*. We will use the front app to call several times the back app and see how the back version change during the deployment.
@@ -25,18 +26,21 @@ OpenShift Components - Offline
 
 We will define an active or online service 'dstrategies-back-online' and a preview or offline service 'dstrategies-back-offline'. The idea is that the frontend will always use 'dstrategies-back-online' and 'dstrategies-back-offline' will only be used to test our service before triggering the rollout.
 
+[#03-dmodel]
 == Generate DStrategies APP GitOps Deployment Model
 
 First of all, it is required to review a set of objects in our forked git repository to configure the deployment correctly for deploying our application following a GitOps model.
 
 Please follow the next section to understand the required objects and configurations.
 
+[#03-reviewsvc]
 === Review Services
 
 As the previous picture shows, it is required to generate a couple of services that will be used to redirect the traffic to the correct DStrategies App version. 
 
 Please take a look at the files *./blue-green/dstrategies-back-service-online.yaml* and *./blue-green/dstrategies-back-service-offline.yaml* to understand the objects and get the names of these elements.
 
+[#03-rollout]
 === Modify Rollout strategy
 
 The Rollout object controls the application deployment. If you look closely, it is possible to find many similarities between an Argo Rollout object and a Kubernetes Deployment. The main difference between the previous objects referenced is the rollout strategy field. 
@@ -55,6 +59,7 @@ Please edit a file named *./blue-green/dstrategies-back-rollout.yaml* in oder to
       previewService: <SERVICE_OFFLINE>
 ----
 
+[#03-anatemp]
 === Modify Analysis Template 
 
 We have created an AnalysisTemplate 'dstrategies-back-analysis-template' that just validates the health of the application, for production environments a better analysis should be done. **Argo Rollouts** use this AnalysisTemplate to validate a new version and set whether it is ready to be promoted or not.
@@ -75,6 +80,7 @@ Please edit the file named *./blue-green/dstrategies-back-analysis-template.yaml
 
 NOTE: For more information about AnalysisTemplate, please visit the following https://argoproj.github.io/argo-rollouts/features/bluegreen/[link].
 
+[#03-backurl]
 === Modify back service URL
 
 Finally, it is required to create a **Deployment** object to deploy the frontend application. This application helps us to test the blue-green rollout strategy from a web interface and see backend information.
@@ -90,6 +96,7 @@ To allow communication between the frontend and the backend, it is required to e
             value: BLUE-GREEN
 ----
 
+[#03-commit]
 === Commit and Push the Changes
 
 Once all the files are configured correctly, it is time to commit and push all changes to the repository that you have just forked.
@@ -102,6 +109,7 @@ git commit -m "Configured DStrategies App deployment files"
 git push
 ----
 
+[#03-argo]
 == Argo CD Application
 
 We are going to create the application *DStrategies* to apply the files modified previously to test Blue/Green deployment. Please edit the following yaml and set your own GitHub repository in the *reportURL*. Create a file called *application-dstrategies-blue-green.yaml*
@@ -142,6 +150,7 @@ image::argocd_dstrategies-blue-green.png["ArgoCD DStrategies"]
 
 NOTE: It is important to wait for *Healthy* and *Synced* status in the Argo CD Application
 
+[#03-test]
 == Test Dstrategies application
  
 We have deployed the *DStrategies* with ArgoCD. We can test the online and offline services to ensure that they are up and running.
@@ -199,6 +208,7 @@ NAME                                  KIND        STATUS     AGE INFO
       └──□ dstrategies-back-67fc9fb79b-49k25  Pod         ✔ Running  12m  ready:1/1
 ----
 
+[#03-deploy]
 == DStrategies-back Blue/Green deployment
 
 We have split a *Cloud Native* Blue/Green deployment into two steps:
@@ -210,6 +220,7 @@ To test Blue/Green deployment we are going to do changes in the backend applicat
  
 We already deployed the *dstrategies-back* version V1.0.0, and we have a new dstrategies-back version V2.0.0 ready to be deployed. 
 
+[#03-step1]
 === Step 1 - Deploy a new version
  
 We will deploy a new version *V2.0.0*. To do so, we have to edit the files *./blue-green/dstrategies-back-rollout.yaml* and *./blue-green/dstrategies-back-configmap.yaml* to modify the value *V1.0.0* to *V2.0.0*:
@@ -293,6 +304,7 @@ Functional testing users can execute *Smoke tests* to validate this new V2.0.0 v
 We have to be careful with those tests in a production environment because the product microservice will call the online dependencies.
 If this dependency is for example a production DB we will modify the Production environment.
  
+[#03-step2]
 === Step 2 - Promote a new version
  
 We are going to open the new version to final users.
@@ -353,6 +365,7 @@ image::frontend-blue-green-v2.png["Frontend Interface V2.0.0"]
 
 **We have in the online environment the new version V2.0.0!!!**
 
+[#03-rollback]
 === Rollback
 
 Imagine that something goes wrong, we know that this never happens but just in case. We can do a very *quick rollback* just by undoing the change in the *dstrategies-back* online service.
