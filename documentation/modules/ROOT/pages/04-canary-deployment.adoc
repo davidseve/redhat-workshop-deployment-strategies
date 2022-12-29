@@ -13,7 +13,7 @@ Please follow the next section to understand the required objects and configurat
 
 As you know so well, the Rollout object controls the application deployment. If you look closely, it is possible to find many similarities between an Argo Rollout object and a Kubernetes Deployment. The main difference between the previous objects referenced is the rollout strategy field. 
 
-Please edit a file named *./canary/dstrategies-back-rollout.yaml* to define **<TIME>** as *30s* and understand the canary deployment strategy:
+Please edit the file named *./canary/dstrategies-back-rollout.yaml* to define **<TIME>** as *30s* and understand the canary deployment strategy:
 
 [source,yaml,subs="+macros,+attributes"]
 ----
@@ -34,7 +34,7 @@ Please edit a file named *./canary/dstrategies-back-rollout.yaml* to define **<T
 
 === Modify Analysis Template 
 
-Please edit a file named *./canary/dstrategies-back-analysis-template.yaml* to add the required **<USERNAME>** that helps to reference the user namespace in the healthcheck URL.
+Please edit the file named *./canary/dstrategies-back-analysis-template.yaml* to add the required **<USERNAME>** that helps to reference the user namespace in the healthcheck URL.
 
 [source,yaml,subs="+macros,+attributes"]
 ----
