@@ -1,4 +1,4 @@
-# Canary deployment strategy with service mesh
+# Canary deployment strategy with Openshift Service Mesh
 include::_attributes.adoc[]
 
 In the previous section, we executed a canary deployment using *Argo Rollouts* without https://argoproj.github.io/argo-rollouts/features/traffic-management/[traffic management]. When we set 10% weight it does not mean that 10% of the traffic goes to the new version. Because, as we explanted before, *Argo Rollouts* makes a best-effort attempt to achieve the percentage listed in the weight between the new and old versions.
@@ -24,12 +24,14 @@ spec:
                     sum(irate( istio_requests_total{reporter="source",destination_service_name=~"dstrategies-back",response_code!~"5.*"}[30s] )) / sum(irate( istio_requests_total{reporter="source",destination_service_name=~"dstrategies-back"}[30s] ))
 ----
 
+[#05-arch]
 == Generate DStrategies APP GitOps Deployment Model
 
 First of all, it is required to review a set of objects in our forked git repository to configure the deployment correctly for deploying our application following a GitOps model.
 
 For this exercise, we are going to use Helm to render the different Kubernetes objects. Please follow the next section to understand the required objects and configurations.
 
+[#05-review]
 === Review and Modify Rollout strategy
 
 We want that you define the steps to perform the canary deployment. You can choose the number of the steps and the percentage of traffic. To learn more about **Argo Rollouts**, please read https://argoproj.github.io/argo-rollouts/features/canary/[this].
@@ -54,6 +56,7 @@ Please edit a file named *./rhsm-canary/templates/dstrategies-back-rollout.yaml*
         <SET-STEPS>
 ----
 
+[#05-helm]
 === Modify Helm values
 
 Finally, it is required to create a **Deployment** object to deploy the frontend application. This application helps us to test the canary rollout strategy from a web interface and see backend information.
@@ -68,7 +71,7 @@ service:
 domain: <OCP_APPS_DOMAIN>
 ----
 
-
+[#05-prometheus]
 === Obtain Red Hat Service Mesh Prometheus Password
 
 To get Service Mesh Prometheus password, review the parameters table provided by the instructor. Then it is required to edit the file named *./rhsm-canary/templates/dstrategies-back-analysis-template.yaml* to add the required *<PROMETHEUS-PASSWORD>*.
@@ -80,6 +83,7 @@ To get Service Mesh Prometheus password, review the parameters table provided by
         address: https://internal:<PROMETHEUS-PASSWORD>@prometheus.istio-system.svc.cluster.local:9090
 ----
 
+[#05-git]
 === Commit and Push the Changes
 
 Once all the files are configured correctly, it is time to commit and push all changes to the repository that you have just forked.
@@ -92,6 +96,7 @@ git commit -m "Configured DStrategies App deployment files for canary with Servi
 git push
 ----
 
+[#05-deploy]
 == Deploy Dstrategies Application
 
 We are going to create the application *dstrategies*, which we will use to test canary deployment with Service Mesh. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just forked. Please edit the following yaml and set your own GitHub repository in the *reportURL*. Create a file called *application-dstrategies-canary-rhsm.yaml*
@@ -133,6 +138,7 @@ Looking at the Argo CD dashboard, you would notice that we have a new *dstrategi
  
 image::argocd_dstrategies-canary-service-mesh.png["ArgoCD Dstrategies"]
 
+[#05-app]
 == Application architecture
 
 To achieve canary deployment with *Cloud Native* applications using **Argo Rollouts** and *Openshift Service Mesh*, we have designed this architecture.
@@ -170,7 +176,7 @@ NAME                                  KIND        STATUS     AGE  INFO
 
 We have defined an active service 'dstrategies-back'. Final user will always use 'dstrategies-back'. When a new version is deployed **Argo Rollouts** create a new revision (ReplicaSet). The number of replicas in the new release increases based on the information in the steps, and the number of replicas in the old release decreases by the same number. But in this case the amount of traffic that is send to each version will be managed by the VirtualService.
 
-
+[#05-test]
 == Test Dstrategies application
  
 We have deployed the *dstrategies* with ArgoCD. We can test that it is up and running.
@@ -191,11 +197,10 @@ image::frontend-canary-service-mesh.png["Frontend Interface"]
 
 Notice that in each microservice response we have added metadata information to see better the *version* of each application. This will help us to see the changes while we do the canary deployment.  We can see that the current version is *V1.0.0*.
 
+[#05-canary]
 == Dstrategies-back canary deployment
 
 To test canary deployment we are going to do changes in the backend application dstrategies-back.
-
-### Deploy dstrategies-back new version
  
 We will deploy a new version *V2.0.0*. 
 
@@ -213,7 +218,7 @@ We also encourage you to use https://kiali-istio-system.apps.%CLUSTER%/[Kiali] g
 .Kiali namespace
 image::kiali-namespace.png["Kiali namespace]
 
-Then go to 'Show Edge Labels' and select 'Requests Percentage'.
+Then go to _Display_, _Show Edge Labels_ and select _Requests Percentage_.
 
 .Kiali labels
 image::kiali-labels.png["Kiali labels]
@@ -297,6 +302,7 @@ New revision:
 .Frontend Interface
 image::frontend-canary-service-mesh-v2.png["Frontend Interface"]
 
+[#05-rollback]
 ### Rollback
 
 Imagine that something goes wrong, we know that this never happens but just in case. We can do a very *quick rollback* just by undoing the change.
