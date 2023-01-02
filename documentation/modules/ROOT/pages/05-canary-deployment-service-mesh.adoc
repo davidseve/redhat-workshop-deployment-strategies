@@ -7,9 +7,22 @@ To achieve the right percentage in each version, we are going to use traffic man
 
 Moreover, we have another huge improvement. The back application is sending metrics to Prometheus. We will configure *Argo Rollouts* to use those metrics to decide if keep increasing the amount of traffic, that goes to the new version, or cancel the rollout.
 
-To get progressive delivery based on the Prometheus metrics. We have an AnalisisTemplate that fetches the metrics and decide if go on or cancel the rollout.
+To get progressive delivery based on the Prometheus metrics. We have an AnalysisTemplate that fetches the metrics and decide if go on or cancel the rollout.
 
-TODO show AnalisisTemplate content
+[source,yaml,subs="+macros,+attributes"]
+----
+spec:
+  metrics:
+  - name: {{ include "service.name" . }}-prometheus-metric
+    interval: 10s
+    successCondition: len(result) == 0 || result[0] >= 0.95
+    failureLimit: 2
+    provider:
+      prometheus:
+        address: https://internal:<PROMETHEUS-PASSWORD>@prometheus.istio-system.svc.cluster.local:9090
+        query: |
+                    sum(irate( istio_requests_total{reporter="source",destination_service_name=~"dstrategies-back",response_code!~"5.*"}[30s] )) / sum(irate( istio_requests_total{reporter="source",destination_service_name=~"dstrategies-back"}[30s] ))
+----
 
 == Generate DStrategies APP GitOps Deployment Model
 
@@ -57,8 +70,15 @@ domain: <OCP_APPS_DOMAIN>
 
 
 === Obtain Red Hat Service Mesh Prometheus Password
-TODO
-<PROMETHEUS-PASSWORD>
+
+To get Service Mesh Prometheus password, review the parameters table provided by the instructor. Then it is required to edit the file named *./rhsm-canary/templates/dstrategies-back-analysis-template.yaml* to add the required *<PROMETHEUS-PASSWORD>*.
+
+[source,yaml,subs="+macros,+attributes"]
+----
+    provider:
+      prometheus:
+        address: https://internal:<PROMETHEUS-PASSWORD>@prometheus.istio-system.svc.cluster.local:9090
+----
 
 === Commit and Push the Changes
 
