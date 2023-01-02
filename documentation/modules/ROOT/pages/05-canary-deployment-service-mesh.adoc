@@ -197,14 +197,7 @@ To test canary deployment we are going to do changes in the backend application 
 
 ### Deploy dstrategies-back new version
  
-We will deploy a new version *V2.0.0*. To do it, we have to edit the files *./rhsm-canary/edit.values.yaml* to modify the value *v1.0.0* to *V2.0.0*:
-
-[.console-input]
-[source,input,yaml,subs="+macros,+attributes"]
-----
-    version: V2.0.0' <---
-----
-[.console-input]
+We will deploy a new version *V2.0.0*. 
 
 Before applying these changes, it is important to monitor the current version via the frontend. To track all canary processes, it is required to prepare the frontend to generate multiple requests. *If do not have multiple requests the back application will not generate traffic and the rollout will fail*. Remember that we are using the metrics to decide if we go on with the rollout or not. Without traffic we don't have metrics.
 
@@ -225,12 +218,19 @@ Then go to 'Show Edge Labels' and select 'Requests Percentage'.
 .Kiali labels
 image::kiali-labels.png["Kiali labels]
 
-We will see the dstrategies graph:
+We will see the dstrategies graph with 100% of the traffic going to V1.0.0
 
 .Kiali graph V1
 image::kiali-graph-v1.png["Kiali graph V1]
 
+We have to edit the files *./rhsm-canary/edit.values.yaml* to modify the value *v1.0.0* to *V2.0.0*:
 
+[.console-input]
+[source,input,yaml,subs="+macros,+attributes"]
+----
+    version: V2.0.0' <---
+----
+[.console-input]
 
 When you are ready to see all the changes on the fly. Push the changes to start the deployment.
 [.console-input]
@@ -243,10 +243,7 @@ git push
 
 ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI.
 
-TODO
-image::argocd-Dstrategies-canary-Refresh.png["Refresh Dstrategies"]
-
-This is our current status:
+This is our current status (It can be different depending on the steps you have defined)):
 
 image::canary-service-mesh-rollout-step-1.png["Dstrategies Step 1]
 
@@ -281,10 +278,14 @@ image::frontend-canary-service-mesh-v2.png["Frontend Interface"]
 
 Old revision:
 
-TODO
-.Frontend Interface
-image::frontend-canary-service-mesh-v1.png["Frontend Interface"]
 
+.Frontend Interface
+image::frontend-canary-service-mesh.png["Frontend Interface"]
+
+In Kiali, you can also see how the traffic going to each version changes.
+
+.Kiali graph V2
+image::kiali-graph-v2.png["Kiali graph V2]
 
 ### Deploy dstrategies-back new version rollout finished
 
