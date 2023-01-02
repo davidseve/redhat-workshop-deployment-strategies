@@ -197,7 +197,7 @@ To test canary deployment we are going to do changes in the backend application 
 
 ### Deploy dstrategies-back new version
  
-We will deploy a new version *V2.0.0*. To do it, we have to edit the files *./rhsm-canary/test.values.yaml* to modify the value *v1.0.0* to *V2.0.0*:
+We will deploy a new version *V2.0.0*. To do it, we have to edit the files *./rhsm-canary/edit.values.yaml* to modify the value *v1.0.0* to *V2.0.0*:
 
 [.console-input]
 [source,input,yaml,subs="+macros,+attributes"]
@@ -208,16 +208,29 @@ We will deploy a new version *V2.0.0*. To do it, we have to edit the files *./rh
 
 Before applying these changes, it is important to monitor the current version via the frontend. To track all canary processes, it is required to prepare the frontend to generate multiple requests. *If do not have multiple requests the back application will not generate traffic and the rollout will fail*. Remember that we are using the metrics to decide if we go on with the rollout or not. Without traffic we don't have metrics.
 
-To test the service, you can use the frontend https://dstrategies-frontend-{user}-canary-service-mesh-istio-system.apps.%CLUSTER%/[URL]
-
 Visit the frontend route via your web browser, edit the number of *Calls Retries* to 10000 and push - JUMP- button and ensure the following message is displaying on your screen:
 
 .Frontend Interface
-image::frontend-canary-service-mesh-v1.png["Frontend Interface"]
+image::frontend-canary-service-mesh-retries.png["Frontend Interface"]
 
 **Argo Rollouts** will automatically deploy a new dstrategies-back revision. Based on the steps that you have defined, we will see how the traffic will go to the different versions.
 
-We also encourage you to use https://kiali-istio-system.apps.%CLUSTER%/[Kiali] graph to see the percentages of the traffic that goes to each version.
+We also encourage you to use https://kiali-istio-system.apps.%CLUSTER%/[Kiali] graph to see the percentages of the traffic that goes to each version. Log in with your Openshift lab-user and select you namespace.
+
+.Kiali namespace
+image::kiali-namespace.png["Kiali namespace]
+
+Then go to 'Show Edge Labels' and select 'Requests Percentage'.
+
+.Kiali labels
+image::kiali-labels.png["Kiali labels]
+
+We will see the dstrategies graph:
+
+.Kiali graph V1
+image::kiali-graph-v1.png["Kiali graph V1]
+
+
 
 When you are ready to see all the changes on the fly. Push the changes to start the deployment.
 [.console-input]
