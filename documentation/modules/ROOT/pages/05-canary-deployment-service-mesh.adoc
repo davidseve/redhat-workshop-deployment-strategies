@@ -272,7 +272,6 @@ On the front web page you will see how the versions change.
 
 New revision:
 
-TODO
 .Frontend Interface
 image::frontend-canary-service-mesh-v2.png["Frontend Interface"]
 
@@ -295,7 +294,6 @@ image::canary-service-mesh-rollout-step-2.png["Dstrategies Step Rollback"]
 
 New revision:
 
-TODO
 .Frontend Interface
 image::frontend-canary-service-mesh-v2.png["Frontend Interface"]
 
