@@ -34,7 +34,7 @@ For this exercise, we are going to use Helm to render the different Kubernetes o
 
 We want that you define the steps to perform the canary deployment. You can choose the number of the steps and the percentage of traffic. To learn more about **Argo Rollouts**, please read https://argoproj.github.io/argo-rollouts/features/canary/[this].
 
-Please edit a file named *./rhsm-canary/template/dstrategies-back-rollout.yaml* to define **<SET-STEPS>** as you want and understand the canary deployment strategy:
+Please edit a file named *./rhsm-canary/templates/dstrategies-back-rollout.yaml* to define **<SET-STEPS>** as you want and understand the canary deployment strategy:
 
 [source,yaml,subs="+macros,+attributes"]
 ----
@@ -130,9 +130,8 @@ oc apply -f application-dstrategies-canary-rhsm.yaml
 ----
 
 Looking at the Argo CD dashboard, you would notice that we have a new *dstrategies* application.
-
-TODO 
-image::argocd_dstrategies-canary.png["ArgoCD Dstrategies"]
+ 
+image::argocd_dstrategies-canary-service-mesh.png["ArgoCD Dstrategies"]
 
 == Application architecture
 
@@ -175,8 +174,15 @@ We have defined an active service 'dstrategies-back'. Final user will always use
 == Test Dstrategies application
  
 We have deployed the *dstrategies* with ArgoCD. We can test that it is up and running.
+
+Visit the back route via your web browser https://dstrategies-back-{user}-canary-service-mesh-istio-system.apps.rollouts.sandbox1288.opentlc.com/[URL]
+
+IMPORTANT: It is required to accept *self-signed certificates* provided by Openshift
+
+.Openshift Self-signed Certificates Warning
+image::certs_warning.png[width=50%]
  
-To test the service, you can use the frontend https://dstrategies-frontend-{user}-canary-service-mesh-istio-system.apps.%CLUSTER%/[URL]
+Then you can use the frontend https://dstrategies-frontend-{user}-canary-service-mesh-istio-system.apps.%CLUSTER%/[URL]
 
 Visit the frontend route via your web browser, push - JUMP- button and ensure the following message is displaying on your screen:
 
@@ -295,7 +301,7 @@ git revert HEAD --no-edit
 
 If we just revert the changes in git we will go back to the previous version. But **Argo Rollouts** will take this revert as a new release so it will do it throw the steps that we have configured. We want a *quick rollback* we don't want a step-by-step revert. To achieve the *quick rollback* we will configure **Argo Rollouts** without steps for the rollback.
 
-In the file *./rhsm-canary/template/dstrategies-back-rollout.yaml*  under the *steps* delete all the steps and only set one step *- setWeight: 100*:
+In the file *./rhsm-canary/templates/dstrategies-back-rollout.yaml*  under the *steps* delete all the steps and only set one step *- setWeight: 100*:
 
 [source,yaml,subs="+macros,+attributes"]
 ----
