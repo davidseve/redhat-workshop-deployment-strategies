@@ -1,9 +1,0 @@
-[.console-input]
-[source,input,yaml,subs="+macros,+attributes"]
-----
-dstrategies-back:
-   rollouts:
-      canary:
-         steps:
-            - setWeight: 100
-----
