@@ -36,12 +36,16 @@ For this exercise, we are going to use Helm to render the different Kubernetes o
 
 We want that you define the steps to perform the canary deployment. You can choose the number of the steps and the percentage of traffic. To learn more about **Argo Rollouts**, please read https://argoproj.github.io/argo-rollouts/features/canary/[this].
 
-Please edit a file named *./rhsm-canary/templates/dstrategies-back-rollout.yaml* to define **<SET-STEPS>** as you want and understand the canary deployment strategy:
+Please edit the file named *./rhsm-canary/templates/dstrategies-back-rollout.yaml* to define **<SET-STEPS>** as you want and understand the canary deployment strategy:
 
 [source,yaml,subs="+macros,+attributes"]
 ----
   strategy:
     canary:
+      dynamicStableScale: true
+      analysis:
+        templates:
+        - templateName: {{ include "service.name" . }}-analysis-template
       trafficRouting:
         istio:
           virtualService:
@@ -59,7 +63,7 @@ Please edit a file named *./rhsm-canary/templates/dstrategies-back-rollout.yaml*
 [#05-helm]
 === Modify Helm values
 
-Finally, it is required to create a **Deployment** object to deploy the frontend application. This application helps us to test the canary rollout strategy from a web interface and see backend information.
+It is required to create a **Deployment** object to deploy the frontend application. This application helps us to test the canary rollout strategy from a web interface and see backend information.
 
 To allow communication between the frontend and the backend, it is required to edit the file named *./rhsm-canary/edit.values.yaml* to add the required **<OCP_APPS_DOMAIN>**.
 
@@ -74,7 +78,7 @@ domain: <OCP_APPS_DOMAIN>
 [#05-prometheus]
 === Obtain Red Hat Service Mesh Prometheus Password
 
-To get Service Mesh Prometheus password, review the parameters table provided by the instructor. Then it is required to edit the file named *./rhsm-canary/templates/dstrategies-back-analysis-template.yaml* to add the required *<PROMETHEUS-PASSWORD>*.
+Finally, we need the Service Mesh Prometheus password, to get it review the parameters table provided by the instructor. Then it is required to edit the file named *./rhsm-canary/templates/dstrategies-back-analysis-template.yaml* to add the required *<PROMETHEUS-PASSWORD>*.
 
 [source,yaml,subs="+macros,+attributes"]
 ----
@@ -204,7 +208,7 @@ To test canary deployment we are going to do changes in the backend application 
  
 We will deploy a new version *V2.0.0*. 
 
-Before applying these changes, it is important to monitor the current version via the frontend. To track all canary processes, it is required to prepare the frontend to generate multiple requests. *If do not have multiple requests the back application will not generate traffic and the rollout will fail*. Remember that we are using the metrics to decide if we go on with the rollout or not. Without traffic we don't have metrics.
+Before applying these changes, it is important to monitor the current version via the frontend. To track all canary processes, it is required to prepare the frontend to generate multiple requests. *If there aren't multiple requests the back application will not have traffic and the rollout will fail*. Remember that we are using the metrics to decide if we go on with the rollout or not. Without traffic we don't have metrics.
 
 Visit the frontend route via your web browser, edit the number of *Calls Retries* to 10000 and push - JUMP- button and ensure the following message is displaying on your screen:
 
@@ -310,7 +314,7 @@ Imagine that something goes wrong, we know that this never happens but just in c
 **Argo Rollouts** has an https://argoproj.github.io/argo-rollouts/generated/kubectl-argo-rollouts/kubectl-argo-rollouts_undo/[undo] command to do the rollback. In our opinion, we don't like this procedure because it is not aligned with GitOps. The changes that **Argo Rollouts** do does not come from git, so git is OutOfSync with what we have in Openshift.
 In our case the commit that we have done not only changes the ReplicaSet but also the ConfigMap. The *undo* command only changes the ReplicaSet, so it does not work for us.
 
-I recommend doing the changes in git. We will revert the last commit
+We recommend making  the changes in git. We will revert the last commit
 [.console-input]
 [source,input,subs="+macros,+attributes"]
 ----
@@ -319,7 +323,7 @@ git revert HEAD --no-edit
 
 If we just revert the changes in git we will go back to the previous version. But **Argo Rollouts** will take this revert as a new release so it will do it throw the steps that we have configured. We want a *quick rollback* we don't want a step-by-step revert. To achieve the *quick rollback* we will configure **Argo Rollouts** without steps for the rollback.
 
-In the file *./rhsm-canary/templates/dstrategies-back-rollout.yaml*  under the *steps* delete all the steps and only set one step *- setWeight: 100*:
+In the file *./rhsm-canary/templates/dstrategies-back-rollout.yaml*  under the *steps*, delete all the steps and only set one step *- setWeight: 100*:
 
 [source,yaml,subs="+macros,+attributes"]
 ----

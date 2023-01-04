@@ -347,7 +347,7 @@ Imagine that something goes wrong, we know that this never happens but just in c
 **Argo Rollouts** has an https://argoproj.github.io/argo-rollouts/generated/kubectl-argo-rollouts/kubectl-argo-rollouts_undo/[undo] command to do the rollback. In our opinion, we don't like this procedure because it is not aligned with GitOps. The changes that **Argo Rollouts** do does not come from git, so git is OutOfSync with what we have in Openshift.
 In our case the commit that we have done not only changes the ReplicaSet but also the ConfigMap. The *undo* command only changes the ReplicaSet, so it does not work for us.
 
-I recommend doing the changes in git. We will revert the last commit
+We recommend making  the changes in git. We will revert the last commit
 [.console-input]
 [source,input,subs="+macros,+attributes"]
 ----
@@ -356,7 +356,7 @@ git revert HEAD --no-edit
 
 If we just revert the changes in git we will go back to the previous version. But **Argo Rollouts** will take this revert as a new release so it will do it throw the steps that we have configured. We want a *quick rollback* we don't want a step-by-step revert. To achieve the *quick rollback* we will configure **Argo Rollouts** without steps for the rollback.
 
-In the file *./canary/dstrategies-back-rollout.yaml*  under *dstrategies-back* under the *steps* delete all the steps and only set one step *- setWeight: 100*:
+In the file *./canary/dstrategies-back-rollout.yaml*  under *dstrategies-back* under the *steps*, delete all the steps and only set one step *- setWeight: 100*:
 
 [source,yaml,subs="+macros,+attributes"]
 ----

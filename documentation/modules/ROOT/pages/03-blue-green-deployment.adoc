@@ -45,7 +45,7 @@ Please take a look at the files *./blue-green/dstrategies-back-service-online.ya
 
 The Rollout object controls the application deployment. If you look closely, it is possible to find many similarities between an Argo Rollout object and a Kubernetes Deployment. The main difference between the previous objects referenced is the rollout strategy field. 
 
-Please edit a file named *./blue-green/dstrategies-back-rollout.yaml* in oder to add the required **<SERVICE_OFFLINE>** and **<SERVICE_ONLINE>** service names:
+Please edit the file named *./blue-green/dstrategies-back-rollout.yaml* in oder to add the required **<SERVICE_OFFLINE>** and **<SERVICE_ONLINE>** service names:
 
 [source,yaml,subs="+macros,+attributes"]
 ----
@@ -373,7 +373,7 @@ Imagine that something goes wrong, we know that this never happens but just in c
 **Argo Rollouts** has an https://argoproj.github.io/argo-rollouts/generated/kubectl-argo-rollouts/kubectl-argo-rollouts_undo/[undo] command to do the rollback. In our opinion, we don't like this procedure because it is not aligned with GitOps. The changes that **Argo Rollouts** do does not come from git, so git is OutOfSync with what we have in Openshift.
 In our case the commit that we have done not only changes the ReplicaSet but also the ConfigMap. The *undo* command only changes the ReplicaSet, so it does not work for us.
 
-I recommend doing the changes in git. We will revert the last commit
+We recommend making  the changes in git. We will revert the last commit
 [.console-input]
 [source,input,subs="+macros,+attributes"]
 ----
