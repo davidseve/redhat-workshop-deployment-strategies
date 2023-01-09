@@ -14,15 +14,15 @@ image::rollout-blue-green-step-0.png["DStrategies initial status"]
 
 OpenShift Components - Online
 
-- Routes and Services declared with the suffix -online
-- Routes mapped only to the online services
-- Services mapped to the rollout.
+- Routes and Services declared with the suffix `-online`.
+- Routes mapped only to the online services.
+- Services mapped to pods created by the rollout.
  
 OpenShift Components - Offline
 
-- Routes and Services declared with the suffix -offline
-- Routes mapped only to the offline services
-- Services mapped to the rollout
+- Routes and Services declared with the suffix `-offline`.
+- Routes mapped only to the offline services.
+- Services mapped to pods created by the rollout.
 
 We will define an active or online service 'dstrategies-back-online' and a preview or offline service 'dstrategies-back-offline'. The idea is that the frontend will always use 'dstrategies-back-online' and 'dstrategies-back-offline' will only be used to test our service before triggering the rollout.
 
@@ -85,7 +85,7 @@ NOTE: For more information about AnalysisTemplate, please visit the following ht
 
 Finally, it is required to create a **Deployment** object to deploy the frontend application. This application helps us to test the blue-green rollout strategy from a web interface and see backend information.
 
-To allow communication between the frontend and the backend, it is required to edit the file named *./blue-green/dstrategies-frontend-deployment.yaml* to add the required **<USERNAME>** and **<OCP_APPS_DOMAIN>**.
+To allow communication between the frontend and the backend, it is required to edit the file named *./blue-green/dstrategies-frontend-deployment.yaml* to add the required **<USERNAME>** and **<OCP_APPS_DOMAIN>**. You can check their values in the xref:01-setup.adoc#01-parameters[parameters chapter].
 
 [source,yaml,subs="+macros,+attributes"]
 ----
