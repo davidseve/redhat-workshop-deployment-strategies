@@ -161,4 +161,6 @@ cd dstrategies-app-deployment
 [#01-clusterSetup]
 == Cluster Setup
 
+NOTE: The cluster is already set up, so you do not need to follow the steps in this section. However, save the following link if you want to recreate this workshop in your own Openshift cluster.
+
 Please visit https://github.com/rhte2023-argo-rollouts/ocp-cluster-setup.git[Openshift Cluster Setup] for more information about setting up an Openshift cluster in order to run this workshop.
