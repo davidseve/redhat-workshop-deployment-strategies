@@ -138,6 +138,25 @@ If the login is successful, you will see the home screen where your applications
 .ArgoCD applications
 image::argocd_applications.png["ArgoCD applications"]
 
+[#01-argocdkubectlplugin]
+=== Argo Rollouts Kubectl plugin
+
+Argo Rollouts offers a Kubectl plugin to enrich the experience with Rollouts, Experiments, and Analysis from the command line. It offers the ability to visualize the Argo Rollouts resources and run routine operations like promoting or retrying on those resources from the command.
+
+Install it using the https://argoproj.github.io/argo-rollouts/installation/#kubectl-plugin-installation[official documentation]. Then, check that the plugin is correctly installed using the following command:
+
+[.lines_space]
+[.console-input]
+[source,bash, subs="+macros,+attributes"]
+----
+$ oc argo rollouts list rollouts
+No resources found.
+----
+
+WARNING: If the previous command shows something like `Error: unknown command "argo" for "oc"`, please recheck your installation.
+
+
+
 [#01-cloneGit]
 === Clone the GitOps repository
 
