@@ -185,7 +185,7 @@ We have defined an active service 'dstrategies-back'. Final users will always us
  
 We have deployed the *dstrategies* with ArgoCD. We can test that it is up and running.
 
-Visit the back route via your web browser https://dstrategies-back-{user}-canary-service-mesh-istio-system.apps.rollouts.sandbox1288.opentlc.com/dstrategies-back[URL]
+Visit the back route via your web browser https://dstrategies-back-{user}-canary-service-mesh-istio-system.apps.%CLUSTER%/dstrategies-back[URL]
 
 IMPORTANT: It is required to accept *self-signed certificates* provided by Openshift
 

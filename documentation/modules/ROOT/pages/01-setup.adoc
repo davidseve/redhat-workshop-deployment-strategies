@@ -138,18 +138,37 @@ If the login is successful, you will see the home screen where your applications
 .ArgoCD applications
 image::argocd_applications.png["ArgoCD applications"]
 
+[#01-argocdkubectlplugin]
+=== Argo Rollouts Kubectl plugin
+
+Argo Rollouts offers a Kubectl plugin to enrich the experience with Rollouts, Experiments, and Analysis from the command line. It offers the ability to visualize the Argo Rollouts resources and run routine operations like promoting or retrying on those resources from the command.
+
+Install it using the https://argoproj.github.io/argo-rollouts/installation/#kubectl-plugin-installation[official documentation]. Then, check that the plugin is correctly installed using the following command:
+
+[.lines_space]
+[.console-input]
+[source,bash, subs="+macros,+attributes"]
+----
+$ oc argo rollouts list rollouts
+No resources found.
+----
+
+WARNING: If the previous command shows something like `Error: unknown command "argo" for "oc"`, please recheck your installation.
+
+
+
 [#01-cloneGit]
 === Clone the GitOps repository
 
 Following the GitOps practices, all the deployment configuration is stored in the git repo. We have created an initial repository that you will change to configure your deployment. As part of the demo, you will have to do some changes and commits. 
 
-Please fork the repository and clone it in your local machine in order to have full autonomy to make changes and deploy applications. In order to complete this task, follow the next steps:
+Please fork the repository and clone it in your local machine to have full autonomy to make changes and deploy applications. In order to complete this task, follow the next steps:
 
-* Access the https://github.com/rhte2023-argo-rollouts/dstrategies-app-deployment[DStrategy App Deployment] repository 
+* Access the https://github.com/rhte2023-argo-rollouts/dstrategies-app-deployment[DStrategy App Deployment] repository. 
 
 * Fork it on your GitHub account. If prompted, choose to fork only the `main` branch.
 
-* Download the repository to your local machine
+* Clone the repository to your local machine. You can use both SSH and HTTPS URLs. If you have already configured your SSH keys, use this mechanism. If not, use HTTPS.
 
 [.console-input]
 [source,input,subs="+macros,+attributes"]
@@ -158,7 +177,49 @@ git clone https://github.com/chamge_me/dstrategies-app-deployment
 cd dstrategies-app-deployment
 ----
 
+
+
+==== Configure your GitHub token
+
+.Why do I need this?
+[TIP]
+====
+GitHub does not allow user-pass authentication anymore. Therefore, if you cloned the repo using the HTTPS link, you will need to generate a GH Token.
+====
+
+Currently, there are two types of GitHub Personal Access Tokens (PATs): Fine-grained tokens and Classic tokens. *Fine-grained personal access tokens* give developers granular control over the permissions and repository access they grant to a PAT and are the new alternative to the traditional Classic tokens. That is why we will use Fine-grained tokens.
+
+1. Access the https://github.com/settings/tokens?type=beta[`New fine-grained personal access token` page for your GitHub account].
+2. Click on `Generate new token`.
++
+3. Enter the following values:
+* Token name: `dstrategies-app-deployment`.
+* Expiration: `7 days`.
+* Description: `Token to manage my dstrategies-app-deployment repository from automation pipelines`.
+* Resource owner: Yourself.
+* Repository access: Select `Only selected repositories` and choose the repository that you just cloned.
++
+.Step 1 to create a GitHub token
+image::github-token-01.png["Step 1 to create a GitHub token"]
++
+4. Now choose the following permissions for this token:
+* `Contents: Access: Read and Write`: To allow pushing commits to the repository.
+* `Pull requests: Access: Read and Write`: To allow automating pull-requests creation.
++
+.Step 2 to create a GitHub token
+image::github-token-02.png["Step 2 to create a GitHub token"]
++
+5. Click on `Generate Token`.
+6. Copy the token content, as you will not be able to see it again. You will need it later *on several occasions*.
+
+
+
+
+
+
 [#01-clusterSetup]
 == Cluster Setup
+
+NOTE: The cluster is already set up, so you do not need to follow the steps in this section. However, save the following link if you want to recreate this workshop in your own Openshift cluster.
 
 Please visit https://github.com/rhte2023-argo-rollouts/ocp-cluster-setup.git[Openshift Cluster Setup] for more information about setting up an Openshift cluster in order to run this workshop.
